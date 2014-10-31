@@ -1,0 +1,29 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+group 'com.iheartradio'
+version '0.0.1'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
