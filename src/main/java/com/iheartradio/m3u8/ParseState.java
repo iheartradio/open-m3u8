@@ -5,6 +5,15 @@ import com.iheartradio.m3u8.data.Playlist;
 class ParseState implements IParseState<Playlist> {
     private MasterParseState mMasterParseState;
     private MediaParseState mMediaParseState;
+    private boolean mIsExtended;
+
+    public void setExtended() throws ParseException {
+        if (mIsExtended) {
+            throw new ParseException(ParseExceptionType.MULTIPLE_EXTM3U);
+        }
+
+        mIsExtended = true;
+    }
 
     public boolean isMaster() {
         return mMasterParseState != null;

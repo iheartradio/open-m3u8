@@ -15,7 +15,9 @@ class ExtendedM3uParser {
         mScanner = new Scanner(inputStream, encoding.value).useDelimiter(Constants.EOL_PATTERN);
 
         // TODO implement the EXT tag handlers and add them here
-        putHandlers();
+        putHandlers(
+                ExtTagHandler.EXTM3U_HANDLER
+        );
     }
 
     Playlist parse() throws ParseException {
