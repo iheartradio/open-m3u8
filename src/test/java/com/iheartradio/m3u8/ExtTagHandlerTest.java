@@ -14,7 +14,7 @@ public class ExtTagHandlerTest extends TestCase {
 
     @Test
     public void testEXTM3U() throws Exception {
-        final ExtTagHandler handler = ExtTagHandler.EXTM3U_HANDLER;
+        final IExtTagHandler handler = ExtTagHandler.EXTM3U_HANDLER;
         final String tag = Constants.EXTM3U_TAG;
         final String line = "#" + tag;
 
@@ -28,7 +28,7 @@ public class ExtTagHandlerTest extends TestCase {
 
     @Test
     public void testEXT_X_VERSION() throws Exception {
-        final ExtTagHandler handler = ExtTagHandler.EXT_X_VERSION_HANDLER;
+        final IExtTagHandler handler = ExtTagHandler.EXT_X_VERSION_HANDLER;
         final String tag = Constants.EXT_X_VERSION_TAG;
         final String line = "#" + tag + ":3";
 
@@ -42,7 +42,7 @@ public class ExtTagHandlerTest extends TestCase {
         assertHandleThrows(handler, line, ParseExceptionType.MULTIPLE_EXT_TAGS);
     }
 
-    private void assertHandleThrows(ExtTagHandler handler, String line, ParseExceptionType exceptionType) {
+    private void assertHandleThrows(IExtTagHandler handler, String line, ParseExceptionType exceptionType) {
         try {
             handler.handle(line, mParseState);
             assertFalse(true);

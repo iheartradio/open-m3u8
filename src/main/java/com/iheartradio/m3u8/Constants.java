@@ -12,11 +12,13 @@ final class Constants {
     // extension tags
     public static final String EXTM3U_TAG = "EXTM3U";
     public static final String EXT_X_VERSION_TAG = "EXT-X-VERSION";
+    public static final String EXT_X_TARGETDURATION = "EXT-X-TARGETDURATION";
 
-    private static final String INTEGER_REGEX = "-?\\d+";
+    private static final String INTEGER_REGEX = "\\d+";
 
     // extension regular expressions
-    public static final Pattern EXT_X_VERSION_PATTERN = Pattern.compile(COMMENT_PREFIX + EXT_X_VERSION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")");
+    public static final Pattern EXT_X_VERSION_PATTERN = Pattern.compile("^" + COMMENT_PREFIX + EXT_X_VERSION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
+    public static final Pattern EXT_X_TARGETDURATION_PATTERN = Pattern.compile("^" + COMMENT_PREFIX + EXT_X_TARGETDURATION + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
 
     public static final Pattern URL_PATTERN = Pattern.compile("(?:https?|ftp)://[^\\s/$.?#]*\\.[^\\s]*$");
 }

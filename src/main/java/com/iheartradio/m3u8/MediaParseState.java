@@ -7,18 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 class MediaParseState implements IParseState<MediaPlaylist> {
-    public final List<TrackData> tracks;
+    public final List<TrackData> tracks = new ArrayList<TrackData>();
 
-    public MediaParseState() {
-        tracks = new ArrayList<TrackData>();
-    }
-
-    public MediaParseState(MediaParseState source) {
-        tracks = source.tracks;
-    }
+    public Integer targetDuration;
 
     @Override
     public MediaPlaylist buildPlaylist() throws ParseException {
-        return new MediaPlaylist(tracks);
+        return new MediaPlaylist.Builder()
+                .withTracks(tracks)
+                .withTargetDuration(targetDuration)
+                .build();
     }
 }

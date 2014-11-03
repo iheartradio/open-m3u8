@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 class ExtendedM3uParser {
     private final Scanner mScanner;
-    private final Map<String, ExtTagHandler> mExtTagHandlers = new HashMap<String, ExtTagHandler>();
+    private final Map<String, IExtTagHandler> mExtTagHandlers = new HashMap<String, IExtTagHandler>();
 
     ExtendedM3uParser(InputStream inputStream, Encoding encoding) {
         mScanner = new Scanner(inputStream, encoding.value).useDelimiter(Constants.EOL_PATTERN);
@@ -17,7 +17,8 @@ class ExtendedM3uParser {
         // TODO implement the EXT tag handlers and add them here
         putHandlers(
                 ExtTagHandler.EXTM3U_HANDLER,
-                ExtTagHandler.EXT_X_VERSION_HANDLER
+                ExtTagHandler.EXT_X_VERSION_HANDLER,
+                MediaPlaylistTagHandler.EXT_X_TARGETDURATION
         );
     }
 
@@ -35,7 +36,7 @@ class ExtendedM3uParser {
                     continue;
                 } else {
                     if (isExtTag(line)) {
-                        final ExtTagHandler handler = mExtTagHandlers.get(getExtTagKey(line));
+                        final IExtTagHandler handler = mExtTagHandlers.get(getExtTagKey(line));
 
                         if (handler == null) {
                             throw new ParseException(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED);
@@ -58,9 +59,9 @@ class ExtendedM3uParser {
         }
     }
 
-    private void putHandlers(ExtTagHandler ... handlers) {
+    private void putHandlers(IExtTagHandler... handlers) {
         if (handlers != null) {
-            for (ExtTagHandler handler : handlers) {
+            for (IExtTagHandler handler : handlers) {
                 mExtTagHandlers.put(handler.getTag(), handler);
             }
         }

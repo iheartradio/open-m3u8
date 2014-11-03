@@ -3,6 +3,7 @@ package com.iheartradio.m3u8;
 public enum ParseExceptionType {
     BAD_EXT_TAG_FORMAT("bad format found for an EXT tag"),
     INVALID_COMPATIBILITY_VERSION("invalid compatibility version"),
+    INTEGER_TOO_LARGE("integers larger than a signed int are not supported"),
     MASTER_IN_MEDIA("master playlist tags we found in a media playlist"),
     MEDIA_IN_MASTER("media playlist tags we found in a master playlist"),
     MISSING_EXT_TAG_SEPARATOR("missing the colon after an EXT tag"),

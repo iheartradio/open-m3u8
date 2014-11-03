@@ -35,10 +35,6 @@ class ParseState implements IParseState<Playlist> {
     }
 
     public void setMedia() throws ParseException {
-        if (isMaster()) {
-            throw new ParseException(ParseExceptionType.MEDIA_IN_MASTER);
-        }
-
         if (mMediaParseState == null) {
             mMediaParseState = new MediaParseState();
         }
