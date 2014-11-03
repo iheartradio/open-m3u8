@@ -6,14 +6,7 @@ class ParseState implements IParseState<Playlist> {
     private MasterParseState mMasterParseState;
     private MediaParseState mMediaParseState;
     private boolean mIsExtended;
-
-    public void setExtended() throws ParseException {
-        if (mIsExtended) {
-            throw new ParseException(ParseExceptionType.MULTIPLE_EXTM3U);
-        }
-
-        mIsExtended = true;
-    }
+    private Integer mCompatibilityVersion;
 
     public boolean isMaster() {
         return mMasterParseState != null;
@@ -51,14 +44,36 @@ class ParseState implements IParseState<Playlist> {
         }
     }
 
+    public boolean isExtended() {
+        return  mIsExtended;
+    }
+
+    public void setExtended() {
+        mIsExtended = true;
+    }
+
+    public Integer getCompatibilityVersion() {
+        return mCompatibilityVersion;
+    }
+
+    public void setCompatibilityVersion(int compatibilityVersion) {
+        mCompatibilityVersion = compatibilityVersion;
+    }
+
     @Override
     public Playlist buildPlaylist() throws ParseException {
+        final Playlist.Builder builder = new Playlist.Builder();
+
         if (isMaster()) {
-            return new Playlist(mMasterParseState.buildPlaylist());
+            builder.withMasterPlaylist(mMasterParseState.buildPlaylist());
         } else if (isMedia()) {
-            return new Playlist(mMediaParseState.buildPlaylist());
+            builder.withMediaPlaylist(mMediaParseState.buildPlaylist()).withExtended(mIsExtended);
         } else {
             throw new ParseException(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE);
         }
+
+        return builder
+                .withCompatibilityVersion(mCompatibilityVersion)
+                .build();
     }
 }

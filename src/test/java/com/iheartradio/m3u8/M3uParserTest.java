@@ -27,7 +27,7 @@ public class M3uParserTest {
 
         final List<TrackData> expectedTracks = Arrays.asList(TrackData.fromUrl(url), TrackData.fromPath(path));
         final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
-        final MediaPlaylist mediaPlaylist = new M3uParser(inputStream, Encoding.UTF_8).parse().asMediaPlaylist();
+        final MediaPlaylist mediaPlaylist = new M3uParser(inputStream, Encoding.UTF_8).parse().getMediaPlaylist();
 
         assertEquals(expectedTracks, mediaPlaylist.getTracks());
     }

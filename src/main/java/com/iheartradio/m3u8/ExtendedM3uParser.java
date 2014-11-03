@@ -16,7 +16,8 @@ class ExtendedM3uParser {
 
         // TODO implement the EXT tag handlers and add them here
         putHandlers(
-                ExtTagHandler.EXTM3U_HANDLER
+                ExtTagHandler.EXTM3U_HANDLER,
+                ExtTagHandler.EXT_X_VERSION_HANDLER
         );
     }
 

@@ -31,7 +31,9 @@ class M3uParser {
                 }
             }
 
-            return new Playlist(new MediaPlaylist(state.getMedia().tracks));
+            return new Playlist.Builder()
+                    .withMediaPlaylist(new MediaPlaylist(state.getMedia().tracks))
+                    .build();
         } finally {
             mScanner.close();
         }
