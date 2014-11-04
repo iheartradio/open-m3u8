@@ -4,17 +4,18 @@ import com.iheartradio.m3u8.data.MediaPlaylist;
 import com.iheartradio.m3u8.data.Playlist;
 
 import java.io.InputStream;
-import java.util.Scanner;
 
 class M3uParser {
-    private final Scanner mScanner;
+    private final ExtendedM3uScanner mScanner;
+    private final Encoding mEncoding;
 
     M3uParser(InputStream inputStream, Encoding encoding) {
-        mScanner = new Scanner(inputStream, encoding.value).useDelimiter(Constants.EOL_PATTERN);
+        mScanner = new ExtendedM3uScanner(inputStream, encoding);
+        mEncoding = encoding;
     }
 
     Playlist parse() throws ParseException {
-        final ParseState state = new ParseState();
+        final ParseState state = new ParseState(mEncoding);
         final TrackHandler trackHandler = new TrackHandler();
 
         try {

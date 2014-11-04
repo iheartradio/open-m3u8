@@ -3,10 +3,18 @@ package com.iheartradio.m3u8;
 import com.iheartradio.m3u8.data.Playlist;
 
 class ParseState implements IParseState<Playlist> {
+    static final int NONE = -1;
+
+    public final Encoding encoding;
+
     private MasterParseState mMasterParseState;
     private MediaParseState mMediaParseState;
     private boolean mIsExtended;
-    private Integer mCompatibilityVersion;
+    private int mCompatibilityVersion = NONE;
+
+    public ParseState(Encoding encoding) {
+        this.encoding = encoding;
+    }
 
     public boolean isMaster() {
         return mMasterParseState != null;
@@ -48,7 +56,7 @@ class ParseState implements IParseState<Playlist> {
         mIsExtended = true;
     }
 
-    public Integer getCompatibilityVersion() {
+    public int getCompatibilityVersion() {
         return mCompatibilityVersion;
     }
 
@@ -69,7 +77,7 @@ class ParseState implements IParseState<Playlist> {
         }
 
         return builder
-                .withCompatibilityVersion(mCompatibilityVersion)
+                .withCompatibilityVersion(mCompatibilityVersion == NONE ? Playlist.MIN_COMPATIBILITY_VERSION : mCompatibilityVersion)
                 .build();
     }
 }

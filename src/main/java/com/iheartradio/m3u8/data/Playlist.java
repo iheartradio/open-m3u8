@@ -6,9 +6,9 @@ public class Playlist {
     private final MasterPlaylist mMasterPlaylist;
     private final MediaPlaylist mMediaPlaylist;
     private final boolean mIsExtended;
-    private final Integer mCompatibilityVersion;
+    private final int mCompatibilityVersion;
 
-    private Playlist(MasterPlaylist masterPlaylist, MediaPlaylist mediaPlaylist, boolean isExtended, Integer compatibilityVersion) {
+    private Playlist(MasterPlaylist masterPlaylist, MediaPlaylist mediaPlaylist, boolean isExtended, int compatibilityVersion) {
         mMasterPlaylist = masterPlaylist;
         mMediaPlaylist = mediaPlaylist;
         mIsExtended = isExtended;
@@ -36,18 +36,14 @@ public class Playlist {
     }
 
     public int getCompatibilityVersion() {
-        if (mCompatibilityVersion == null) {
-            return MIN_COMPATIBILITY_VERSION;
-        } else {
-            return mCompatibilityVersion;
-        }
+        return mCompatibilityVersion;
     }
 
     public static class Builder {
         private boolean mIsExtended;
         private MasterPlaylist mMasterPlaylist;
         private MediaPlaylist mMediaPlaylist;
-        private Integer mCompatibilityVersion;
+        private int mCompatibilityVersion = MIN_COMPATIBILITY_VERSION;
 
         public Builder withMasterPlaylist(MasterPlaylist masterPlaylist) {
             if (mMediaPlaylist != null) {
@@ -77,6 +73,10 @@ public class Playlist {
         }
 
         public Builder withCompatibilityVersion(int version) {
+            if (version < MIN_COMPATIBILITY_VERSION) {
+                throw new IllegalArgumentException("compatibility version must be >= " + MIN_COMPATIBILITY_VERSION);
+            }
+
             mCompatibilityVersion = version;
             return this;
         }

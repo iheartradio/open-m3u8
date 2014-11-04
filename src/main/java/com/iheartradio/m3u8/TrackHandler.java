@@ -4,15 +4,25 @@ import com.iheartradio.m3u8.data.TrackData;
 
 class TrackHandler implements LineHandler {
     @Override
-    public void handle(String line, ParseState state) {
-        final TrackData trackData;
+    public void handle(String line, ParseState state) throws ParseException {
+        final TrackData.Builder builder = new TrackData.Builder();
+        final MediaParseState mediaState = state.getMedia();
 
-        if (Constants.URL_PATTERN.matcher(line).matches()) {
-            trackData = TrackData.fromUrl(line);
-        } else {
-            trackData = TrackData.fromPath(line);
+        if (state.isExtended() && mediaState.trackInfo == null) {
+            throw new ParseException(ParseExceptionType.MISSING_TRACK_INFO);
         }
 
-        state.getMedia().tracks.add(trackData);
+        if (Constants.URL_PATTERN.matcher(line).matches()) {
+            builder.withUrl(line);
+        } else {
+            builder.withPath(line);
+        }
+
+        mediaState.tracks.add(builder
+                .withTrackInfo(mediaState.trackInfo)
+                .withEncryptionData(mediaState.encryptionData)
+                .build());
+
+        mediaState.trackInfo = null;
     }
 }

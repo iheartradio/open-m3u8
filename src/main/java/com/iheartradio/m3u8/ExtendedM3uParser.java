@@ -5,25 +5,28 @@ import com.iheartradio.m3u8.data.Playlist;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 class ExtendedM3uParser {
-    private final Scanner mScanner;
+    private final ExtendedM3uScanner mScanner;
+    private final Encoding mEncoding;
     private final Map<String, IExtTagHandler> mExtTagHandlers = new HashMap<String, IExtTagHandler>();
 
     ExtendedM3uParser(InputStream inputStream, Encoding encoding) {
-        mScanner = new Scanner(inputStream, encoding.value).useDelimiter(Constants.EOL_PATTERN);
+        mScanner = new ExtendedM3uScanner(inputStream, encoding);
+        mEncoding = encoding;
 
         // TODO implement the EXT tag handlers and add them here
         putHandlers(
                 ExtTagHandler.EXTM3U_HANDLER,
                 ExtTagHandler.EXT_X_VERSION_HANDLER,
-                MediaPlaylistTagHandler.EXT_X_TARGETDURATION
+                MediaPlaylistTagHandler.EXT_X_TARGETDURATION,
+                MediaPlaylistTagHandler.EXTINF,
+                MediaPlaylistTagHandler.EXT_X_KEY
         );
     }
 
     Playlist parse() throws ParseException {
-        final ParseState state = new ParseState();
+        final ParseState state = new ParseState(mEncoding);
         final LineHandler playlistHandler = new PlaylistHandler();
         final LineHandler trackHandler = new TrackHandler();
 
@@ -36,10 +39,11 @@ class ExtendedM3uParser {
                     continue;
                 } else {
                     if (isExtTag(line)) {
-                        final IExtTagHandler handler = mExtTagHandlers.get(getExtTagKey(line));
+                        final String tagKey = getExtTagKey(line);
+                        final IExtTagHandler handler = mExtTagHandlers.get(tagKey);
 
                         if (handler == null) {
-                            throw new ParseException(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED);
+                            throw new ParseException(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey);
                         } else {
                             handler.handle(line, state);
                         }
