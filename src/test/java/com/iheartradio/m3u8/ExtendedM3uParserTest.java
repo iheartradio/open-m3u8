@@ -1,5 +1,6 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.MediaType;
 import com.iheartradio.m3u8.data.Playlist;
 import com.iheartradio.m3u8.data.TrackData;
 import com.iheartradio.m3u8.data.TrackInfo;
@@ -15,7 +16,26 @@ import static org.junit.Assert.*;
 
 public class ExtendedM3uParserTest {
     @Test
-    public void testParse() throws Exception {
+    public void testParseMaster() throws Exception {
+        final String validData =
+                        "#EXTM3U\n" +
+                        "#EXT-X-VERSION:2\n" +
+                        "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"1234\",NAME=\"Foo\"\n" +
+                        "\n";
+
+        final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
+        final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8).parse();
+
+        assertTrue(playlist.isExtended());
+        assertEquals(2, playlist.getCompatibilityVersion());
+        assertTrue(playlist.hasMasterPlaylist());
+        assertEquals(MediaType.AUDIO, playlist.getMasterPlaylist().getMediaData().getType());
+        assertEquals("1234", playlist.getMasterPlaylist().getMediaData().getGroupId());
+        assertEquals("Foo", playlist.getMasterPlaylist().getMediaData().getName());
+    }
+
+    @Test
+    public void testParseMedia() throws Exception {
         final String url = "http://www.my.song/file1.mp3";
         final String path = "/usr/user1/file2.mp3";
 
@@ -40,6 +60,7 @@ public class ExtendedM3uParserTest {
 
         assertTrue(playlist.isExtended());
         assertEquals(2, playlist.getCompatibilityVersion());
+        assertTrue(playlist.hasMediaPlaylist());
         assertEquals(60, playlist.getMediaPlaylist().getTargetDuration());
         assertEquals(expectedTracks, playlist.getMediaPlaylist().getTracks());
     }

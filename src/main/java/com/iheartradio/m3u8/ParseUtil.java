@@ -66,6 +66,16 @@ final class ParseUtil {
         }
     }
 
+    public static boolean parseYesNo(String yesNoString, String tag) throws ParseException {
+        if (yesNoString.equals("YES")) {
+            return true;
+        } else if (yesNoString.equals("NO")) {
+            return false;
+        } else {
+            throw new ParseException(ParseExceptionType.NOT_YES_OR_NO, tag);
+        }
+    }
+
     public static String parseQuotedString(String quotedString, String tag) throws ParseException {
         final StringBuilder builder = new StringBuilder();
 

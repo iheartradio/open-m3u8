@@ -2,14 +2,13 @@ package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.Playlist;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 abstract class ExtTagHandler implements IExtTagHandler {
     @Override
     public void handle(String line, ParseState state) throws ParseException {
-        state.setMedia();
-
         if (hasAttributes()) {
             if (line.indexOf(Constants.EXT_TAG_END) != getTag().length() + 1) {
                 throw new ParseException(ParseExceptionType.MISSING_EXT_TAG_SEPARATOR, getTag());
@@ -27,6 +26,16 @@ abstract class ExtTagHandler implements IExtTagHandler {
         }
 
         return matcher;
+    }
+
+    <T> void parseAttributes(String line, T builder, ParseState state, Map<String, AttributeHandler<T>> handlers) throws ParseException {
+        for (Attribute attribute : ParseUtil.parseAttributeList(line, getTag())) {
+            if (handlers.containsKey(attribute.name)) {
+                handlers.get(attribute.name).handle(attribute, builder, state);
+            } else {
+                throw new ParseException(ParseExceptionType.INVALID_ATTRIBUTE_NAME, getTag());
+            }
+        }
     }
 
     static final IExtTagHandler EXTM3U_HANDLER = new ExtTagHandler() {

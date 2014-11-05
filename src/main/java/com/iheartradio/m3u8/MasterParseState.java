@@ -1,6 +1,7 @@
 package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.MasterPlaylist;
+import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.PlaylistData;
 
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 
 class MasterParseState implements IParseState<MasterPlaylist> {
     public final List<PlaylistData> playlists;
+
+    public MediaData mediaData;
 
     public MasterParseState() {
         playlists = new ArrayList<PlaylistData>();
@@ -19,6 +22,9 @@ class MasterParseState implements IParseState<MasterPlaylist> {
 
     @Override
     public MasterPlaylist buildPlaylist() throws ParseException {
-        return new MasterPlaylist(playlists);
+        return new MasterPlaylist.Builder()
+                .withPlaylists(playlists)
+                .withMediaData(mediaData)
+                .build();
     }
 }

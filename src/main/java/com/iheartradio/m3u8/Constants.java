@@ -14,7 +14,17 @@ final class Constants {
 
     public static final String EXTM3U_TAG = "EXTM3U";
     public static final String EXT_X_VERSION_TAG = "EXT-X-VERSION";
+
+    // master playlist tags
+
+    public static final String EXT_X_MEDIA_TAG = "EXT-X-MEDIA";
+
+    // media playlist tags
+
     public static final String EXT_X_TARGETDURATION_TAG = "EXT-X-TARGETDURATION";
+
+    // media segment tags
+
     public static final String EXTINF_TAG = "EXTINF";
     public static final String EXT_X_KEY_TAG = "EXT-X-KEY";
 
@@ -28,6 +38,7 @@ final class Constants {
 
     public static final Pattern EXT_X_VERSION_PATTERN = Pattern.compile("^#" + EXT_X_VERSION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
     public static final Pattern EXT_X_TARGETDURATION_PATTERN = Pattern.compile("^#" + EXT_X_TARGETDURATION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
+    public static final Pattern EXT_X_MEDIA_IN_STREAM_ID_PATTERN = Pattern.compile("^CC[1-4]|SERVICE(?:[1-9]|[1-5]\\d|6[0-3])$");
     public static final Pattern EXTINF_PATTERN = Pattern.compile("^#" + EXTINF_TAG + EXT_TAG_END + "(" + FLOAT_REGEX + ")(?:,(.+)?)?$");
 
     // other

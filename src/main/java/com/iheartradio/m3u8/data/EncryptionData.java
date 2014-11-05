@@ -62,10 +62,6 @@ public class EncryptionData {
         private List<Integer> mKeyFormatVersions;
 
         public Builder withMethod(EncryptionMethod method) {
-            if (method == null) {
-                throw new IllegalArgumentException("method is null");
-            }
-
             mMethod = method;
             return this;
         }
@@ -92,7 +88,7 @@ public class EncryptionData {
 
         public EncryptionData build() {
             if (mMethod == null) {
-                throw new IllegalArgumentException("EncryptionData requires a method");
+                throw new IllegalStateException("EncryptionData requires a method");
             }
 
             return new EncryptionData(mMethod, mUri, mInitializationVector, mKeyFormat, mKeyFormatVersions);

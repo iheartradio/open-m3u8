@@ -19,6 +19,7 @@ class ExtendedM3uParser {
         putHandlers(
                 ExtTagHandler.EXTM3U_HANDLER,
                 ExtTagHandler.EXT_X_VERSION_HANDLER,
+                MasterPlaylistTagHandler.EXT_X_MEDIA,
                 MediaPlaylistTagHandler.EXT_X_TARGETDURATION,
                 MediaPlaylistTagHandler.EXTINF,
                 MediaPlaylistTagHandler.EXT_X_KEY
