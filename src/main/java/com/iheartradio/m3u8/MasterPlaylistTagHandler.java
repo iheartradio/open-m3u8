@@ -211,6 +211,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
         private final String VIDEO = "VIDEO";
         private final String SUBTITLES = "SUBTITLES";
         private final String CLOSED_CAPTIONS = "CLOSED-CAPTIONS";
+        private final String PROGRAM_ID = "PROGRAM-ID";
 
         {
             HANDLERS.put(BANDWIDTH, new AttributeHandler<StreamInfo.Builder>() {
@@ -272,6 +273,13 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                     if (!attribute.value.equals(Constants.NO_CLOSED_CAPTIONS)) {
                         builder.withClosedCaptions(ParseUtil.parseQuotedString(attribute.value, getTag()));
                     }
+                }
+            });
+
+            HANDLERS.put(PROGRAM_ID, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    // deprecated
                 }
             });
         }
