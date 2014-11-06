@@ -12,6 +12,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
     public final List<TrackData> tracks = new ArrayList<TrackData>();
 
     public Integer targetDuration;
+    public Integer mediaSequenceNumber;
     public TrackInfo trackInfo;
     public EncryptionData encryptionData;
 
@@ -20,6 +21,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
         return new MediaPlaylist.Builder()
                 .withTracks(tracks)
                 .withTargetDuration(targetDuration)
+                .withMediaSequenceNumber(mediaSequenceNumber == null ? 0 : mediaSequenceNumber)
                 .build();
     }
 }

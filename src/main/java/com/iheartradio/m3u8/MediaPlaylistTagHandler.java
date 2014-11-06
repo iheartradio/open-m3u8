@@ -52,6 +52,31 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
 
+    static final IExtTagHandler EXT_X_MEDIA_SEQUENCE = new MediaPlaylistTagHandler() {
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_MEDIA_SEQUENCE_TAG;
+        }
+
+        @Override
+        boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+            super.handle(line, state);
+
+            final Matcher matcher = match(Constants.EXT_X_MEDIA_SEQUENCE_PATTERN, line);
+
+            if (state.getMedia().mediaSequenceNumber != null) {
+                throw new ParseException(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag());
+            }
+
+            state.getMedia().mediaSequenceNumber = ParseUtil.parseInt(matcher.group(1), getTag());
+        }
+    };
+
     // media segment tags
 
     static final IExtTagHandler EXTINF = new MediaPlaylistTagHandler() {

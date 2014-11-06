@@ -23,6 +23,7 @@ final class Constants {
     // media playlist tags
 
     public static final String EXT_X_TARGETDURATION_TAG = "EXT-X-TARGETDURATION";
+    public static final String EXT_X_MEDIA_SEQUENCE_TAG = "EXT-X-MEDIA-SEQUENCE";
 
     // media segment tags
 
@@ -40,6 +41,7 @@ final class Constants {
 
     public static final Pattern EXT_X_VERSION_PATTERN = Pattern.compile("^#" + EXT_X_VERSION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
     public static final Pattern EXT_X_TARGETDURATION_PATTERN = Pattern.compile("^#" + EXT_X_TARGETDURATION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
+    public static final Pattern EXT_X_MEDIA_SEQUENCE_PATTERN = Pattern.compile("^#" + EXT_X_MEDIA_SEQUENCE_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
     public static final Pattern EXT_X_MEDIA_IN_STREAM_ID_PATTERN = Pattern.compile("^CC[1-4]|SERVICE(?:[1-9]|[1-5]\\d|6[0-3])$");
     public static final Pattern EXTINF_PATTERN = Pattern.compile("^#" + EXTINF_TAG + EXT_TAG_END + "(" + FLOAT_REGEX + ")(?:,(.+)?)?$");
 

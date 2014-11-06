@@ -59,6 +59,7 @@ public class ExtendedM3uParserTest {
                         "#EXTM3U\n" +
                         "#EXT-X-VERSION:2\n" +
                         "#EXT-X-TARGETDURATION:60\n" +
+                        "#EXT-X-MEDIA-SEQUENCE:10\n" +
                         "#some comment\n" +
                         "#EXTINF:120.0,title 1\n" +
                         url + "\n" +
@@ -78,6 +79,7 @@ public class ExtendedM3uParserTest {
         assertEquals(2, playlist.getCompatibilityVersion());
         assertTrue(playlist.hasMediaPlaylist());
         assertEquals(60, playlist.getMediaPlaylist().getTargetDuration());
+        assertEquals(10, playlist.getMediaPlaylist().getMediaSequenceNumber());
         assertEquals(expectedTracks, playlist.getMediaPlaylist().getTracks());
     }
 }
