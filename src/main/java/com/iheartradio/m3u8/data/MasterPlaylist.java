@@ -5,31 +5,31 @@ import java.util.List;
 
 public class MasterPlaylist {
     private final List<PlaylistData> mPlaylists;
-    private final MediaData mMediaData;
+    private final List<MediaData> mMediaData;
 
-    private MasterPlaylist(List<PlaylistData> playlists, MediaData mediaData) {
+    private MasterPlaylist(List<PlaylistData> playlists, List<MediaData> mediaData) {
         mPlaylists = Collections.unmodifiableList(playlists);
-        mMediaData = mediaData;
+        mMediaData = Collections.unmodifiableList(mediaData);
     }
 
     public List<PlaylistData> getPlaylists() {
         return mPlaylists;
     }
 
-    public MediaData getMediaData() {
+    public List<MediaData> getMediaData() {
         return mMediaData;
     }
 
     public static class Builder {
         private List<PlaylistData> mPlaylists;
-        private MediaData mMediaData;
+        private List<MediaData> mMediaData;
 
         public Builder withPlaylists(List<PlaylistData> playlists) {
             mPlaylists = playlists;
             return this;
         }
 
-        public Builder withMediaData(MediaData mediaData) {
+        public Builder withMediaData(List<MediaData> mediaData) {
             mMediaData = mediaData;
             return this;
         }

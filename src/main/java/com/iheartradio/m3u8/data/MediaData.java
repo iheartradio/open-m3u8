@@ -40,6 +40,28 @@ public class MediaData {
         mCharacteristics = characteristics;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MediaData)) {
+            return false;
+        }
+
+        MediaData other = (MediaData) o;
+
+        return this.mType == other.mType &&
+               ObjectUtil.equals(this.mUri, other.mUri) &&
+               ObjectUtil.equals(this.mUri, other.mUri) &&
+               ObjectUtil.equals(this.mGroupId, other.mGroupId) &&
+               ObjectUtil.equals(this.mLanguage, other.mLanguage) &&
+               ObjectUtil.equals(this.mAssociatedLanguage, other.mAssociatedLanguage) &&
+               ObjectUtil.equals(this.mName, other.mName) &&
+               this.mDefault == other.mDefault &&
+               this.mAutoSelect == other.mAutoSelect &&
+               this.mForced == other.mForced &&
+               ObjectUtil.equals(this.mInStreamId, other.mInStreamId) &&
+               ObjectUtil.equals(this.mCharacteristics, other.mCharacteristics);
+    }
+
     public MediaType getType() {
         return mType;
     }

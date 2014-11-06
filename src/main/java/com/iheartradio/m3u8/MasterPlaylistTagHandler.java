@@ -196,7 +196,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 throw new ParseException(ParseExceptionType.FORCED_WITHOUT_SUBTITLES, getTag());
             }
 
-            state.getMaster().mediaData = mediaData;
+            state.getMaster().mediaData.add(mediaData);
         }
     };
 }

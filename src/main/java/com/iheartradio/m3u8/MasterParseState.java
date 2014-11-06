@@ -8,17 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class MasterParseState implements IParseState<MasterPlaylist> {
-    public final List<PlaylistData> playlists;
-
-    public MediaData mediaData;
-
-    public MasterParseState() {
-        playlists = new ArrayList<PlaylistData>();
-    }
-
-    public MasterParseState(MasterParseState source) {
-        playlists = source.playlists;
-    }
+    public final List<PlaylistData> playlists = new ArrayList<PlaylistData>();
+    public final List<MediaData> mediaData = new ArrayList<MediaData>();
 
     @Override
     public MasterPlaylist buildPlaylist() throws ParseException {

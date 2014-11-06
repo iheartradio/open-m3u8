@@ -5,11 +5,14 @@ import com.iheartradio.m3u8.data.MediaType;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MasterPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
     @Test
     public void testEXT_X_MEDIA() throws Exception {
+        final List<MediaData> expectedMediaData = new ArrayList<MediaData>();
         final IExtTagHandler handler = MasterPlaylistTagHandler.EXT_X_MEDIA;
         final String tag = Constants.EXT_X_MEDIA_TAG;
         final String groupId = "1234";
@@ -17,6 +20,17 @@ public class MasterPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
         final String associatedLanguage = "assoc-lang";
         final String name = "Foo";
         final String inStreamId = "SERVICE1";
+
+        expectedMediaData.add(new MediaData.Builder()
+                .withType(MediaType.CLOSED_CAPTIONS)
+                .withGroupId(groupId)
+                .withLanguage(language)
+                .withAssociatedLanguage(associatedLanguage)
+                .withName(name)
+                .withAutoSelect(true)
+                .withInStreamId(inStreamId)
+                .withCharacteristics(Arrays.asList("char1", "char2"))
+                .build());
 
         final String line = "#" + tag +
                 ":TYPE=CLOSED-CAPTIONS" +
@@ -32,17 +46,6 @@ public class MasterPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
         assertEquals(tag, handler.getTag());
 
         handler.handle(line, mParseState);
-        MediaData mediaData = mParseState.getMaster().mediaData;
-        assertEquals(MediaType.CLOSED_CAPTIONS, mediaData.getType());
-        assertEquals(null, mediaData.getUri());
-        assertEquals(groupId, mediaData.getGroupId());
-        assertEquals(language, mediaData.getLanguage());
-        assertEquals(associatedLanguage, mediaData.getAssociatedLanguage());
-        assertEquals(name, mediaData.getName());
-        assertEquals(false, mediaData.isDefault());
-        assertEquals(true, mediaData.isAutoSelect());
-        assertEquals(false, mediaData.isForced());
-        assertEquals(inStreamId, mediaData.getInStreamId());
-        assertEquals(Arrays.asList("char1", "char2"), mediaData.getCharacteristics());
+        assertEquals(expectedMediaData, mParseState.getMaster().mediaData);
     }
 }

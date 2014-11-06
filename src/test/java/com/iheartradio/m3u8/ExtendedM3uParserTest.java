@@ -1,5 +1,6 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.MediaType;
 import com.iheartradio.m3u8.data.Playlist;
 import com.iheartradio.m3u8.data.TrackData;
@@ -9,6 +10,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,6 +19,14 @@ import static org.junit.Assert.*;
 public class ExtendedM3uParserTest {
     @Test
     public void testParseMaster() throws Exception {
+        final List<MediaData> expectedMediaData = new ArrayList<MediaData>();
+
+        expectedMediaData.add(new MediaData.Builder()
+                .withType(MediaType.AUDIO)
+                .withGroupId("1234")
+                .withName("Foo")
+                .build());
+
         final String validData =
                         "#EXTM3U\n" +
                         "#EXT-X-VERSION:2\n" +
@@ -29,9 +39,7 @@ public class ExtendedM3uParserTest {
         assertTrue(playlist.isExtended());
         assertEquals(2, playlist.getCompatibilityVersion());
         assertTrue(playlist.hasMasterPlaylist());
-        assertEquals(MediaType.AUDIO, playlist.getMasterPlaylist().getMediaData().getType());
-        assertEquals("1234", playlist.getMasterPlaylist().getMediaData().getGroupId());
-        assertEquals("Foo", playlist.getMasterPlaylist().getMediaData().getName());
+        assertEquals(expectedMediaData, playlist.getMasterPlaylist().getMediaData());
     }
 
     @Test
