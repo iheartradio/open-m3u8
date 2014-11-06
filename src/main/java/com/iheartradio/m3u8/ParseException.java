@@ -5,6 +5,8 @@ public class ParseException extends Exception {
 
     public final ParseExceptionType type;
 
+    private String mInput;
+
     ParseException(ParseExceptionType type) {
         this(type, null);
     }
@@ -12,6 +14,14 @@ public class ParseException extends Exception {
     ParseException(ParseExceptionType type, String messageSuffix) {
         this.type = type;
         mMessageSuffix = messageSuffix;
+    }
+
+    public String getInput() {
+        return mInput;
+    }
+
+    void setInput(String input) {
+        mInput = input;
     }
 
     public String getMessage() {

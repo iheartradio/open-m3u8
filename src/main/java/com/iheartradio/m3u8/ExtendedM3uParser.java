@@ -60,6 +60,9 @@ class ExtendedM3uParser {
             }
 
             return state.buildPlaylist();
+        } catch (ParseException exception) {
+            exception.setInput(mScanner.getInput());
+            throw exception;
         } finally {
             mScanner.close();
         }

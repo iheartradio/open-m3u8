@@ -37,6 +37,9 @@ class M3uParser {
                             .withTracks(state.getMedia().tracks)
                             .build())
                     .build();
+        } catch (ParseException exception) {
+            exception.setInput(mScanner.getInput());
+            throw exception;
         } finally {
             mScanner.close();
         }
