@@ -34,7 +34,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        boolean hasAttributes() {
+        boolean hasData() {
             return true;
         }
 
@@ -61,7 +61,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        boolean hasAttributes() {
+        boolean hasData() {
             return true;
         }
 
@@ -149,7 +149,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        boolean hasAttributes() {
+        boolean hasData() {
             return true;
         }
 

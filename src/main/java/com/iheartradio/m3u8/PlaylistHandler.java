@@ -5,14 +5,20 @@ import com.iheartradio.m3u8.data.PlaylistData;
 class PlaylistHandler implements LineHandler {
     @Override
     public void handle(String line, ParseState state) {
-        final PlaylistData playlistData;
+        final PlaylistData.Builder builder = new PlaylistData.Builder();
 
         if (Constants.URL_PATTERN.matcher(line).matches()) {
-            playlistData = PlaylistData.fromUrl(line);
+            builder.withUrl(line);
         } else {
-            playlistData = PlaylistData.fromPath(line);
+            builder.withPath(line);
         }
 
-        state.getMaster().playlists.add(playlistData);
+        final MasterParseState masterState = state.getMaster();
+
+        masterState.playlists.add(builder
+                .withStreamInfo(masterState.streamInfo)
+                .build());
+
+        masterState.streamInfo = null;
     }
 }

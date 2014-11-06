@@ -1,34 +1,67 @@
 package com.iheartradio.m3u8.data;
 
 public class PlaylistData extends LocationData {
-    private final PlaylistInfo mPlaylistInfo;
+    private final StreamInfo mStreamInfo;
 
-    public static PlaylistData fromPath(String path) {
-        return fromPath(path, null);
-    }
-
-    public static PlaylistData fromPath(String path, PlaylistInfo playlistInfo) {
-        return new PlaylistData(LocationType.PATH, path, playlistInfo);
-    }
-
-    public static PlaylistData fromUrl(String url) {
-        return fromUrl(url, null);
-    }
-
-    public static PlaylistData fromUrl(String url, PlaylistInfo playlistInfo) {
-        return new PlaylistData(LocationType.URL, url, playlistInfo);
-    }
-
-    PlaylistData(LocationType locationType, String location, PlaylistInfo playlistInfo) {
+    private PlaylistData(LocationType locationType, String location, StreamInfo streamInfo) {
         super(locationType, location);
-        mPlaylistInfo = playlistInfo;
+        mStreamInfo = streamInfo;
     }
 
-    public boolean hasPlaylistInfo() {
-        return mPlaylistInfo != null;
+    public boolean hasStreamInfo() {
+        return mStreamInfo != null;
     }
 
-    public PlaylistInfo getPlaylistInfo() {
-        return mPlaylistInfo;
+    public StreamInfo getStreamInfo() {
+        return mStreamInfo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof PlaylistData)) {
+            return false;
+        }
+
+        PlaylistData other = (PlaylistData) o;
+        return super.equals(other) && ObjectUtil.equals(this.mStreamInfo, other.mStreamInfo);
+    }
+
+    public static class Builder {
+        private LocationType mLocationType;
+        private String mLocation;
+        private StreamInfo mStreamInfo;
+
+        public Builder withPath(String path) {
+            if (path == null || path.isEmpty()) {
+                throw new IllegalStateException("path cannot be empty");
+            }
+
+            mLocationType = LocationType.PATH;
+            mLocation = path;
+            return this;
+        }
+
+        public Builder withUrl(String url) {
+            if (url == null || url.isEmpty()) {
+                throw new IllegalStateException("url cannot be empty");
+            }
+
+            mLocationType = LocationType.URL;
+            mLocation = url;
+            return this;
+        }
+
+        public Builder withStreamInfo(StreamInfo streamInfo) {
+            mStreamInfo = streamInfo;
+            return this;
+        }
+
+        public PlaylistData build() {
+            if (mLocationType == null) {
+                throw new IllegalStateException("cannot build PlaylistData without a path or url");
+            }
+
+            return new PlaylistData(mLocationType, mLocation, mStreamInfo);
+        }
     }
 }

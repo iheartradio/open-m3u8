@@ -3,6 +3,7 @@ package com.iheartradio.m3u8;
 import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.MediaType;
 import com.iheartradio.m3u8.data.Playlist;
+import com.iheartradio.m3u8.data.StreamInfo;
 import com.iheartradio.m3u8.data.TrackData;
 import com.iheartradio.m3u8.data.TrackInfo;
 
@@ -27,10 +28,16 @@ public class ExtendedM3uParserTest {
                 .withName("Foo")
                 .build());
 
+        final StreamInfo expectedStreamInfo = new StreamInfo.Builder()
+                .withBandwidth(500)
+                .build();
+
         final String validData =
                         "#EXTM3U\n" +
                         "#EXT-X-VERSION:2\n" +
                         "#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID=\"1234\",NAME=\"Foo\"\n" +
+                        "#EXT-X-STREAM-INF:BANDWIDTH=500\n" +
+                        "http://foo.bar.com/\n" +
                         "\n";
 
         final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
@@ -40,6 +47,7 @@ public class ExtendedM3uParserTest {
         assertEquals(2, playlist.getCompatibilityVersion());
         assertTrue(playlist.hasMasterPlaylist());
         assertEquals(expectedMediaData, playlist.getMasterPlaylist().getMediaData());
+        assertEquals(expectedStreamInfo, playlist.getMasterPlaylist().getPlaylists().get(0).getStreamInfo());
     }
 
     @Test

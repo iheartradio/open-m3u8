@@ -9,14 +9,14 @@ import java.util.regex.Pattern;
 abstract class ExtTagHandler implements IExtTagHandler {
     @Override
     public void handle(String line, ParseState state) throws ParseException {
-        if (hasAttributes()) {
+        if (hasData()) {
             if (line.indexOf(Constants.EXT_TAG_END) != getTag().length() + 1) {
                 throw new ParseException(ParseExceptionType.MISSING_EXT_TAG_SEPARATOR, getTag());
             }
         }
     }
 
-    abstract boolean hasAttributes();
+    abstract boolean hasData();
 
     Matcher match(Pattern pattern, String line) throws ParseException {
         final Matcher matcher = pattern.matcher(line);
@@ -45,7 +45,7 @@ abstract class ExtTagHandler implements IExtTagHandler {
         }
 
         @Override
-        boolean hasAttributes() {
+        boolean hasData() {
             return false;
         }
 
@@ -66,7 +66,7 @@ abstract class ExtTagHandler implements IExtTagHandler {
         }
 
         @Override
-        boolean hasAttributes() {
+        boolean hasData() {
             return true;
         }
 

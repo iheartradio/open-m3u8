@@ -2,6 +2,8 @@ package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.MediaType;
+import com.iheartradio.m3u8.data.Resolution;
+import com.iheartradio.m3u8.data.StreamInfo;
 
 import org.junit.Test;
 
@@ -47,5 +49,45 @@ public class MasterPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
 
         handler.handle(line, mParseState);
         assertEquals(expectedMediaData, mParseState.getMaster().mediaData);
+    }
+
+    @Test
+    public void testEXT_X_STREAM_INF() throws Exception {
+        final IExtTagHandler handler = MasterPlaylistTagHandler.EXT_X_STREAM_INF;
+        final String tag = Constants.EXT_X_STREAM_INF_TAG;
+        final int bandwidth = 10000;
+        final int averageBandwidth = 5000;
+        final List<String> codecs = Arrays.asList("h.263", "h.264");
+        final Resolution resolution = new Resolution(800, 600);
+        final String audio = "foo";
+        final String video = "bar";
+        final String subtitles = "titles";
+        final String closedCaptions = "captions";
+
+        final StreamInfo expectedStreamInfo = new StreamInfo.Builder()
+                .withBandwidth(bandwidth)
+                .withAverageBandwidth(averageBandwidth)
+                .withCodecs(codecs)
+                .withResolution(resolution)
+                .withAudio(audio)
+                .withVideo(video)
+                .withSubtitles(subtitles)
+                .withClosedCaptions(closedCaptions)
+                .build();
+
+        final String line = "#" + tag +
+                ":BANDWIDTH=" + bandwidth +
+                ",AVERAGE-BANDWIDTH=" + averageBandwidth +
+                ",CODECS=\"" + codecs.get(0) + "," + codecs.get(1) + "\"" +
+                ",RESOLUTION=" + resolution.width + "x" + resolution.height +
+                ",AUDIO=\"" + audio + "\"" +
+                ",VIDEO=\"" + video + "\"" +
+                ",SUBTITLES=\"" + subtitles + "\"" +
+                ",CLOSED-CAPTIONS=\"" + closedCaptions + "\"";
+
+        assertEquals(tag, handler.getTag());
+
+        handler.handle(line, mParseState);
+        assertEquals(expectedStreamInfo, mParseState.getMaster().streamInfo);
     }
 }

@@ -2,6 +2,7 @@ package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.MediaType;
+import com.iheartradio.m3u8.data.StreamInfo;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,12 +11,12 @@ import java.util.Map;
 abstract class MasterPlaylistTagHandler extends ExtTagHandler {
     @Override
     public void handle(String line, ParseState state) throws ParseException {
-        validateNotMaster(state);
+        validateNotMedia(state);
         state.setMaster();
         super.handle(line, state);
     }
 
-    private void validateNotMaster(ParseState state) throws ParseException {
+    private void validateNotMedia(ParseState state) throws ParseException {
         if (state.isMedia()) {
             throw new ParseException(ParseExceptionType.MASTER_IN_MEDIA, getTag());
         }
@@ -152,7 +153,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        boolean hasAttributes() {
+        boolean hasData() {
             return true;
         }
 
@@ -197,6 +198,107 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
             }
 
             state.getMaster().mediaData.add(mediaData);
+        }
+    };
+
+    static final IExtTagHandler EXT_X_STREAM_INF = new MasterPlaylistTagHandler() {
+        private final Map<String, AttributeHandler<StreamInfo.Builder>> HANDLERS = new HashMap<String, AttributeHandler<StreamInfo.Builder>>();
+        private final String BANDWIDTH = "BANDWIDTH";
+        private final String AVERAGE_BANDWIDTH = "AVERAGE-BANDWIDTH";
+        private final String CODECS = "CODECS";
+        private final String RESOLUTION = "RESOLUTION";
+        private final String AUDIO = "AUDIO";
+        private final String VIDEO = "VIDEO";
+        private final String SUBTITLES = "SUBTITLES";
+        private final String CLOSED_CAPTIONS = "CLOSED-CAPTIONS";
+
+        {
+            HANDLERS.put(BANDWIDTH, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withBandwidth(ParseUtil.parseInt(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(AVERAGE_BANDWIDTH, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withAverageBandwidth(ParseUtil.parseInt(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(CODECS, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(",");
+
+                    if (characteristicStrings.length > 0) {
+                        builder.withCodecs(Arrays.asList(characteristicStrings));
+                    }
+                }
+            });
+
+            HANDLERS.put(RESOLUTION, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withResolution(ParseUtil.parseResolution(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(AUDIO, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withAudio(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(VIDEO, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withVideo(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(SUBTITLES, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withSubtitles(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(CLOSED_CAPTIONS, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    if (!attribute.value.equals(Constants.NO_CLOSED_CAPTIONS)) {
+                        builder.withClosedCaptions(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_STREAM_INF_TAG;
+        }
+
+        @Override
+        boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+            super.handle(line, state);
+
+            final StreamInfo.Builder builder = new StreamInfo.Builder();
+            parseAttributes(line, builder, state, HANDLERS);
+            final StreamInfo streamInfo = builder.build();
+
+            if (!builder.isBandwidthSet()) {
+                throw new ParseException(ParseExceptionType.MISSING_STREAM_BANDWIDTH, getTag());
+            }
+
+            state.getMaster().streamInfo = streamInfo;
         }
     };
 }

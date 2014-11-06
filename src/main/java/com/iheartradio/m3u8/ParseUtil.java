@@ -1,13 +1,13 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.Resolution;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -28,27 +28,6 @@ final class ParseUtil {
         }
     }
 
-    private static final Map<Character, Byte> HEX_MAP = new HashMap<Character, Byte>();
-
-    static {
-        HEX_MAP.put('0', (byte) 0);
-        HEX_MAP.put('1', (byte) 1);
-        HEX_MAP.put('2', (byte) 2);
-        HEX_MAP.put('3', (byte) 3);
-        HEX_MAP.put('4', (byte) 4);
-        HEX_MAP.put('5', (byte) 5);
-        HEX_MAP.put('6', (byte) 6);
-        HEX_MAP.put('7', (byte) 7);
-        HEX_MAP.put('8', (byte) 8);
-        HEX_MAP.put('9', (byte) 9);
-        HEX_MAP.put('A', (byte) 10);
-        HEX_MAP.put('B', (byte) 11);
-        HEX_MAP.put('C', (byte) 12);
-        HEX_MAP.put('D', (byte) 13);
-        HEX_MAP.put('E', (byte) 14);
-        HEX_MAP.put('F', (byte) 15);
-    }
-
     public static List<Byte> parseHexadecimal(String hexString, String tag) throws ParseException {
         final List<Byte> bytes = new ArrayList<Byte>();
         final Matcher matcher = Constants.HEXADECIMAL_PATTERN.matcher(hexString.toUpperCase(Locale.US));
@@ -57,12 +36,20 @@ final class ParseUtil {
             String valueString = matcher.group(1);
 
             for (char c : valueString.toCharArray()) {
-                bytes.add(HEX_MAP.get(c));
+                bytes.add(hexCharToByte(c));
             }
 
             return bytes;
         } else {
             throw new ParseException(ParseExceptionType.INVALID_HEXADECIMAL_STRING, tag);
+        }
+    }
+
+    private static byte hexCharToByte(char hex) {
+        if (hex >= 'A') {
+            return (byte) ((hex & 0xF) + 9);
+        } else {
+            return (byte) (hex & 0xF);
         }
     }
 
@@ -74,6 +61,16 @@ final class ParseUtil {
         } else {
             throw new ParseException(ParseExceptionType.NOT_YES_OR_NO, tag);
         }
+    }
+
+    public static Resolution parseResolution(String resolutionString, String tag) throws ParseException {
+        Matcher matcher = Constants.RESOLUTION_PATTERN.matcher(resolutionString);
+
+        if (!matcher.matches()) {
+            throw new ParseException(ParseExceptionType.INVALID_RESOLUTION_FORMAT, tag);
+        }
+
+        return new Resolution(parseInt(matcher.group(1), tag), parseInt(matcher.group(2), tag));
     }
 
     public static String parseQuotedString(String quotedString, String tag) throws ParseException {

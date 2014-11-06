@@ -20,6 +20,7 @@ class ExtendedM3uParser {
                 ExtTagHandler.EXTM3U_HANDLER,
                 ExtTagHandler.EXT_X_VERSION_HANDLER,
                 MasterPlaylistTagHandler.EXT_X_MEDIA,
+                MasterPlaylistTagHandler.EXT_X_STREAM_INF,
                 MediaPlaylistTagHandler.EXT_X_TARGETDURATION,
                 MediaPlaylistTagHandler.EXTINF,
                 MediaPlaylistTagHandler.EXT_X_KEY
@@ -81,11 +82,11 @@ class ExtendedM3uParser {
     }
 
     private boolean isComment(final String line) {
-        return line.indexOf(Constants.COMMENT_PREFIX) == 0 && !isExtTag(line);
+        return line.startsWith(Constants.COMMENT_PREFIX) && !isExtTag(line);
     }
 
     private boolean isExtTag(final String line) {
-        return line.indexOf(Constants.EXT_TAG_PREFIX) == 0;
+        return line.startsWith(Constants.EXT_TAG_PREFIX);
     }
 
     private String getExtTagKey(final String line) {
