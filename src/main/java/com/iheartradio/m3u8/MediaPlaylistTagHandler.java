@@ -77,6 +77,25 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
 
+    static final IExtTagHandler EXT_X_ALLOW_CACHE = new MediaPlaylistTagHandler() {
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_ALLOW_CACHE_TAG;
+        }
+
+        @Override
+        boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+            super.handle(line, state);
+
+            // deprecated
+        }
+    };
+
     // media segment tags
 
     static final IExtTagHandler EXTINF = new MediaPlaylistTagHandler() {
