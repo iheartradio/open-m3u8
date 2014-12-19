@@ -10,4 +10,4 @@ Currently there is very little compliance as this is still very much a work in p
 
 ## Rationale
 
-We would like to give back to the open source community surrounding Android that has helped make iHeartRadio a success. By using the 3-clause BSD license we hope to make this code as usable as possible.
+We would like to give back to the open source community surrounding Android that has helped make iHeartRadio a success. By using the MIT license we hope to make this code as usable as possible.
