@@ -16,7 +16,7 @@ We would like to give back to the open source community surrounding Android that
 
 We now have artifacts in Maven Central!
 
-# Gradel
+### Gradel
 
 ```
 dependencies {
@@ -24,7 +24,7 @@ dependencies {
 }
 ```
 
-# Maven
+### Maven
 
 ```
 <dependency>
