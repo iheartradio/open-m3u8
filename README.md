@@ -16,16 +16,20 @@ We would like to give back to the open source community surrounding Android that
 
 We now have artifacts in Maven Central!
 
-gradle:
+# Gradel
 
+```
 dependencies {
   compile 'com.iheartradio.m3u8:open-m3u8:0.0.1'
 }
+```
 
-maven:
+# Maven
 
+```
 <dependency>
   <groupId>com.iheartradio.m3u8</groupId>
   <artifactId>open-m3u8</artifactId>
   <version>0.0.1</version>
 </dependency>
+```
