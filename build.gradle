@@ -1,5 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 idea {
     module {
@@ -21,9 +23,72 @@ repositories {
     mavenCentral()
 }
 
-group 'com.iheartradio'
+group 'com.iheartradio.m3u8'
+archivesBaseName = 'open-m3u8'
 version '0.0.1'
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Open M3U8'
+                packaging 'jar'
+                description 'An open source M3U8 playlist parser java library.'
+                url 'https://github.com/iheartradio/open-m3u8/'
+
+                scm {
+                    connection 'scm:git:https://github.com/iheartradio/open-m3u8.git/'
+                    developerConnection 'scm:git:https://github.com/iheartradio/open-m3u8.git/'
+                    url 'https://github.com/iheartradio/open-m3u8/'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'http://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'iheartradio-oss'
+                        name 'Daniel Tashjian'
+                        email 'danieltashjian@iheartmedia.com'
+                    }
+                }
+            }
+        }
+    }
 }
