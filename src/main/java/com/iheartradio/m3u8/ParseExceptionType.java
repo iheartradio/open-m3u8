@@ -9,7 +9,6 @@ public enum ParseExceptionType {
     EMPTY_MEDIA_CHARACTERISTICS("CHARACTERISTICS is empty"),
     EMPTY_MEDIA_GROUP_ID("GROUP-ID is empty"),
     EMPTY_MEDIA_NAME("NAME is empty"),
-    ILLEGAL_CARRIAGE_RETURN("found an illegal carriage return"),
     ILLEGAL_WHITESPACE("found illegal whitespace"),
     IN_STREAM_ID_WITHOUT_CLOSE_CAPTIONS("media data can only have an INSTREAM-ID if it is CLOSE-CAPTIONS"),
     INTERNAL_ERROR("there was an unrecoverable problem"),
