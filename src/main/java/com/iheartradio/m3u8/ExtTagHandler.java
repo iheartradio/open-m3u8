@@ -11,7 +11,7 @@ abstract class ExtTagHandler implements IExtTagHandler {
     public void handle(String line, ParseState state) throws ParseException {
         if (hasData()) {
             if (line.indexOf(Constants.EXT_TAG_END) != getTag().length() + 1) {
-                throw new ParseException(ParseExceptionType.MISSING_EXT_TAG_SEPARATOR, getTag());
+                throw ParseException.create(ParseExceptionType.MISSING_EXT_TAG_SEPARATOR, getTag(), line);
             }
         }
     }
@@ -22,7 +22,7 @@ abstract class ExtTagHandler implements IExtTagHandler {
         final Matcher matcher = pattern.matcher(line);
 
         if (!matcher.matches()) {
-            throw new ParseException(ParseExceptionType.BAD_EXT_TAG_FORMAT, getTag());
+            throw ParseException.create(ParseExceptionType.BAD_EXT_TAG_FORMAT, getTag(), line);
         }
 
         return matcher;
@@ -33,7 +33,7 @@ abstract class ExtTagHandler implements IExtTagHandler {
             if (handlers.containsKey(attribute.name)) {
                 handlers.get(attribute.name).handle(attribute, builder, state);
             } else {
-                throw new ParseException(ParseExceptionType.INVALID_ATTRIBUTE_NAME, getTag());
+                throw ParseException.create(ParseExceptionType.INVALID_ATTRIBUTE_NAME, getTag(), line);
             }
         }
     }
@@ -52,7 +52,7 @@ abstract class ExtTagHandler implements IExtTagHandler {
         @Override
         public void handle(String line, ParseState state) throws ParseException {
             if (state.isExtended()) {
-                throw new ParseException(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag());
+                throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
             }
 
             state.setExtended();
@@ -77,17 +77,17 @@ abstract class ExtTagHandler implements IExtTagHandler {
             final Matcher matcher = match(Constants.EXT_X_VERSION_PATTERN, line);
 
             if (state.getCompatibilityVersion() != ParseState.NONE) {
-                throw new ParseException(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag());
+                throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
             }
 
             final int compatibilityVersion = ParseUtil.parseInt(matcher.group(1), getTag());
 
             if (compatibilityVersion < Playlist.MIN_COMPATIBILITY_VERSION) {
-                throw new ParseException(ParseExceptionType.INVALID_COMPATIBILITY_VERSION, getTag() + ":" + compatibilityVersion);
+                throw ParseException.create(ParseExceptionType.INVALID_COMPATIBILITY_VERSION, getTag(), line);
             }
 
             if (compatibilityVersion > Constants.MAX_COMPATIBILITY_VERSION) {
-                throw new ParseException(ParseExceptionType.UNSUPPORTED_COMPATIBILITY_VERSION, getTag() + ":" + compatibilityVersion);
+                throw ParseException.create(ParseExceptionType.UNSUPPORTED_COMPATIBILITY_VERSION, getTag(), line);
             }
 
             state.setCompatibilityVersion(compatibilityVersion);

@@ -16,7 +16,7 @@ final class ParseUtil {
         try {
             return Integer.parseInt(string);
         } catch (NumberFormatException exception) {
-            throw new ParseException(ParseExceptionType.NOT_JAVA_INTEGER, tag);
+            throw ParseException.create(ParseExceptionType.NOT_JAVA_INTEGER, tag, string);
         }
     }
 
@@ -24,7 +24,7 @@ final class ParseUtil {
         try {
             return Float.parseFloat(string);
         } catch (NumberFormatException exception) {
-            throw new ParseException(ParseExceptionType.NOT_JAVA_FLOAT, tag);
+            throw ParseException.create(ParseExceptionType.NOT_JAVA_FLOAT, tag, string);
         }
     }
 
@@ -41,7 +41,7 @@ final class ParseUtil {
 
             return bytes;
         } else {
-            throw new ParseException(ParseExceptionType.INVALID_HEXADECIMAL_STRING, tag);
+            throw ParseException.create(ParseExceptionType.INVALID_HEXADECIMAL_STRING, tag, hexString);
         }
     }
 
@@ -138,21 +138,21 @@ final class ParseUtil {
             final int quote = string.indexOf("\"");
 
             if (separator == -1 || (quote != -1 && quote < separator)) {
-                throw new ParseException(ParseExceptionType.MISSING_ATTRIBUTE_SEPARATOR, tag);
+                throw ParseException.create(ParseExceptionType.MISSING_ATTRIBUTE_SEPARATOR, tag, attributes.toString());
             } else {
                 final String name = string.substring(0, separator);
                 final String value = string.substring(separator + 1);
 
                 if (name.isEmpty()) {
-                    throw new ParseException(ParseExceptionType.MISSING_ATTRIBUTE_NAME, tag);
+                    throw ParseException.create(ParseExceptionType.MISSING_ATTRIBUTE_NAME, tag, attributes.toString());
                 }
 
                 if (value.isEmpty()) {
-                    throw new ParseException(ParseExceptionType.MISSING_ATTRIBUTE_VALUE, tag);
+                    throw ParseException.create(ParseExceptionType.MISSING_ATTRIBUTE_VALUE, tag, attributes.toString());
                 }
 
                 if (!attributeNames.add(name)) {
-                    throw new ParseException(ParseExceptionType.MULTIPLE_ATTRIBUTE_NAME_INSTANCES, tag + ":" + name);
+                    throw ParseException.create(ParseExceptionType.MULTIPLE_ATTRIBUTE_NAME_INSTANCES, tag, attributes.toString());
                 }
 
                 attributes.add(new Attribute(name, value));

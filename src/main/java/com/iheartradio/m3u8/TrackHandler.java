@@ -9,7 +9,7 @@ class TrackHandler implements LineHandler {
         final MediaParseState mediaState = state.getMedia();
 
         if (state.isExtended() && mediaState.trackInfo == null) {
-            throw new ParseException(ParseExceptionType.MISSING_TRACK_INFO);
+            throw ParseException.create(ParseExceptionType.MISSING_TRACK_INFO, line);
         }
 
         if (Constants.URL_PATTERN.matcher(line).matches()) {

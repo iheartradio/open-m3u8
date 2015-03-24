@@ -8,4 +8,13 @@ class Attribute {
         this.name = name;
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("(Attribute")
+                .append("name=").append(name).append(", ")
+                .append("value=").append(value)
+                .append(")").toString();
+    }
 }

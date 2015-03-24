@@ -47,7 +47,7 @@ class ExtendedM3uParser {
                         final IExtTagHandler handler = mExtTagHandlers.get(tagKey);
 
                         if (handler == null) {
-                            throw new ParseException(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey);
+                            throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
                         } else {
                             handler.handle(line, state);
                         }
@@ -56,7 +56,7 @@ class ExtendedM3uParser {
                     } else if (state.isMedia()) {
                         trackHandler.handle(line, state);
                     } else {
-                        throw new ParseException(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE);
+                        throw ParseException.create(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE, line);
                     }
                 }
             }
@@ -81,7 +81,7 @@ class ExtendedM3uParser {
     private void checkWhitespace(final String line) throws ParseException {
         if (!isComment(line)) {
             if (line.length() != line.trim().length()) {
-                throw new ParseException(ParseExceptionType.WHITESPACE_IN_TRACK);
+                throw ParseException.create(ParseExceptionType.WHITESPACE_IN_TRACK, line);
             }
         }
     }

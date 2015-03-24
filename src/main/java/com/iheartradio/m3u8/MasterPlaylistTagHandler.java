@@ -18,7 +18,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
 
     private void validateNotMedia(ParseState state) throws ParseException {
         if (state.isMedia()) {
-            throw new ParseException(ParseExceptionType.MASTER_IN_MEDIA, getTag());
+            throw ParseException.create(ParseExceptionType.MASTER_IN_MEDIA, getTag());
         }
     }
 
@@ -45,7 +45,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                     final MediaType type = MediaType.fromValue(attribute.value);
 
                     if (type == null) {
-                        throw new ParseException(ParseExceptionType.INVALID_MEDIA_TYPE, getTag());
+                        throw ParseException.create(ParseExceptionType.INVALID_MEDIA_TYPE, getTag(), attribute.toString());
                     } else {
                         builder.withType(type);
                     }
@@ -65,7 +65,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                     final String groupId = ParseUtil.parseQuotedString(attribute.value, getTag());
 
                     if (groupId.isEmpty()) {
-                        throw new ParseException(ParseExceptionType.EMPTY_MEDIA_GROUP_ID, getTag());
+                        throw ParseException.create(ParseExceptionType.EMPTY_MEDIA_GROUP_ID, getTag(), attribute.toString());
                     } else {
                         builder.withGroupId(groupId);
                     }
@@ -92,7 +92,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                     final String name = ParseUtil.parseQuotedString(attribute.value, getTag());
 
                     if (name.isEmpty()) {
-                        throw new ParseException(ParseExceptionType.EMPTY_MEDIA_NAME, getTag());
+                        throw ParseException.create(ParseExceptionType.EMPTY_MEDIA_NAME, getTag(), attribute.toString());
                     } else {
                         builder.withName(name);
                     }
@@ -128,7 +128,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                     if (Constants.EXT_X_MEDIA_IN_STREAM_ID_PATTERN.matcher(inStreamId).matches()) {
                         builder.withInStreamId(inStreamId);
                     } else {
-                        throw new ParseException(ParseExceptionType.INVALID_MEDIA_IN_STREAM_ID, getTag());
+                        throw ParseException.create(ParseExceptionType.INVALID_MEDIA_IN_STREAM_ID, getTag(), attribute.toString());
                     }
                 }
             });
@@ -139,7 +139,7 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                     final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(",");
 
                     if (characteristicStrings.length == 0) {
-                        throw new ParseException(ParseExceptionType.EMPTY_MEDIA_CHARACTERISTICS, getTag());
+                        throw ParseException.create(ParseExceptionType.EMPTY_MEDIA_CHARACTERISTICS, getTag(), attribute.toString());
                     } else {
                         builder.withCharacteristics(Arrays.asList(characteristicStrings));
                     }
@@ -166,35 +166,35 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
             final MediaData mediaData = builder.build();
 
             if (mediaData.getType() == null) {
-                throw new ParseException(ParseExceptionType.MISSING_MEDIA_TYPE, getTag());
+                throw ParseException.create(ParseExceptionType.MISSING_MEDIA_TYPE, getTag(), line);
             }
 
             if (mediaData.getGroupId() == null) {
-                throw new ParseException(ParseExceptionType.MISSING_MEDIA_GROUP_ID, getTag());
+                throw ParseException.create(ParseExceptionType.MISSING_MEDIA_GROUP_ID, getTag(), line);
             }
 
             if (mediaData.getName() == null) {
-                throw new ParseException(ParseExceptionType.MISSING_MEDIA_NAME, getTag());
+                throw ParseException.create(ParseExceptionType.MISSING_MEDIA_NAME, getTag(), line);
             }
 
             if (mediaData.getType() == MediaType.CLOSED_CAPTIONS && mediaData.getUri() != null) {
-                throw new ParseException(ParseExceptionType.CLOSE_CAPTIONS_WITH_URI, getTag());
+                throw ParseException.create(ParseExceptionType.CLOSE_CAPTIONS_WITH_URI, getTag(), line);
             }
 
             if (mediaData.getType() == MediaType.CLOSED_CAPTIONS && mediaData.getInStreamId() == null) {
-                throw new ParseException(ParseExceptionType.CLOSE_CAPTIONS_WITHOUT_IN_STREAM_ID, getTag());
+                throw ParseException.create(ParseExceptionType.CLOSE_CAPTIONS_WITHOUT_IN_STREAM_ID, getTag(), line);
             }
 
             if (mediaData.getType() != MediaType.CLOSED_CAPTIONS && mediaData.getInStreamId() != null) {
-                throw new ParseException(ParseExceptionType.IN_STREAM_ID_WITHOUT_CLOSE_CAPTIONS, getTag());
+                throw ParseException.create(ParseExceptionType.IN_STREAM_ID_WITHOUT_CLOSE_CAPTIONS, getTag(), line);
             }
 
             if (mediaData.isDefault() && builder.isAutoSelectSet() && !mediaData.isAutoSelect()) {
-                throw new ParseException(ParseExceptionType.DEFAULT_WITHOUT_AUTO_SELECT, getTag());
+                throw ParseException.create(ParseExceptionType.DEFAULT_WITHOUT_AUTO_SELECT, getTag(), line);
             }
 
             if (mediaData.getType() != MediaType.SUBTITLES && builder.isForcedSet()) {
-                throw new ParseException(ParseExceptionType.FORCED_WITHOUT_SUBTITLES, getTag());
+                throw ParseException.create(ParseExceptionType.FORCED_WITHOUT_SUBTITLES, getTag(), line);
             }
 
             state.getMaster().mediaData.add(mediaData);

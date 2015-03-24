@@ -21,7 +21,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
 
     private void validateNotMaster(ParseState state) throws ParseException {
         if (state.isMaster()) {
-            throw new ParseException(ParseExceptionType.MEDIA_IN_MASTER, getTag());
+            throw ParseException.create(ParseExceptionType.MEDIA_IN_MASTER, getTag());
         }
     }
 
@@ -45,7 +45,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
             final Matcher matcher = match(Constants.EXT_X_TARGETDURATION_PATTERN, line);
 
             if (state.getMedia().targetDuration != null) {
-                throw new ParseException(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag());
+                throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
             }
 
             state.getMedia().targetDuration = ParseUtil.parseInt(matcher.group(1), getTag());
@@ -70,7 +70,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
             final Matcher matcher = match(Constants.EXT_X_MEDIA_SEQUENCE_PATTERN, line);
 
             if (state.getMedia().mediaSequenceNumber != null) {
-                throw new ParseException(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag());
+                throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
             }
 
             state.getMedia().mediaSequenceNumber = ParseUtil.parseInt(matcher.group(1), getTag());
@@ -134,7 +134,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                     final EncryptionMethod method = EncryptionMethod.fromValue(attribute.value);
 
                     if (method == null) {
-                        throw new ParseException(ParseExceptionType.INVALID_ENCRYPTION_METHOD, getTag());
+                        throw ParseException.create(ParseExceptionType.INVALID_ENCRYPTION_METHOD, getTag(), attribute.toString());
                     } else {
                         builder.withMethod(method);
                     }
@@ -154,7 +154,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                     final List<Byte> initializationVector = ParseUtil.parseHexadecimal(attribute.value, getTag());
 
                     if (initializationVector.size() != Constants.IV_SIZE) {
-                        throw new ParseException(ParseExceptionType.INVALID_IV_SIZE);
+                        throw ParseException.create(ParseExceptionType.INVALID_IV_SIZE, getTag(), attribute.toString());
                     }
 
                     builder.withInitializationVector(initializationVector);
@@ -178,7 +178,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                         try {
                             versions.add(Integer.parseInt(version));
                         } catch (NumberFormatException exception) {
-                            throw new ParseException(ParseExceptionType.INVALID_KEY_FORMAT_VERSIONS, getTag());
+                            throw ParseException.create(ParseExceptionType.INVALID_KEY_FORMAT_VERSIONS, getTag(), attribute.toString());
                         }
                     }
 
@@ -209,7 +209,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
             final EncryptionData encryptionData = builder.build();
 
             if (encryptionData.getMethod() != EncryptionMethod.NONE && encryptionData.getUri() == null) {
-                throw new ParseException(ParseExceptionType.MISSING_ENCRYPTION_URI);
+                throw ParseException.create(ParseExceptionType.MISSING_ENCRYPTION_URI, getTag(), line);
             }
 
             state.getMedia().encryptionData = encryptionData;

@@ -7,6 +7,32 @@ public class ParseException extends Exception {
 
     private String mInput;
 
+    static ParseException create(ParseExceptionType type, String tag) {
+        return create(type, tag, null);
+    }
+
+    static ParseException create(ParseExceptionType type, String tag, String context) {
+        final StringBuilder builder = new StringBuilder();
+
+        if (tag != null) {
+            builder.append(tag);
+        }
+
+        if (context != null) {
+            if (builder.length() > 0) {
+                builder.append(" - ");
+            }
+
+            builder.append(context);
+        }
+
+        if (builder.length() > 0) {
+            return new ParseException(type, builder.toString());
+        } else {
+            return new ParseException(type);
+        }
+    }
+
     ParseException(ParseExceptionType type) {
         this(type, null);
     }

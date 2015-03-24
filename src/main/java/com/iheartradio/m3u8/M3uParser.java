@@ -48,7 +48,7 @@ class M3uParser {
     private void validateLine(final String line) throws ParseException {
         if (!isComment(line)) {
             if (line.length() != line.trim().length()) {
-                throw new ParseException(ParseExceptionType.WHITESPACE_IN_TRACK);
+                throw ParseException.create(ParseExceptionType.WHITESPACE_IN_TRACK, line, "" + line.length());
             }
         }
     }
