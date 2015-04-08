@@ -237,4 +237,15 @@ public class MediaData {
                     mCharacteristics);
         }
     }
+
+    @Override
+    public String toString() {
+        return "MediaData [mType=" + mType + ", mUri=" + mUri + ", mGroupId="
+                + mGroupId + ", mLanguage=" + mLanguage
+                + ", mAssociatedLanguage=" + mAssociatedLanguage + ", mName="
+                + mName + ", mDefault=" + mDefault + ", mAutoSelect="
+                + mAutoSelect + ", mForced=" + mForced + ", mInStreamId="
+                + mInStreamId + ", mCharacteristics=" + mCharacteristics + "]";
+    }
+    
 }

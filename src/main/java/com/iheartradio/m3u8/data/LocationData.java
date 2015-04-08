@@ -44,4 +44,11 @@ public class LocationData {
     public String getLocation() {
         return mLocation;
     }
+
+    @Override
+    public String toString() {
+        return "LocationData [mLocationType=" + mLocationType + ", mLocation="
+                + mLocation + "]";
+    }
+    
 }

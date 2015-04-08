@@ -64,4 +64,12 @@ public class PlaylistData extends LocationData {
             return new PlaylistData(mLocationType, mLocation, mStreamInfo);
         }
     }
+
+    @Override
+    public String toString() {
+        return "PlaylistData [mStreamInfo=" + mStreamInfo
+                + ", getLocationType()=" + getLocationType()
+                + ", getLocation()=" + getLocation() + "]";
+    }
+    
 }
