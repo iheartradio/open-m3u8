@@ -10,6 +10,7 @@ public class StreamInfo {
     private final List<String> mCodecs;
     private final Resolution mResolution;
     private final String mAudio;
+    private final String mUri;
     private final String mVideo;
     private final String mSubtitles;
     private final String mClosedCaptions;
@@ -20,6 +21,7 @@ public class StreamInfo {
             List<String> codecs,
             Resolution resolution,
             String audio,
+            String uri,
             String video,
             String subtitles,
             String closedCaptions) {
@@ -28,6 +30,7 @@ public class StreamInfo {
         mCodecs = codecs;
         mResolution = resolution;
         mAudio = audio;
+        mUri = uri;
         mVideo = video;
         mSubtitles = subtitles;
         mClosedCaptions = closedCaptions;
@@ -45,6 +48,7 @@ public class StreamInfo {
                this.mAverageBandwidth == other.mAverageBandwidth &&
                ObjectUtil.equals(this.mResolution, other.mResolution) &&
                ObjectUtil.equals(this.mAudio, other.mAudio) &&
+               ObjectUtil.equals(this.mUri, other.mUri) &&
                ObjectUtil.equals(this.mVideo, other.mVideo) &&
                ObjectUtil.equals(this.mSubtitles, other.mSubtitles) &&
                ObjectUtil.equals(this.mClosedCaptions, other.mClosedCaptions);
@@ -89,6 +93,14 @@ public class StreamInfo {
     public String getAudio() {
         return mAudio;
     }
+    
+    public boolean hasUri() {
+        return mUri != null;
+    }
+    
+    public String getUri() {
+        return mUri;
+    }
 
     public boolean hasVideo() {
         return mVideo != null;
@@ -120,10 +132,12 @@ public class StreamInfo {
         private List<String> mCodecs;
         private Resolution mResolution;
         private String mAudio;
+        private String mUri;
         private String mVideo;
         private String mSubtitles;
         private String mClosedCaptions;
         private boolean mBandwidthSet;
+        private boolean mUriSet;
 
         public Builder withBandwidth(int bandwidth) {
             mBandwidth = bandwidth;
@@ -146,6 +160,12 @@ public class StreamInfo {
             return this;
         }
 
+        public Builder withUri(String uri) {
+            mUri = uri;
+            mUriSet = true;
+            return this;
+        }
+        
         public Builder withAudio(String audio) {
             mAudio = audio;
             return this;
@@ -166,6 +186,10 @@ public class StreamInfo {
             return this;
         }
 
+        public boolean isUriSet() {
+            return mUriSet;
+        }
+        
         public boolean isBandwidthSet() {
             return mBandwidthSet;
         }
@@ -181,6 +205,7 @@ public class StreamInfo {
                     mCodecs,
                     mResolution,
                     mAudio,
+                    mUri,
                     mVideo,
                     mSubtitles,
                     mClosedCaptions);

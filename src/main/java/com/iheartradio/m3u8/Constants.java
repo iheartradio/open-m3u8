@@ -19,6 +19,7 @@ final class Constants {
 
     public static final String EXT_X_MEDIA_TAG = "EXT-X-MEDIA";
     public static final String EXT_X_STREAM_INF_TAG = "EXT-X-STREAM-INF";
+    public static final String EXT_X_I_FRAME_STREAM_INF_TAG = "EXT-X-I-FRAME-STREAM-INF";
 
     // media playlist tags
 

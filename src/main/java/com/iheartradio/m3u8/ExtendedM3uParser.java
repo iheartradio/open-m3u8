@@ -21,6 +21,7 @@ class ExtendedM3uParser {
                 ExtTagHandler.EXT_X_VERSION_HANDLER,
                 MasterPlaylistTagHandler.EXT_X_MEDIA,
                 MasterPlaylistTagHandler.EXT_X_STREAM_INF,
+                MasterPlaylistTagHandler.EXT_X_I_FRAME_STREAM_INF,
                 MediaPlaylistTagHandler.EXT_X_TARGETDURATION,
                 MediaPlaylistTagHandler.EXT_X_MEDIA_SEQUENCE,
                 MediaPlaylistTagHandler.EXT_X_ALLOW_CACHE,

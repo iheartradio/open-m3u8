@@ -33,6 +33,7 @@ public enum ParseExceptionType {
     MISSING_MEDIA_NAME("media data requires a NAME"),
     MISSING_MEDIA_TYPE("media data requires a TYPE"),
     MISSING_STREAM_BANDWIDTH("stream info requires a BANDWIDTH"),
+    MISSING_STREAM_URI("stream info requires URI"),
     MISSING_TRACK_INFO("missing EXTINF for a track in an extended media playlist"),
     MULTIPLE_ATTRIBUTE_NAME_INSTANCES("multiple instances of an attribute name found in an attribute list"),
     MULTIPLE_EXT_TAG_INSTANCES("multiple instances of an EXT tag found for which only one is allowed"),

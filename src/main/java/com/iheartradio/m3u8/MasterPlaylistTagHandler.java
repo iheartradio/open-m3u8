@@ -201,16 +201,13 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
         }
     };
 
-    static final IExtTagHandler EXT_X_STREAM_INF = new MasterPlaylistTagHandler() {
-        private final Map<String, AttributeHandler<StreamInfo.Builder>> HANDLERS = new HashMap<String, AttributeHandler<StreamInfo.Builder>>();
+    static abstract class EXT_STREAM_INF extends MasterPlaylistTagHandler {
+        final Map<String, AttributeHandler<StreamInfo.Builder>> HANDLERS = new HashMap<String, AttributeHandler<StreamInfo.Builder>>();
         private final String BANDWIDTH = "BANDWIDTH";
         private final String AVERAGE_BANDWIDTH = "AVERAGE-BANDWIDTH";
         private final String CODECS = "CODECS";
         private final String RESOLUTION = "RESOLUTION";
-        private final String AUDIO = "AUDIO";
         private final String VIDEO = "VIDEO";
-        private final String SUBTITLES = "SUBTITLES";
-        private final String CLOSED_CAPTIONS = "CLOSED-CAPTIONS";
         private final String PROGRAM_ID = "PROGRAM-ID";
 
         {
@@ -246,33 +243,10 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(AUDIO, new AttributeHandler<StreamInfo.Builder>() {
-                @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
-                    builder.withAudio(ParseUtil.parseQuotedString(attribute.value, getTag()));
-                }
-            });
-
             HANDLERS.put(VIDEO, new AttributeHandler<StreamInfo.Builder>() {
                 @Override
                 public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withVideo(ParseUtil.parseQuotedString(attribute.value, getTag()));
-                }
-            });
-
-            HANDLERS.put(SUBTITLES, new AttributeHandler<StreamInfo.Builder>() {
-                @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
-                    builder.withSubtitles(ParseUtil.parseQuotedString(attribute.value, getTag()));
-                }
-            });
-
-            HANDLERS.put(CLOSED_CAPTIONS, new AttributeHandler<StreamInfo.Builder>() {
-                @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
-                    if (!attribute.value.equals(Constants.NO_CLOSED_CAPTIONS)) {
-                        builder.withClosedCaptions(ParseUtil.parseQuotedString(attribute.value, getTag()));
-                    }
                 }
             });
 
@@ -282,11 +256,6 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                     // deprecated
                 }
             });
-        }
-
-        @Override
-        public String getTag() {
-            return Constants.EXT_X_STREAM_INF_TAG;
         }
 
         @Override
@@ -305,8 +274,73 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
             if (!builder.isBandwidthSet()) {
                 throw new ParseException(ParseExceptionType.MISSING_STREAM_BANDWIDTH, getTag());
             }
+            
+            validate(builder);
 
             state.getMaster().streamInfo = streamInfo;
+        }
+        
+        protected void validate(StreamInfo.Builder builder) throws ParseException {
+        }
+    }
+    
+    static final IExtTagHandler EXT_X_I_FRAME_STREAM_INF = new EXT_STREAM_INF() {
+        private final String URI = "URI";
+        
+        {
+            HANDLERS.put(URI, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withUri(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                }
+            });
+        }
+        
+        protected void validate(StreamInfo.Builder builder) throws ParseException {
+            if (!builder.isUriSet()) {
+                throw new ParseException(ParseExceptionType.MISSING_STREAM_URI, getTag());
+            }
+        };
+        
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_I_FRAME_STREAM_INF_TAG;
+        } 
+    };
+    
+    static final IExtTagHandler EXT_X_STREAM_INF = new EXT_STREAM_INF() {
+        private final String AUDIO = "AUDIO";
+        private final String SUBTITLES = "SUBTITLES";
+        private final String CLOSED_CAPTIONS = "CLOSED-CAPTIONS";
+        
+        {
+            HANDLERS.put(AUDIO, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withAudio(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                }
+            });
+            
+            HANDLERS.put(SUBTITLES, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withSubtitles(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(CLOSED_CAPTIONS, new AttributeHandler<StreamInfo.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    if (!attribute.value.equals(Constants.NO_CLOSED_CAPTIONS)) {
+                        builder.withClosedCaptions(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                    }
+                }
+            });    
+        }
+        
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_STREAM_INF_TAG;
         }
     };
 }
