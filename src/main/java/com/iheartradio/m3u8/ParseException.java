@@ -1,6 +1,8 @@
 package com.iheartradio.m3u8;
 
 public class ParseException extends Exception {
+    private static final long serialVersionUID = -2217152001086567983L;
+
     private final String mMessageSuffix;
 
     public final ParseExceptionType type;

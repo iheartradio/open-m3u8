@@ -16,6 +16,10 @@ We would like to give back to the open source community surrounding Android that
 
 We now have artifacts in Maven Central!
 
+### Compatibility
+
+This library needs to support Android which means we are limited to Java 7 sans try-with-resources.
+
 ### Gradle
 
 ```
