@@ -45,7 +45,8 @@ public enum ParseExceptionType {
     UNKNOWN_PLAYLIST_TYPE("unable to determine playlist type"),
     UNSUPPORTED_COMPATIBILITY_VERSION("open m3u8 does not support this version"),
     UNSUPPORTED_EXT_TAG_DETECTED("unsupported ext tag detected"),
-    WHITESPACE_IN_TRACK("whitespace was found surrounding a track");
+    WHITESPACE_IN_TRACK("whitespace was found surrounding a track"), 
+    REQUIRES_PROTOCOL_VERSION_4_OR_HIGHER("A Media Playlist REQUIRES protocol version 4 or higher");
 
     final String message;
 

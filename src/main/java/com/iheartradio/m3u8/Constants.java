@@ -28,6 +28,7 @@ final class Constants {
     public static final String EXT_X_MEDIA_SEQUENCE_TAG = "EXT-X-MEDIA-SEQUENCE";
     public static final String EXT_X_ALLOW_CACHE_TAG = "EXT-X-ALLOW-CACHE";
     public static final String EXT_X_ENDLIST_TAG = "EXT-X-ENDLIST";
+    public static final String EXT_X_I_FRAMES_ONLY_TAG = "EXT-X-I-FRAMES-ONLY";
 
     // media segment tags
 
@@ -50,6 +51,7 @@ final class Constants {
     public static final Pattern EXT_X_MEDIA_IN_STREAM_ID_PATTERN = Pattern.compile("^CC[1-4]|SERVICE(?:[1-9]|[1-5]\\d|6[0-3])$");
     public static final Pattern EXTINF_PATTERN = Pattern.compile("^#" + EXTINF_TAG + EXT_TAG_END + "(" + FLOAT_REGEX + ")(?:,(.+)?)?$");
     public static final Pattern EXT_X_ENDLIST_PATTERN = Pattern.compile("^#" + EXT_X_ENDLIST_TAG);
+    public static final Pattern EXT_X_I_FRAMES_ONLY_PATTERN = Pattern.compile("^#" + EXT_X_I_FRAMES_ONLY_TAG);
     
     // other
 

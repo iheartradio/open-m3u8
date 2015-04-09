@@ -25,8 +25,9 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
             throw ParseException.create(ParseExceptionType.MEDIA_IN_MASTER, getTag());
         }
     }
-
+    
     // media playlist tags
+    
     static final IExtTagHandler EXT_X_ENDLIST = new MediaPlaylistTagHandler() {
         @Override
         public String getTag() {
@@ -41,8 +42,32 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         @Override
         public void handle(String line, ParseState state) throws ParseException {
             super.handle(line, state);
-            
+
+            match(Constants.EXT_X_ENDLIST_PATTERN, line);
             //TODO we should ensure that no new items are added beyond this point to the playlist
+        }
+    };
+    
+    static final IExtTagHandler EXT_X_I_FRAMES_ONLY = new MediaPlaylistTagHandler() {
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_I_FRAMES_ONLY_TAG;
+        }
+
+        @Override
+        boolean hasData() {
+            return false;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+            super.handle(line, state);
+            
+            final Matcher matcher = match(Constants.EXT_X_I_FRAMES_ONLY_PATTERN, line);
+            
+            if (state.getCompatibilityVersion() < 4) {
+                throw ParseException.create(ParseExceptionType.REQUIRES_PROTOCOL_VERSION_4_OR_HIGHER, getTag());
+            }
         }
     };
     
