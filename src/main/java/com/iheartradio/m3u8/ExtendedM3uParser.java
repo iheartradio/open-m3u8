@@ -26,6 +26,7 @@ class ExtendedM3uParser {
                 MediaPlaylistTagHandler.EXT_X_PLAYLIST_TYPE,
                 MediaPlaylistTagHandler.EXT_X_MEDIA_SEQUENCE,
                 MediaPlaylistTagHandler.EXT_X_ALLOW_CACHE,
+                MediaPlaylistTagHandler.EXT_X_ENDLIST,
                 MediaPlaylistTagHandler.EXTINF,
                 MediaPlaylistTagHandler.EXT_X_KEY
         );

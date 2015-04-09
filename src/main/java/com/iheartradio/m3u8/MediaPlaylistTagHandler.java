@@ -27,7 +27,25 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
     }
 
     // media playlist tags
+    static final IExtTagHandler EXT_X_ENDLIST = new MediaPlaylistTagHandler() {
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_ENDLIST_TAG;
+        }
 
+        @Override
+        boolean hasData() {
+            return false;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+            super.handle(line, state);
+            
+            //TODO we should ensure that no new items are added beyond this point to the playlist
+        }
+    };
+    
     static final IExtTagHandler EXT_X_PLAYLIST_TYPE = new MediaPlaylistTagHandler() {
         @Override
         public String getTag() {
