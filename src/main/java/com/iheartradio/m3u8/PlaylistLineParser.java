@@ -2,9 +2,9 @@ package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.PlaylistData;
 
-class PlaylistHandler implements LineHandler {
+class PlaylistLineParser implements LineParser {
     @Override
-    public void handle(String line, ParseState state) {
+    public void parse(String line, ParseState state) {
         final PlaylistData.Builder builder = new PlaylistData.Builder();
 
         if (Constants.URL_PATTERN.matcher(line).matches()) {

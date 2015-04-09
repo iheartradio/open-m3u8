@@ -1,14 +1,14 @@
 package com.iheartradio.m3u8;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.iheartradio.m3u8.data.EncryptionData;
 import com.iheartradio.m3u8.data.MediaPlaylist;
 import com.iheartradio.m3u8.data.PlaylistType;
 import com.iheartradio.m3u8.data.StartData;
 import com.iheartradio.m3u8.data.TrackData;
 import com.iheartradio.m3u8.data.TrackInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 class MediaParseState implements IParseState<MediaPlaylist> {
     public final List<TrackData> tracks = new ArrayList<TrackData>();

@@ -2,9 +2,9 @@ package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.TrackData;
 
-class TrackHandler implements LineHandler {
+class TrackLineParser implements LineParser {
     @Override
-    public void handle(String line, ParseState state) throws ParseException {
+    public void parse(String line, ParseState state) throws ParseException {
         final TrackData.Builder builder = new TrackData.Builder();
         final MediaParseState mediaState = state.getMedia();
 

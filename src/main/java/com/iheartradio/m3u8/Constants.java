@@ -5,10 +5,18 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 final class Constants {
+    public static final String MIME_TYPE = "application/vnd.apple.mpegurl";
+    public static final String MIME_TYPE_COMPATIBILITY = "audio/mpegurl";
+    
     public static final String ATTRIBUTE_SEPARATOR = "=";
+    public static final char ATTRIBUTE_LIST_SEPARATOR_CHAR = ',';
+    public static final String ATTRIBUTE_LIST_SEPARATOR = Character.toString(ATTRIBUTE_LIST_SEPARATOR_CHAR);
+    public static final String LIST_SEPARATOR = "/";
     public static final String COMMENT_PREFIX = "#";
     public static final String EXT_TAG_PREFIX = "#EXT";
     public static final String EXT_TAG_END = ":";
+    public static final String WRITE_NEW_LINE = "\n";
+    public static final String PARSE_NEW_LINE = "\\r?\\n";
 
     // extension tags
 
@@ -17,15 +25,42 @@ final class Constants {
 
     // master playlist tags
 
+    public static  final String URI = "URI";
+    
     public static final String EXT_X_MEDIA_TAG = "EXT-X-MEDIA";
+    public static  final String TYPE = "TYPE";
+    public static  final String GROUP_ID = "GROUP-ID";
+    public static  final String LANGUAGE = "LANGUAGE";
+    public static  final String ASSOCIATED_LANGUAGE = "ASSOC-LANGUAGE";
+    public static  final String NAME = "NAME";
+    public static  final String DEFAULT = "DEFAULT";
+    public static  final String AUTO_SELECT = "AUTOSELECT";
+    public static  final String FORCED = "FORCED";
+    public static  final String IN_STREAM_ID = "INSTREAM-ID";
+    public static  final String CHARACTERISTICS = "CHARACTERISTICS";
+    
     public static final String EXT_X_STREAM_INF_TAG = "EXT-X-STREAM-INF";
     public static final String EXT_X_I_FRAME_STREAM_INF_TAG = "EXT-X-I-FRAME-STREAM-INF";
+    public static final String BANDWIDTH = "BANDWIDTH";
+    public static final String AVERAGE_BANDWIDTH = "AVERAGE-BANDWIDTH";
+    public static final String CODECS = "CODECS";
+    public static final String RESOLUTION = "RESOLUTION";
+    public static final String VIDEO = "VIDEO";
+    public static final String PROGRAM_ID = "PROGRAM-ID";
+
+    public static final String AUDIO = "AUDIO";
+    public static final String SUBTITLES = "SUBTITLES";
+    public static final String CLOSED_CAPTIONS = "CLOSED-CAPTIONS";
+    
 
     // media playlist tags
     
     public static final String EXT_X_PLAYLIST_TYPE_TAG = "EXT-X-PLAYLIST-TYPE";
     public static final String EXT_X_TARGETDURATION_TAG = "EXT-X-TARGETDURATION";
     public static final String EXT_X_START_TAG = "EXT-X-START";
+    public static final String TIME_OFFSET = "TIME-OFFSET";
+    public static final String PRECISE = "PRECISE";
+    
     public static final String EXT_X_MEDIA_SEQUENCE_TAG = "EXT-X-MEDIA-SEQUENCE";
     public static final String EXT_X_ALLOW_CACHE_TAG = "EXT-X-ALLOW-CACHE";
     public static final String EXT_X_ENDLIST_TAG = "EXT-X-ENDLIST";
@@ -35,6 +70,10 @@ final class Constants {
 
     public static final String EXTINF_TAG = "EXTINF";
     public static final String EXT_X_KEY_TAG = "EXT-X-KEY";
+    public static final String METHOD = "METHOD";
+    public static final String IV = "IV";
+    public static final String KEY_FORMAT = "KEYFORMAT";
+    public static final String KEY_FORMAT_VERSIONS = "KEYFORMATVERSIONS";
 
     // regular expressions
     public static final String YES = "YES";
@@ -57,7 +96,7 @@ final class Constants {
     
     // other
 
-    public static final int MAX_COMPATIBILITY_VERSION = 4;
+    public static final int MAX_COMPATIBILITY_VERSION = 5;
     public static final int IV_SIZE = 16;
     //Against the spec but used by Adobe
     public static final int IV_SIZE_ALTERNATIVE = 32;

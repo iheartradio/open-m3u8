@@ -9,12 +9,14 @@ public class Playlist {
     private final MasterPlaylist mMasterPlaylist;
     private final MediaPlaylist mMediaPlaylist;
     private final boolean mIsExtended;
+    private final boolean mIsIframesOnly;
     private final int mCompatibilityVersion;
 
-    private Playlist(MasterPlaylist masterPlaylist, MediaPlaylist mediaPlaylist, boolean isExtended, int compatibilityVersion) {
+    private Playlist(MasterPlaylist masterPlaylist, MediaPlaylist mediaPlaylist, boolean isExtended, boolean isIframesOnly, int compatibilityVersion) {
         mMasterPlaylist = masterPlaylist;
         mMediaPlaylist = mediaPlaylist;
         mIsExtended = isExtended;
+        mIsIframesOnly = isIframesOnly;
         mCompatibilityVersion = compatibilityVersion;
     }
 
@@ -37,6 +39,10 @@ public class Playlist {
     public boolean isExtended() {
         return mIsExtended;
     }
+    
+    public boolean isIframesOnly() {
+        return mIsIframesOnly;
+    }
 
     public int getCompatibilityVersion() {
         return mCompatibilityVersion;
@@ -50,6 +56,7 @@ public class Playlist {
         private MasterPlaylist mMasterPlaylist;
         private MediaPlaylist mMediaPlaylist;
         private boolean mIsExtended;
+        private boolean mIsIframesOnly;
         private int mCompatibilityVersion = MIN_COMPATIBILITY_VERSION;
 
         public Builder() {
@@ -80,6 +87,11 @@ public class Playlist {
             return this;
         }
 
+        public Builder withIframesOnly(boolean isIframesOnly) {
+            mIsIframesOnly = isIframesOnly;
+            return this;
+        }
+
         public Builder withExtended(boolean isExtended) {
             if (mMasterPlaylist != null && !isExtended) {
                 throw new IllegalStateException("a Playlist with a MasterPlaylist must be extended");
@@ -100,7 +112,7 @@ public class Playlist {
 
         public Playlist build() {
             if (mMasterPlaylist != null || mMediaPlaylist != null) {
-                return new Playlist(mMasterPlaylist, mMediaPlaylist, mIsExtended, mCompatibilityVersion);
+                return new Playlist(mMasterPlaylist, mMediaPlaylist, mIsExtended, mIsIframesOnly, mCompatibilityVersion);
             } else {
                 throw new IllegalStateException("a Playlist must have a MasterPlaylist or a MediaPlaylist");
             }

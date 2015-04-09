@@ -1,8 +1,5 @@
 package com.iheartradio.m3u8;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.iheartradio.m3u8.data.Playlist;
 
 class ParseState implements IParseState<Playlist> {
@@ -13,6 +10,7 @@ class ParseState implements IParseState<Playlist> {
     private MasterParseState mMasterParseState;
     private MediaParseState mMediaParseState;
     private boolean mIsExtended;
+    private boolean mIsIframesOnly;
     private int mCompatibilityVersion = NONE;
 
     public ParseState(Encoding encoding) {
@@ -52,13 +50,17 @@ class ParseState implements IParseState<Playlist> {
     }
 
     public boolean isExtended() {
-        return  mIsExtended;
+        return mIsExtended;
     }
 
     public void setExtended() {
         mIsExtended = true;
     }
-
+    
+    public boolean isIframesOnly() {
+        return mIsIframesOnly;
+    }
+    
     public void setIsIframesOnly() throws ParseException {
         if (isMaster()) {
             throw new ParseException(ParseExceptionType.MEDIA_IN_MASTER);
@@ -77,19 +79,19 @@ class ParseState implements IParseState<Playlist> {
 
     @Override
     public Playlist buildPlaylist() throws ParseException {
-        final Playlist.Builder builder = new Playlist.Builder();
+        final Playlist.Builder playlistBuilder = new Playlist.Builder();
 
         if (isMaster()) {
-            builder.
-                withMasterPlaylist(mMasterParseState.buildPlaylist());
+            playlistBuilder.withMasterPlaylist(mMasterParseState.buildPlaylist());
         } else if (isMedia()) {
-            builder.
-                withMediaPlaylist(mMediaParseState.buildPlaylist()).withExtended(mIsExtended);
+            playlistBuilder
+                    .withMediaPlaylist(mMediaParseState.buildPlaylist())
+                    .withExtended(mIsExtended);
         } else {
             throw new ParseException(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE);
         }
 
-        return builder
+        return playlistBuilder
                 .withCompatibilityVersion(mCompatibilityVersion == NONE ? Playlist.MIN_COMPATIBILITY_VERSION : mCompatibilityVersion)
                 .build();
     }

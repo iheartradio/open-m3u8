@@ -1,7 +1,5 @@
 package com.iheartradio.m3u8;
 
-import com.iheartradio.m3u8.data.Resolution;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -10,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
+
+import com.iheartradio.m3u8.data.Resolution;
 
 final class ParseUtil {
     public static int parseInt(String string, String tag) throws ParseException {
@@ -52,7 +52,7 @@ final class ParseUtil {
             throw ParseException.create(ParseExceptionType.INVALID_HEXADECIMAL_STRING, tag, hexString);
         }
     }
-
+    
     private static byte hexCharToByte(char hex) {
         if (hex >= 'A') {
             return (byte) ((hex & 0xF) + 9);
@@ -125,13 +125,13 @@ final class ParseUtil {
         return builder.toString();
     }
 
-    private static boolean isWhitespace(char c) {
+    static boolean isWhitespace(char c) {
         return c == ' ' || c == '\t' || c == '\r' || c == '\n';
     }
 
     public static String decodeUrl(String encodedUrl, Encoding encoding) throws ParseException {
         try {
-            return URLDecoder.decode(encodedUrl.replace("+", "%2B"), encoding.value);
+            return URLDecoder.decode(encodedUrl.replace("+", "%2B"), encoding.getValue());
         } catch (UnsupportedEncodingException exception) {
             throw new ParseException(ParseExceptionType.INTERNAL_ERROR);
         }
@@ -148,9 +148,10 @@ final class ParseUtil {
             if (separator == -1 || (quote != -1 && quote < separator)) {
                 throw ParseException.create(ParseExceptionType.MISSING_ATTRIBUTE_SEPARATOR, tag, attributes.toString());
             } else {
-                final String name = string.substring(0, separator);
+                //Even Apple playlists have sometimes spaces after a ,
+                final String name = string.substring(0, separator).trim();
                 final String value = string.substring(separator + 1);
-
+                
                 if (name.isEmpty()) {
                     throw ParseException.create(ParseExceptionType.MISSING_ATTRIBUTE_NAME, tag, attributes.toString());
                 }
@@ -194,7 +195,7 @@ final class ParseUtil {
             } else {
                 char c = line.charAt(i);
 
-                if (c == ',') {
+                if (c == Constants.ATTRIBUTE_LIST_SEPARATOR_CHAR) {
                     splitIndices.add(i);
                 } else if (c == '"') {
                     isQuotedString = true;

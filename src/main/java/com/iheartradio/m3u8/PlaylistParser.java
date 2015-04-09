@@ -1,9 +1,9 @@
 package com.iheartradio.m3u8;
 
-import com.iheartradio.m3u8.data.Playlist;
-
 import java.io.IOException;
 import java.io.InputStream;
+
+import com.iheartradio.m3u8.data.Playlist;
 
 public class PlaylistParser {
     /**
@@ -117,9 +117,10 @@ public class PlaylistParser {
                 return new M3uParser(inputStream, encoding).parse();
             case EXT_M3U:
                 return new ExtendedM3uParser(inputStream, encoding).parse(parsingMode);
+            default:
+                throw new RuntimeException("unsupported format detected, this should be impossible: " + format);
         }
 
-        throw new RuntimeException("unsupported format detected, this should be impossible: " + format);
     }
 
     private static Extension parseExtension(String filename) {

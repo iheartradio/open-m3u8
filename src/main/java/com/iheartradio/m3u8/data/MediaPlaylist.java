@@ -31,6 +31,7 @@ public class MediaPlaylist {
         MediaPlaylist other = (MediaPlaylist) o;
 
         return ObjectUtil.equals(this.mTracks, other.mTracks) &&
+               ObjectUtil.equals(this.mUnknownTags, other.mUnknownTags) &&
                this.mTargetDuration == other.mTargetDuration &&
                this.mMediaSequenceNumber == other.mMediaSequenceNumber &&
                this.mIsIframesOnly == other.mIsIframesOnly &&
@@ -65,18 +66,26 @@ public class MediaPlaylist {
     public StartData getStartData() {
         return mStartData;
     }
+    
+    public boolean hasStartData() {
+        return mStartData != null;
+    }
 
     public PlaylistType getPlaylistType() {
         return mPlaylistType;
     }
+    
+    public boolean hasPlaylistType() {
+        return mPlaylistType != null;
+    }
 
     public Builder buildUpon() {
-        return new Builder(mTracks, mTargetDuration, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType, mStartData);
+        return new Builder(mTracks, mUnknownTags, mTargetDuration, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType, mStartData);
     }
 
     public static class Builder {
         private List<TrackData> mTracks;
-        private List<String> mUnknownTags = Collections.emptyList();
+        private List<String> mUnknownTags;
         private int mTargetDuration;
         private int mMediaSequenceNumber;
         private boolean mIsIframesOnly;
@@ -84,10 +93,12 @@ public class MediaPlaylist {
         private StartData mStartData;
 
         public Builder() {
+            mUnknownTags = Collections.emptyList();
         }
 
-        private Builder(List<TrackData> tracks, int targetDuration, int mediaSequenceNumber, boolean isIframesOnly, PlaylistType playlistType, StartData startData) {
+        private Builder(List<TrackData> tracks, List<String> unknownTags, int targetDuration, int mediaSequenceNumber, boolean isIframesOnly, PlaylistType playlistType, StartData startData) {
             mTracks = tracks;
+            mUnknownTags = unknownTags;
             mTargetDuration = targetDuration;
             mMediaSequenceNumber = mediaSequenceNumber;
             mIsIframesOnly = isIframesOnly;
@@ -131,6 +142,9 @@ public class MediaPlaylist {
         }
 
         public MediaPlaylist build() {
+            if (mTracks == null) {
+                throw new IllegalStateException("cannot build MediaPlaylist without Tracks");
+            }
             return new MediaPlaylist(mTracks, mUnknownTags, mTargetDuration, mStartData, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType);
         }
     }

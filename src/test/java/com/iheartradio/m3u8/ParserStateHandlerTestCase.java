@@ -12,9 +12,9 @@ public class ParserStateHandlerTestCase extends TestCase {
         mParseState = new ParseState(Encoding.UTF_8);
     }
 
-    protected void assertHandleThrows(IExtTagHandler handler, String line, ParseExceptionType exceptionType) {
+    protected void assertHandleThrows(IExtTagParser handler, String line, ParseExceptionType exceptionType) {
         try {
-            handler.handle(line, mParseState);
+            handler.parse(line, mParseState);
             assertFalse(true);
         } catch (ParseException exception) {
             assertEquals(exceptionType, exception.type);

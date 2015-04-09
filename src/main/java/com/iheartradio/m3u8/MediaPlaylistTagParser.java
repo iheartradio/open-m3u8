@@ -1,5 +1,11 @@
 package com.iheartradio.m3u8;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+
 import com.iheartradio.m3u8.data.EncryptionData;
 import com.iheartradio.m3u8.data.EncryptionData.Builder;
 import com.iheartradio.m3u8.data.EncryptionMethod;
@@ -7,18 +13,12 @@ import com.iheartradio.m3u8.data.PlaylistType;
 import com.iheartradio.m3u8.data.StartData;
 import com.iheartradio.m3u8.data.TrackInfo;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-
-abstract class MediaPlaylistTagHandler extends ExtTagHandler {
+abstract class MediaPlaylistTagParser extends ExtTagParser {
     @Override
-    public void handle(String line, ParseState state) throws ParseException {
+    public void parse(String line, ParseState state) throws ParseException {
         validateNotMaster(state);
         state.setMedia();
-        super.handle(line, state);
+        super.parse(line, state);
     }
 
     private void validateNotMaster(ParseState state) throws ParseException {
@@ -29,7 +29,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
     
     // media playlist tags
     
-    static final IExtTagHandler EXT_X_ENDLIST = new MediaPlaylistTagHandler() {
+    static final IExtTagParser EXT_X_ENDLIST = new MediaPlaylistTagParser() {
         @Override
         public String getTag() {
             return Constants.EXT_X_ENDLIST_TAG;
@@ -41,15 +41,15 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             match(Constants.EXT_X_ENDLIST_PATTERN, line);
             //TODO we should ensure that no new items are added beyond this point to the playlist
         }
     };
     
-    static final IExtTagHandler EXT_X_I_FRAMES_ONLY = new MediaPlaylistTagHandler() {
+    static final IExtTagParser EXT_X_I_FRAMES_ONLY = new MediaPlaylistTagParser() {
         @Override
         public String getTag() {
             return Constants.EXT_X_I_FRAMES_ONLY_TAG;
@@ -61,8 +61,8 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
             
             match(Constants.EXT_X_I_FRAMES_ONLY_PATTERN, line);
             
@@ -74,7 +74,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
     
-    static final IExtTagHandler EXT_X_PLAYLIST_TYPE = new MediaPlaylistTagHandler() {
+    static final IExtTagParser EXT_X_PLAYLIST_TYPE = new MediaPlaylistTagParser() {
         @Override
         public String getTag() {
             return Constants.EXT_X_PLAYLIST_TYPE_TAG;
@@ -84,14 +84,14 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         boolean hasData() {
             return true;
         }
-
+        
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final Matcher matcher = match(Constants.EXT_X_PLAYLIST_TYPE_PATTERN, line);
 
-            if (state.getMedia().targetDuration != null) {
+            if (state.getMedia().playlistType != null) {
                 throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
             }
 
@@ -99,15 +99,13 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
     
-    static final IExtTagHandler EXT_X_START = new MediaPlaylistTagHandler() {
-        private final Map<String, AttributeHandler<StartData.Builder>> HANDLERS = new HashMap<String, AttributeHandler<StartData.Builder>>();
-        private final String TIME_OFFSET = "TIME-OFFSET";
-        private final String PRECISE = "PRECISE";
+    static final IExtTagParser EXT_X_START = new MediaPlaylistTagParser() {
+        private final Map<String, AttributeParser<StartData.Builder>> HANDLERS = new HashMap<String, AttributeParser<StartData.Builder>>();
         
         {
-            HANDLERS.put(TIME_OFFSET, new AttributeHandler<StartData.Builder>() {
+            HANDLERS.put(Constants.TIME_OFFSET, new AttributeParser<StartData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
                     try {
                         final float timeOffset = Float.parseFloat(attribute.value);
                         builder.withTimeOffset(timeOffset);
@@ -116,9 +114,10 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                     }
                 }
             });
-            HANDLERS.put(PRECISE, new AttributeHandler<StartData.Builder>() {
+            
+            HANDLERS.put(Constants.PRECISE, new AttributeParser<StartData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
                     try {
                         final boolean precise = ParseUtil.parseYesNo(attribute.value, getTag());
                         builder.withPrecise(precise);
@@ -128,7 +127,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                 }
             });
         }
-        
+
         @Override
         public String getTag() {
             return Constants.EXT_X_START_TAG;
@@ -138,10 +137,10 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         boolean hasData() {
             return true;
         }
-
+        
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final StartData.Builder builder = new StartData.Builder();
             parseAttributes(line, builder, state, HANDLERS);
@@ -151,7 +150,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
     
-    static final IExtTagHandler EXT_X_TARGETDURATION = new MediaPlaylistTagHandler() {
+    static final IExtTagParser EXT_X_TARGETDURATION = new MediaPlaylistTagParser() {
         @Override
         public String getTag() {
             return Constants.EXT_X_TARGETDURATION_TAG;
@@ -163,8 +162,8 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final Matcher matcher = match(Constants.EXT_X_TARGETDURATION_PATTERN, line);
 
@@ -176,7 +175,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
 
-    static final IExtTagHandler EXT_X_MEDIA_SEQUENCE = new MediaPlaylistTagHandler() {
+    static final IExtTagParser EXT_X_MEDIA_SEQUENCE = new MediaPlaylistTagParser() {
         @Override
         public String getTag() {
             return Constants.EXT_X_MEDIA_SEQUENCE_TAG;
@@ -188,8 +187,8 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final Matcher matcher = match(Constants.EXT_X_MEDIA_SEQUENCE_PATTERN, line);
 
@@ -201,7 +200,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
 
-    static final IExtTagHandler EXT_X_ALLOW_CACHE = new MediaPlaylistTagHandler() {
+    static final IExtTagParser EXT_X_ALLOW_CACHE = new MediaPlaylistTagParser() {
         @Override
         public String getTag() {
             return Constants.EXT_X_ALLOW_CACHE_TAG;
@@ -213,8 +212,8 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             // deprecated
         }
@@ -222,7 +221,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
 
     // media segment tags
 
-    static final IExtTagHandler EXTINF = new MediaPlaylistTagHandler() {
+    static final IExtTagParser EXTINF = new MediaPlaylistTagParser() {
         @Override
         public String getTag() {
             return Constants.EXTINF_TAG;
@@ -234,8 +233,8 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final Matcher matcher = match(Constants.EXTINF_PATTERN, line);
 
@@ -243,18 +242,13 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         }
     };
 
-    static final IExtTagHandler EXT_X_KEY = new MediaPlaylistTagHandler() {
-        private final Map<String, AttributeHandler<EncryptionData.Builder>> HANDLERS = new HashMap<String, AttributeHandler<EncryptionData.Builder>>();
-        private final String METHOD = "METHOD";
-        private final String URI = "URI";
-        private final String IV = "IV";
-        private final String KEY_FORMAT = "KEYFORMAT";
-        private final String KEY_FORMAT_VERSIONS = "KEYFORMATVERSIONS";
+    static final IExtTagParser EXT_X_KEY = new MediaPlaylistTagParser() {
+        private final Map<String, AttributeParser<EncryptionData.Builder>> HANDLERS = new HashMap<String, AttributeParser<EncryptionData.Builder>>();
 
         {
-            HANDLERS.put(METHOD, new AttributeHandler<EncryptionData.Builder>() {
+            HANDLERS.put(Constants.METHOD, new AttributeParser<EncryptionData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, Builder builder, ParseState state) throws ParseException {
                     final EncryptionMethod method = EncryptionMethod.fromValue(attribute.value);
 
                     if (method == null) {
@@ -265,16 +259,16 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(URI, new AttributeHandler<EncryptionData.Builder>() {
+            HANDLERS.put(Constants.URI, new AttributeParser<EncryptionData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, Builder builder, ParseState state) throws ParseException {
                     builder.withUri(ParseUtil.decodeUrl(ParseUtil.parseQuotedString(attribute.value, getTag()), state.encoding));
                 }
             });
 
-            HANDLERS.put(IV, new AttributeHandler<EncryptionData.Builder>() {
+            HANDLERS.put(Constants.IV, new AttributeParser<EncryptionData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, Builder builder, ParseState state) throws ParseException {
                     final List<Byte> initializationVector = ParseUtil.parseHexadecimal(attribute.value, getTag());
 
                     if ((initializationVector.size() != Constants.IV_SIZE) && 
@@ -286,17 +280,17 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(KEY_FORMAT, new AttributeHandler<EncryptionData.Builder>() {
+            HANDLERS.put(Constants.KEY_FORMAT, new AttributeParser<EncryptionData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, Builder builder, ParseState state) throws ParseException {
                     builder.withKeyFormat(ParseUtil.parseQuotedString(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(KEY_FORMAT_VERSIONS, new AttributeHandler<EncryptionData.Builder>() {
+            HANDLERS.put(Constants.KEY_FORMAT_VERSIONS, new AttributeParser<EncryptionData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, Builder builder, ParseState state) throws ParseException {
-                    String[] versionStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split("/");
+                public void parse(Attribute attribute, Builder builder, ParseState state) throws ParseException {
+                    String[] versionStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.LIST_SEPARATOR);
                     final List<Integer> versions = new ArrayList<Integer>();
 
                     for (String version : versionStrings) {
@@ -306,7 +300,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                             throw ParseException.create(ParseExceptionType.INVALID_KEY_FORMAT_VERSIONS, getTag(), attribute.toString());
                         }
                     }
-
+                    
                     builder.withKeyFormatVersions(versions);
                 }
             });
@@ -321,10 +315,10 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         boolean hasData() {
             return true;
         }
-
+        
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final EncryptionData.Builder builder = new EncryptionData.Builder()
                     .withKeyFormat(Constants.DEFAULT_KEY_FORMAT)

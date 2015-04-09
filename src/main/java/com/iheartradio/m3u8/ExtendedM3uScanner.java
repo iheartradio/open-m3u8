@@ -12,7 +12,7 @@ public class ExtendedM3uScanner implements Closeable {
     private boolean mClosed = false;
 
     ExtendedM3uScanner(InputStream inputStream, Encoding encoding) {
-        mScanner = new Scanner(inputStream, encoding.value).useLocale(Locale.US).useDelimiter("\\r?\\n");
+        mScanner = new Scanner(inputStream, encoding.getValue()).useLocale(Locale.US).useDelimiter(Constants.PARSE_NEW_LINE);
     }
 
     @Override

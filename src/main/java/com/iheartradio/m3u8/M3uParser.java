@@ -1,9 +1,9 @@
 package com.iheartradio.m3u8;
 
+import java.io.InputStream;
+
 import com.iheartradio.m3u8.data.MediaPlaylist;
 import com.iheartradio.m3u8.data.Playlist;
-
-import java.io.InputStream;
 
 class M3uParser {
     private final ExtendedM3uScanner mScanner;
@@ -16,7 +16,7 @@ class M3uParser {
 
     Playlist parse() throws ParseException {
         final ParseState state = new ParseState(mEncoding);
-        final TrackHandler trackHandler = new TrackHandler();
+        final TrackLineParser trackLineParser = new TrackLineParser();
 
         try {
             state.setMedia();
@@ -28,7 +28,7 @@ class M3uParser {
                 if (line.length() == 0 || isComment(line)) {
                     continue;
                 } else {
-                    trackHandler.handle(line, state);
+                    trackLineParser.parse(line, state);
                 }
             }
 

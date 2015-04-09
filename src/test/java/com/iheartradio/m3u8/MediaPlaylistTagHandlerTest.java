@@ -10,13 +10,13 @@ import java.util.Arrays;
 public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
     @Test
     public void testEXT_X_TARGETDURATION() throws Exception {
-        final IExtTagHandler handler = MediaPlaylistTagHandler.EXT_X_TARGETDURATION;
+        final IExtTagParser handler = MediaPlaylistTagParser.EXT_X_TARGETDURATION;
         final String tag = Constants.EXT_X_TARGETDURATION_TAG;
         final String line = "#" + tag + ":60";
 
         assertEquals(tag, handler.getTag());
 
-        handler.handle(line, mParseState);
+        handler.parse(line, mParseState);
         assertEquals(60, (int) mParseState.getMedia().targetDuration);
 
         assertHandleThrows(handler, line, ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES);
@@ -24,7 +24,7 @@ public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
 
     @Test
     public void testEXT_X_KEY() throws Exception {
-        final IExtTagHandler handler = MediaPlaylistTagHandler.EXT_X_KEY;
+        final IExtTagParser handler = MediaPlaylistTagParser.EXT_X_KEY;
         final String tag = Constants.EXT_X_KEY_TAG;
         final String uri = "http://foo.bar.com/";
         final String format = "format";
@@ -38,7 +38,7 @@ public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
 
         assertEquals(tag, handler.getTag());
 
-        handler.handle(line, mParseState);
+        handler.parse(line, mParseState);
         EncryptionData encryptionData = mParseState.getMedia().encryptionData;
         assertEquals(EncryptionMethod.AES, encryptionData.getMethod());
         assertEquals(uri, encryptionData.getUri());

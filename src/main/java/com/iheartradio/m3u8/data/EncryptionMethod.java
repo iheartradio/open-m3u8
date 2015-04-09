@@ -25,4 +25,8 @@ public enum EncryptionMethod {
     public static EncryptionMethod fromValue(String value) {
         return sMap.get(value);
     }
+    
+    public String getValue() {
+        return this.value;
+    }
 }

@@ -1,43 +1,43 @@
 package com.iheartradio.m3u8;
 
-import com.iheartradio.m3u8.data.Playlist;
-
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.iheartradio.m3u8.data.Playlist;
+
 class ExtendedM3uParser {
     private final ExtendedM3uScanner mScanner;
     private final Encoding mEncoding;
-    private final Map<String, IExtTagHandler> mExtTagHandlers = new HashMap<String, IExtTagHandler>();
+    private final Map<String, IExtTagParser> mExtTagParsers = new HashMap<String, IExtTagParser>();
 
     ExtendedM3uParser(InputStream inputStream, Encoding encoding) {
         mScanner = new ExtendedM3uScanner(inputStream, encoding);
         mEncoding = encoding;
 
         // TODO implement the EXT tag handlers and add them here
-        putHandlers(
-                ExtTagHandler.EXTM3U_HANDLER,
-                ExtTagHandler.EXT_X_VERSION_HANDLER,
-                MediaPlaylistTagHandler.EXT_X_KEY,
-                MasterPlaylistTagHandler.EXT_X_MEDIA,
-                MasterPlaylistTagHandler.EXT_X_STREAM_INF,
-                MasterPlaylistTagHandler.EXT_X_I_FRAME_STREAM_INF,
-                MediaPlaylistTagHandler.EXT_X_TARGETDURATION,
-                MediaPlaylistTagHandler.EXT_X_START,
-                MediaPlaylistTagHandler.EXT_X_PLAYLIST_TYPE,
-                MediaPlaylistTagHandler.EXT_X_MEDIA_SEQUENCE,
-                MediaPlaylistTagHandler.EXT_X_ALLOW_CACHE,
-                MediaPlaylistTagHandler.EXT_X_I_FRAMES_ONLY,
-                MediaPlaylistTagHandler.EXTINF,
-                MediaPlaylistTagHandler.EXT_X_ENDLIST
+        putParsers(
+                ExtTagParser.EXTM3U_HANDLER,
+                ExtTagParser.EXT_X_VERSION_HANDLER,
+                MediaPlaylistTagParser.EXT_X_PLAYLIST_TYPE,
+                MediaPlaylistTagParser.EXT_X_KEY,
+                MediaPlaylistTagParser.EXT_X_TARGETDURATION,
+                MediaPlaylistTagParser.EXT_X_START,
+                MediaPlaylistTagParser.EXT_X_MEDIA_SEQUENCE,
+                MediaPlaylistTagParser.EXT_X_I_FRAMES_ONLY,
+                MasterPlaylistTagParser.EXT_X_MEDIA,
+                MediaPlaylistTagParser.EXT_X_ALLOW_CACHE,
+                MasterPlaylistTagParser.EXT_X_STREAM_INF,
+                MasterPlaylistTagParser.EXT_X_I_FRAME_STREAM_INF,
+                MediaPlaylistTagParser.EXTINF,
+                MediaPlaylistTagParser.EXT_X_ENDLIST
         );
     }
 
     Playlist parse(ParsingMode parsingMode) throws ParseException {
         final ParseState state = new ParseState(mEncoding);
-        final LineHandler playlistHandler = new PlaylistHandler();
-        final LineHandler trackHandler = new TrackHandler();
+        final LineParser playlistParser = new PlaylistLineParser();
+        final LineParser trackLineParser = new TrackLineParser();
 
         try {
             while (mScanner.hasNext()) {
@@ -49,7 +49,7 @@ class ExtendedM3uParser {
                 } else {
                     if (isExtTag(line)) {
                         final String tagKey = getExtTagKey(line);
-                        IExtTagHandler handler = mExtTagHandlers.get(tagKey);
+                        IExtTagParser handler = mExtTagParsers.get(tagKey);
 
                         if (handler == null) {
                             //To support forward compatibility, when parsing Playlists, Clients
@@ -60,16 +60,16 @@ class ExtendedM3uParser {
                                     throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
                                 case LENIENT:
                                 default:
-                                    handler = ExtTagHandler.EXT_UNKNOWN_HANDLER;
+                                    handler = ExtTagParser.EXT_UNKNOWN_HANDLER;
                                     break;
                             }
                         } 
-                        handler.handle(line, state);
+                        handler.parse(line, state);
                         
                     } else if (state.isMaster()) {
-                        playlistHandler.handle(line, state);
+                        playlistParser.parse(line, state);
                     } else if (state.isMedia()) {
-                        trackHandler.handle(line, state);
+                        trackLineParser.parse(line, state);
                     } else {
                         throw ParseException.create(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE, line);
                     }
@@ -85,10 +85,10 @@ class ExtendedM3uParser {
         }
     }
 
-    private void putHandlers(IExtTagHandler... handlers) {
-        if (handlers != null) {
-            for (IExtTagHandler handler : handlers) {
-                mExtTagHandlers.put(handler.getTag(), handler);
+    private void putParsers(IExtTagParser... parsers) {
+        if (parsers != null) {
+            for (IExtTagParser parser : parsers) {
+                mExtTagParsers.put(parser.getTag(), parser);
             }
         }
     }

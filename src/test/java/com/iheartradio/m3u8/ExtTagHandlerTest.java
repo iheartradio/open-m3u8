@@ -5,13 +5,13 @@ import org.junit.Test;
 public class ExtTagHandlerTest extends ParserStateHandlerTestCase {
     @Test
     public void testEXTM3U() throws Exception {
-        final IExtTagHandler handler = ExtTagHandler.EXTM3U_HANDLER;
+        final IExtTagParser handler = ExtTagParser.EXTM3U_HANDLER;
         final String tag = Constants.EXTM3U_TAG;
         final String line = "#" + tag;
 
         assertEquals(tag, handler.getTag());
 
-        handler.handle(line, mParseState);
+        handler.parse(line, mParseState);
         assertTrue(mParseState.isExtended());
 
         assertHandleThrows(handler, line, ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES);
@@ -19,7 +19,7 @@ public class ExtTagHandlerTest extends ParserStateHandlerTestCase {
 
     @Test
     public void testEXT_X_VERSION() throws Exception {
-        final IExtTagHandler handler = ExtTagHandler.EXT_X_VERSION_HANDLER;
+        final IExtTagParser handler = ExtTagParser.EXT_X_VERSION_HANDLER;
         final String tag = Constants.EXT_X_VERSION_TAG;
         final String line = "#" + tag + ":2";
 
@@ -27,7 +27,7 @@ public class ExtTagHandlerTest extends ParserStateHandlerTestCase {
 
         assertHandleThrows(handler, line + ".", ParseExceptionType.BAD_EXT_TAG_FORMAT);
 
-        handler.handle(line, mParseState);
+        handler.parse(line, mParseState);
         assertEquals(2, mParseState.getCompatibilityVersion());
 
         assertHandleThrows(handler, line, ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES);

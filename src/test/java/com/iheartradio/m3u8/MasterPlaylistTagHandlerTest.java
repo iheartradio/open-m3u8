@@ -15,7 +15,7 @@ public class MasterPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
     @Test
     public void testEXT_X_MEDIA() throws Exception {
         final List<MediaData> expectedMediaData = new ArrayList<MediaData>();
-        final IExtTagHandler handler = MasterPlaylistTagHandler.EXT_X_MEDIA;
+        final IExtTagParser handler = MasterPlaylistTagParser.EXT_X_MEDIA;
         final String tag = Constants.EXT_X_MEDIA_TAG;
         final String groupId = "1234";
         final String language = "lang";
@@ -47,13 +47,13 @@ public class MasterPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
 
         assertEquals(tag, handler.getTag());
 
-        handler.handle(line, mParseState);
+        handler.parse(line, mParseState);
         assertEquals(expectedMediaData, mParseState.getMaster().mediaData);
     }
 
     @Test
     public void testEXT_X_STREAM_INF() throws Exception {
-        final IExtTagHandler handler = MasterPlaylistTagHandler.EXT_X_STREAM_INF;
+        final IExtTagParser handler = MasterPlaylistTagParser.EXT_X_STREAM_INF;
         final String tag = Constants.EXT_X_STREAM_INF_TAG;
         final int bandwidth = 10000;
         final int averageBandwidth = 5000;
@@ -87,7 +87,7 @@ public class MasterPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
 
         assertEquals(tag, handler.getTag());
 
-        handler.handle(line, mParseState);
+        handler.parse(line, mParseState);
         assertEquals(expectedStreamInfo, mParseState.getMaster().streamInfo);
     }
 }

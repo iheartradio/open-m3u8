@@ -1,21 +1,21 @@
 package com.iheartradio.m3u8;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.MediaType;
 import com.iheartradio.m3u8.data.PlaylistData;
 import com.iheartradio.m3u8.data.StreamInfo;
 import com.iheartradio.m3u8.data.StreamInfo.Builder;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-abstract class MasterPlaylistTagHandler extends ExtTagHandler {
+abstract class MasterPlaylistTagParser extends ExtTagParser {
     @Override
-    public void handle(String line, ParseState state) throws ParseException {
+    public void parse(String line, ParseState state) throws ParseException {
         validateNotMedia(state);
         state.setMaster();
-        super.handle(line, state);
+        super.parse(line, state);
     }
 
     private void validateNotMedia(ParseState state) throws ParseException {
@@ -26,24 +26,13 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
 
     // master playlist tags
 
-    static final IExtTagHandler EXT_X_MEDIA = new MasterPlaylistTagHandler() {
-        private final Map<String, AttributeHandler<MediaData.Builder>> HANDLERS = new HashMap<String, AttributeHandler<MediaData.Builder>>();
-        private final String TYPE = "TYPE";
-        private final String URI = "URI";
-        private final String GROUP_ID = "GROUP-ID";
-        private final String LANGUAGE = "LANGUAGE";
-        private final String ASSOCIATED_LANGUAGE = "ASSOC-LANGUAGE";
-        private final String NAME = "NAME";
-        private final String DEFAULT = "DEFAULT";
-        private final String AUTO_SELECT = "AUTOSELECT";
-        private final String FORCED = "FORCED";
-        private final String IN_STREAM_ID = "INSTREAM-ID";
-        private final String CHARACTERISTICS = "CHARACTERISTICS";
+    static final IExtTagParser EXT_X_MEDIA = new MasterPlaylistTagParser() {
+        private final Map<String, AttributeParser<MediaData.Builder>> HANDLERS = new HashMap<String, AttributeParser<MediaData.Builder>>();
 
         {
-            HANDLERS.put(TYPE, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.TYPE, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     final MediaType type = MediaType.fromValue(attribute.value);
 
                     if (type == null) {
@@ -54,16 +43,16 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(URI, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.URI, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     builder.withUri(ParseUtil.decodeUrl(ParseUtil.parseQuotedString(attribute.value, getTag()), state.encoding));
                 }
             });
 
-            HANDLERS.put(GROUP_ID, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.GROUP_ID, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     final String groupId = ParseUtil.parseQuotedString(attribute.value, getTag());
 
                     if (groupId.isEmpty()) {
@@ -74,23 +63,23 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(LANGUAGE, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.LANGUAGE, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     builder.withLanguage(ParseUtil.parseQuotedString(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(ASSOCIATED_LANGUAGE, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.ASSOCIATED_LANGUAGE, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     builder.withAssociatedLanguage(ParseUtil.parseQuotedString(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(NAME, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.NAME, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     final String name = ParseUtil.parseQuotedString(attribute.value, getTag());
 
                     if (name.isEmpty()) {
@@ -101,30 +90,30 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(DEFAULT, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.DEFAULT, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     builder.withDefault(ParseUtil.parseYesNo(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(AUTO_SELECT, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.AUTO_SELECT, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     builder.withAutoSelect(ParseUtil.parseYesNo(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(FORCED, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.FORCED, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     builder.withForced(ParseUtil.parseYesNo(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(IN_STREAM_ID, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.IN_STREAM_ID, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
                     final String inStreamId = ParseUtil.parseQuotedString(attribute.value, getTag());
 
                     if (Constants.EXT_X_MEDIA_IN_STREAM_ID_PATTERN.matcher(inStreamId).matches()) {
@@ -135,10 +124,10 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(CHARACTERISTICS, new AttributeHandler<MediaData.Builder>() {
+            HANDLERS.put(Constants.CHARACTERISTICS, new AttributeParser<MediaData.Builder>() {
                 @Override
-                public void handle(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
-                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(",");
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.ATTRIBUTE_LIST_SEPARATOR);
 
                     if (characteristicStrings.length == 0) {
                         throw ParseException.create(ParseExceptionType.EMPTY_MEDIA_CHARACTERISTICS, getTag(), attribute.toString());
@@ -160,8 +149,8 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final MediaData.Builder builder = new MediaData.Builder();
             parseAttributes(line, builder, state, HANDLERS);
@@ -203,34 +192,28 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
         }
     };
 
-    static abstract class EXT_STREAM_INF extends MasterPlaylistTagHandler {
-        final Map<String, AttributeHandler<StreamInfo.Builder>> HANDLERS = new HashMap<String, AttributeHandler<StreamInfo.Builder>>();
-        private final String BANDWIDTH = "BANDWIDTH";
-        private final String AVERAGE_BANDWIDTH = "AVERAGE-BANDWIDTH";
-        private final String CODECS = "CODECS";
-        private final String RESOLUTION = "RESOLUTION";
-        private final String VIDEO = "VIDEO";
-        private final String PROGRAM_ID = "PROGRAM-ID";
+    static abstract class EXT_STREAM_INF extends MasterPlaylistTagParser {
+        final Map<String, AttributeParser<StreamInfo.Builder>> HANDLERS = new HashMap<String, AttributeParser<StreamInfo.Builder>>();
 
         {
-            HANDLERS.put(BANDWIDTH, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.BANDWIDTH, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withBandwidth(ParseUtil.parseInt(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(AVERAGE_BANDWIDTH, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.AVERAGE_BANDWIDTH, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withAverageBandwidth(ParseUtil.parseInt(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(CODECS, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.CODECS, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
-                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(",");
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.ATTRIBUTE_LIST_SEPARATOR);
 
                     if (characteristicStrings.length > 0) {
                         builder.withCodecs(Arrays.asList(characteristicStrings));
@@ -238,23 +221,23 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 }
             });
 
-            HANDLERS.put(RESOLUTION, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.RESOLUTION, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withResolution(ParseUtil.parseResolution(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(VIDEO, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.VIDEO, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withVideo(ParseUtil.parseQuotedString(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(PROGRAM_ID, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.PROGRAM_ID, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     // deprecated
                 }
             });
@@ -266,8 +249,8 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
         }
 
         @Override
-        public void handle(String line, ParseState state) throws ParseException {
-            super.handle(line, state);
+        public void parse(String line, ParseState state) throws ParseException {
+            super.parse(line, state);
 
             final StreamInfo.Builder builder = new StreamInfo.Builder();
             parseAttributes(line, builder, state, HANDLERS);
@@ -284,13 +267,12 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
 
     }
     
-    static final IExtTagHandler EXT_X_I_FRAME_STREAM_INF = new EXT_STREAM_INF() {
-        private final String URI = "URI";
-        
+    static final IExtTagParser EXT_X_I_FRAME_STREAM_INF = new EXT_STREAM_INF() {
+
         {
-            HANDLERS.put(URI, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.URI, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withUri(ParseUtil.parseQuotedString(attribute.value, getTag()));
                 }
             });
@@ -324,29 +306,26 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
         } 
     };
     
-    static final IExtTagHandler EXT_X_STREAM_INF = new EXT_STREAM_INF() {
-        private final String AUDIO = "AUDIO";
-        private final String SUBTITLES = "SUBTITLES";
-        private final String CLOSED_CAPTIONS = "CLOSED-CAPTIONS";
+    static final IExtTagParser EXT_X_STREAM_INF = new EXT_STREAM_INF() {
         
         {
-            HANDLERS.put(AUDIO, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.AUDIO, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withAudio(ParseUtil.parseQuotedString(attribute.value, getTag()));
                 }
             });
             
-            HANDLERS.put(SUBTITLES, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.SUBTITLES, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     builder.withSubtitles(ParseUtil.parseQuotedString(attribute.value, getTag()));
                 }
             });
 
-            HANDLERS.put(CLOSED_CAPTIONS, new AttributeHandler<StreamInfo.Builder>() {
+            HANDLERS.put(Constants.CLOSED_CAPTIONS, new AttributeParser<StreamInfo.Builder>() {
                 @Override
-                public void handle(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
+                public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
                     if (!attribute.value.equals(Constants.NO_CLOSED_CAPTIONS)) {
                         builder.withClosedCaptions(ParseUtil.parseQuotedString(attribute.value, getTag()));
                     }

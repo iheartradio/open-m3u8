@@ -26,4 +26,8 @@ public enum MediaType {
     public static MediaType fromValue(String value) {
         return sMap.get(value);
     }
+    
+    public String getValue() {
+        return value;
+    }
 }
