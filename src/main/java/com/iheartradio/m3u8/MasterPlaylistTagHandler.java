@@ -2,7 +2,9 @@ package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.MediaType;
+import com.iheartradio.m3u8.data.PlaylistData;
 import com.iheartradio.m3u8.data.StreamInfo;
+import com.iheartradio.m3u8.data.StreamInfo.Builder;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -275,13 +277,11 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 throw new ParseException(ParseExceptionType.MISSING_STREAM_BANDWIDTH, getTag());
             }
             
-            validate(builder);
-
-            state.getMaster().streamInfo = streamInfo;
+            handle(builder, state, streamInfo);
         }
         
-        protected void validate(StreamInfo.Builder builder) throws ParseException {
-        }
+        protected abstract void handle(Builder builder, ParseState state, StreamInfo streamInfo) throws ParseException;
+
     }
     
     static final IExtTagHandler EXT_X_I_FRAME_STREAM_INF = new EXT_STREAM_INF() {
@@ -296,10 +296,26 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
             });
         }
         
-        protected void validate(StreamInfo.Builder builder) throws ParseException {
-            if (!builder.isUriSet()) {
+        protected void handle(Builder streamBuilder, ParseState state, StreamInfo streamInfo) throws ParseException {
+
+            if (!streamBuilder.isUriSet()) {
                 throw new ParseException(ParseExceptionType.MISSING_STREAM_URI, getTag());
             }
+            String line = streamInfo.getUri();
+            
+            final PlaylistData.Builder builder = new PlaylistData.Builder();
+
+            if (Constants.URL_PATTERN.matcher(line).matches()) {
+                builder.withUrl(line);
+            } else {
+                builder.withPath(line);
+            }
+            
+            final MasterParseState masterState = state.getMaster();
+
+            masterState.playlists.add(builder
+                    .withStreamInfo(masterState.streamInfo)
+                    .build());
         };
         
         @Override
@@ -337,6 +353,10 @@ abstract class MasterPlaylistTagHandler extends ExtTagHandler {
                 }
             });    
         }
+        
+        protected void handle(Builder builder, ParseState state, StreamInfo streamInfo) {
+            state.getMaster().streamInfo = streamInfo;
+        };
         
         @Override
         public String getTag() {
