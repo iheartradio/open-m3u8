@@ -3,6 +3,7 @@ package com.iheartradio.m3u8;
 import com.iheartradio.m3u8.data.EncryptionData;
 import com.iheartradio.m3u8.data.EncryptionData.Builder;
 import com.iheartradio.m3u8.data.EncryptionMethod;
+import com.iheartradio.m3u8.data.PlaylistType;
 import com.iheartradio.m3u8.data.TrackInfo;
 
 import java.util.ArrayList;
@@ -27,6 +28,31 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
 
     // media playlist tags
 
+    static final IExtTagHandler EXT_X_PLAYLIST_TYPE = new MediaPlaylistTagHandler() {
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_PLAYLIST_TYPE_TAG;
+        }
+
+        @Override
+        boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+            super.handle(line, state);
+
+            final Matcher matcher = match(Constants.EXT_X_PLAYLIST_TYPE_PATTERN, line);
+
+            if (state.getMedia().targetDuration != null) {
+                throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
+            }
+
+            state.getMedia().playlistType = ParseUtil.parseEnum(matcher.group(1), PlaylistType.class, getTag());
+        }
+    };
+    
     static final IExtTagHandler EXT_X_TARGETDURATION = new MediaPlaylistTagHandler() {
         @Override
         public String getTag() {
@@ -153,7 +179,8 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
                 public void handle(Attribute attribute, Builder builder, ParseState state) throws ParseException {
                     final List<Byte> initializationVector = ParseUtil.parseHexadecimal(attribute.value, getTag());
 
-                    if (initializationVector.size() != Constants.IV_SIZE) {
+                    if ((initializationVector.size() != Constants.IV_SIZE) && 
+                        (initializationVector.size() != Constants.IV_SIZE_ALTERNATIVE)) {
                         throw ParseException.create(ParseExceptionType.INVALID_IV_SIZE, getTag(), attribute.toString());
                     }
 

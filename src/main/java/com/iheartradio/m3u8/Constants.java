@@ -22,7 +22,8 @@ final class Constants {
     public static final String EXT_X_I_FRAME_STREAM_INF_TAG = "EXT-X-I-FRAME-STREAM-INF";
 
     // media playlist tags
-
+    
+    public static final String EXT_X_PLAYLIST_TYPE_TAG = "EXT-X-PLAYLIST-TYPE";
     public static final String EXT_X_TARGETDURATION_TAG = "EXT-X-TARGETDURATION";
     public static final String EXT_X_MEDIA_SEQUENCE_TAG = "EXT-X-MEDIA-SEQUENCE";
     public static final String EXT_X_ALLOW_CACHE_TAG = "EXT-X-ALLOW-CACHE";
@@ -44,6 +45,7 @@ final class Constants {
     public static final Pattern EXT_X_VERSION_PATTERN = Pattern.compile("^#" + EXT_X_VERSION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
     public static final Pattern EXT_X_TARGETDURATION_PATTERN = Pattern.compile("^#" + EXT_X_TARGETDURATION_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
     public static final Pattern EXT_X_MEDIA_SEQUENCE_PATTERN = Pattern.compile("^#" + EXT_X_MEDIA_SEQUENCE_TAG + EXT_TAG_END + "(" + INTEGER_REGEX + ")$");
+    public static final Pattern EXT_X_PLAYLIST_TYPE_PATTERN  = Pattern.compile("^#" + EXT_X_PLAYLIST_TYPE_TAG + EXT_TAG_END + "(EVENT|VOD)$");
     public static final Pattern EXT_X_MEDIA_IN_STREAM_ID_PATTERN = Pattern.compile("^CC[1-4]|SERVICE(?:[1-9]|[1-5]\\d|6[0-3])$");
     public static final Pattern EXTINF_PATTERN = Pattern.compile("^#" + EXTINF_TAG + EXT_TAG_END + "(" + FLOAT_REGEX + ")(?:,(.+)?)?$");
 
@@ -51,6 +53,8 @@ final class Constants {
 
     public static final int MAX_COMPATIBILITY_VERSION = 3;
     public static final int IV_SIZE = 16;
+    //Against the spec but used by Adobe
+    public static final int IV_SIZE_ALTERNATIVE = 32;
     public static final String DEFAULT_KEY_FORMAT = "identity";
     public static final String NO_CLOSED_CAPTIONS = "NONE";
     public static final List<Integer> DEFAULT_KEY_FORMAT_VERSIONS = Arrays.asList(1);

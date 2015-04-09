@@ -2,6 +2,7 @@ package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.EncryptionData;
 import com.iheartradio.m3u8.data.MediaPlaylist;
+import com.iheartradio.m3u8.data.PlaylistType;
 import com.iheartradio.m3u8.data.TrackData;
 import com.iheartradio.m3u8.data.TrackInfo;
 
@@ -13,6 +14,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
 
     public Integer targetDuration;
     public Integer mediaSequenceNumber;
+    public PlaylistType playlistType;
     public TrackInfo trackInfo;
     public EncryptionData encryptionData;
 
@@ -22,6 +24,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
                 .withTracks(tracks)
                 .withTargetDuration(targetDuration)
                 .withMediaSequenceNumber(mediaSequenceNumber == null ? 0 : mediaSequenceNumber)
+                .withPlaylistType(playlistType)
                 .build();
     }
 }

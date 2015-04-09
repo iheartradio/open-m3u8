@@ -20,6 +20,14 @@ final class ParseUtil {
         }
     }
 
+    public static <T extends Enum<T>> T parseEnum(String string, Class<T> enumType, String tag) throws ParseException {
+        try {
+            return Enum.valueOf(enumType, string);
+        } catch (IllegalArgumentException exception) {
+            throw ParseException.create(ParseExceptionType.NOT_JAVA_ENUM, tag, string);
+        }
+    }
+
     public static float parseFloat(String string, String tag) throws ParseException {
         try {
             return Float.parseFloat(string);

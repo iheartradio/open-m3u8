@@ -38,6 +38,7 @@ public enum ParseExceptionType {
     MULTIPLE_ATTRIBUTE_NAME_INSTANCES("multiple instances of an attribute name found in an attribute list"),
     MULTIPLE_EXT_TAG_INSTANCES("multiple instances of an EXT tag found for which only one is allowed"),
     NOT_JAVA_INTEGER("only java integers are supported"),
+    NOT_JAVA_ENUM("only specific values are supported"),
     NOT_JAVA_FLOAT("only java floats are supported"),
     NOT_YES_OR_NO("the only valid values are YES and NO"),
     UNCLOSED_QUOTED_STRING("a quoted string was not closed"),
