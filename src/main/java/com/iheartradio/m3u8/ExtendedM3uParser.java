@@ -19,17 +19,18 @@ class ExtendedM3uParser {
         putHandlers(
                 ExtTagHandler.EXTM3U_HANDLER,
                 ExtTagHandler.EXT_X_VERSION_HANDLER,
+                MediaPlaylistTagHandler.EXT_X_KEY,
                 MasterPlaylistTagHandler.EXT_X_MEDIA,
                 MasterPlaylistTagHandler.EXT_X_STREAM_INF,
                 MasterPlaylistTagHandler.EXT_X_I_FRAME_STREAM_INF,
                 MediaPlaylistTagHandler.EXT_X_TARGETDURATION,
+                MediaPlaylistTagHandler.EXT_X_START,
                 MediaPlaylistTagHandler.EXT_X_PLAYLIST_TYPE,
                 MediaPlaylistTagHandler.EXT_X_MEDIA_SEQUENCE,
                 MediaPlaylistTagHandler.EXT_X_ALLOW_CACHE,
-                MediaPlaylistTagHandler.EXT_X_ENDLIST,
                 MediaPlaylistTagHandler.EXT_X_I_FRAMES_ONLY,
                 MediaPlaylistTagHandler.EXTINF,
-                MediaPlaylistTagHandler.EXT_X_KEY
+                MediaPlaylistTagHandler.EXT_X_ENDLIST
         );
     }
 

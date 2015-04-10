@@ -20,6 +20,8 @@ public enum ParseExceptionType {
     INVALID_KEY_FORMAT_VERSIONS("invalid KEYFORMATVERSIONS"),
     INVALID_MEDIA_IN_STREAM_ID("invalid media INSTREAM-ID"),
     INVALID_MEDIA_TYPE("invalid media TYPE"),
+    INVALID_FLOATING_POINT("invalid decimal-floating-point number"),
+    INVALID_YES_NO("invalid YES/NO attribute value"),
     INVALID_RESOLUTION_FORMAT("a resolution was not formatted properly"),
     INVALID_QUOTED_STRING("a quoted string was not properly formatted"),
     MASTER_IN_MEDIA("master playlist tags we found in a media playlist"),

@@ -62,9 +62,9 @@ final class ParseUtil {
     }
 
     public static boolean parseYesNo(String yesNoString, String tag) throws ParseException {
-        if (yesNoString.equals("YES")) {
+        if (yesNoString.equals(Constants.YES)) {
             return true;
-        } else if (yesNoString.equals("NO")) {
+        } else if (yesNoString.equals(Constants.NO)) {
             return false;
         } else {
             throw new ParseException(ParseExceptionType.NOT_YES_OR_NO, tag);

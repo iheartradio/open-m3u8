@@ -8,11 +8,13 @@ public class MediaPlaylist {
     private final int mTargetDuration;
     private final int mMediaSequenceNumber;
     private final PlaylistType mPlaylistType;
+    private final StartData mStartData;
 
-    private MediaPlaylist(List<TrackData> tracks, int targetDuration, int mediaSequenceNumber, PlaylistType playlistType) {
+    private MediaPlaylist(List<TrackData> tracks, int targetDuration, StartData startData, int mediaSequenceNumber, PlaylistType playlistType) {
         mTracks = Collections.unmodifiableList(tracks);
         mTargetDuration = targetDuration;
         mMediaSequenceNumber = mediaSequenceNumber;
+        mStartData = startData;
         mPlaylistType = playlistType;
     }
 
@@ -27,6 +29,7 @@ public class MediaPlaylist {
         return ObjectUtil.equals(this.mTracks, other.mTracks) &&
                this.mTargetDuration == other.mTargetDuration &&
                this.mMediaSequenceNumber == other.mMediaSequenceNumber &&
+               ObjectUtil.equals(this.mStartData, other.mStartData) &&
                this.mPlaylistType == other.mPlaylistType;
     }
 
@@ -42,6 +45,10 @@ public class MediaPlaylist {
         return mMediaSequenceNumber;
     }
     
+    public StartData getStartData() {
+        return mStartData;
+    }
+
     public PlaylistType getPlaylistType() {
         return mPlaylistType;
     }
@@ -51,6 +58,7 @@ public class MediaPlaylist {
         private int mTargetDuration;
         private int mMediaSequenceNumber;
         private PlaylistType mPlaylistType;
+        private StartData mStartData;
 
         public Builder withTracks(List<TrackData> tracks) {
             mTracks = tracks;
@@ -62,6 +70,11 @@ public class MediaPlaylist {
             return this;
         }
 
+        public Builder withStartData(StartData startData) {
+            mStartData = startData;
+            return this;
+        }
+        
         public Builder withMediaSequenceNumber(int mediaSequenceNumber) {
             mMediaSequenceNumber = mediaSequenceNumber;
             return this;
@@ -73,7 +86,7 @@ public class MediaPlaylist {
         }
 
         public MediaPlaylist build() {
-            return new MediaPlaylist(mTracks, mTargetDuration, mMediaSequenceNumber, mPlaylistType);
+            return new MediaPlaylist(mTracks, mTargetDuration, mStartData, mMediaSequenceNumber, mPlaylistType);
         }
 
     }

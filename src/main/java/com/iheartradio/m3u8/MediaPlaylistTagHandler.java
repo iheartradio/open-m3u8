@@ -4,6 +4,7 @@ import com.iheartradio.m3u8.data.EncryptionData;
 import com.iheartradio.m3u8.data.EncryptionData.Builder;
 import com.iheartradio.m3u8.data.EncryptionMethod;
 import com.iheartradio.m3u8.data.PlaylistType;
+import com.iheartradio.m3u8.data.StartData;
 import com.iheartradio.m3u8.data.TrackInfo;
 
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
         public void handle(String line, ParseState state) throws ParseException {
             super.handle(line, state);
             
-            final Matcher matcher = match(Constants.EXT_X_I_FRAMES_ONLY_PATTERN, line);
+            match(Constants.EXT_X_I_FRAMES_ONLY_PATTERN, line);
             
             if (state.getCompatibilityVersion() < 4) {
                 throw ParseException.create(ParseExceptionType.REQUIRES_PROTOCOL_VERSION_4_OR_HIGHER, getTag());
@@ -93,6 +94,58 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
             }
 
             state.getMedia().playlistType = ParseUtil.parseEnum(matcher.group(1), PlaylistType.class, getTag());
+        }
+    };
+    
+    static final IExtTagHandler EXT_X_START = new MediaPlaylistTagHandler() {
+        private final Map<String, AttributeHandler<StartData.Builder>> HANDLERS = new HashMap<String, AttributeHandler<StartData.Builder>>();
+        private final String TIME_OFFSET = "TIME-OFFSET";
+        private final String PRECISE = "PRECISE";
+        
+        {
+            HANDLERS.put(TIME_OFFSET, new AttributeHandler<StartData.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
+                    try {
+                        final float timeOffset = Float.parseFloat(attribute.value);
+                        builder.withTimeOffset(timeOffset);
+                    } catch (NumberFormatException e) {
+                        throw ParseException.create(ParseExceptionType.INVALID_FLOATING_POINT, getTag(), attribute.toString());
+                    }
+                }
+            });
+            HANDLERS.put(PRECISE, new AttributeHandler<StartData.Builder>() {
+                @Override
+                public void handle(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
+                    try {
+                        final boolean precise = ParseUtil.parseYesNo(attribute.value, getTag());
+                        builder.withPrecise(precise);
+                    } catch (ParseException e) {
+                        throw ParseException.create(ParseExceptionType.INVALID_YES_NO, getTag(), attribute.toString());
+                    }
+                }
+            });
+        }
+        
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_START_TAG;
+        }
+
+        @Override
+        boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+            super.handle(line, state);
+
+            final StartData.Builder builder = new StartData.Builder();
+            parseAttributes(line, builder, state, HANDLERS);
+            final StartData startData = builder.build();
+
+            state.getMedia().startData = startData;
         }
     };
     

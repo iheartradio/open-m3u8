@@ -25,6 +25,7 @@ final class Constants {
     
     public static final String EXT_X_PLAYLIST_TYPE_TAG = "EXT-X-PLAYLIST-TYPE";
     public static final String EXT_X_TARGETDURATION_TAG = "EXT-X-TARGETDURATION";
+    public static final String EXT_X_START_TAG = "EXT-X-START";
     public static final String EXT_X_MEDIA_SEQUENCE_TAG = "EXT-X-MEDIA-SEQUENCE";
     public static final String EXT_X_ALLOW_CACHE_TAG = "EXT-X-ALLOW-CACHE";
     public static final String EXT_X_ENDLIST_TAG = "EXT-X-ENDLIST";
@@ -36,7 +37,8 @@ final class Constants {
     public static final String EXT_X_KEY_TAG = "EXT-X-KEY";
 
     // regular expressions
-
+    public static final String YES = "YES";
+    public static final String NO = "NO";
     private static final String INTEGER_REGEX = "\\d+";
     private static final String FLOAT_REGEX = "\\d+\\.?\\d*";
 
