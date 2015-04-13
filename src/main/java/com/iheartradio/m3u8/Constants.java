@@ -57,7 +57,7 @@ final class Constants {
     
     // other
 
-    public static final int MAX_COMPATIBILITY_VERSION = 3;
+    public static final int MAX_COMPATIBILITY_VERSION = 4;
     public static final int IV_SIZE = 16;
     //Against the spec but used by Adobe
     public static final int IV_SIZE_ALTERNATIVE = 32;
