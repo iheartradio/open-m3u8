@@ -52,6 +52,7 @@ class ExtendedM3uParser {
                         final IExtTagHandler handler = mExtTagHandlers.get(tagKey);
 
                         if (handler == null) {
+                            // TODO provide lenient mode that ignores unrecognized EXT tags
                             throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
                         } else {
                             handler.handle(line, state);
