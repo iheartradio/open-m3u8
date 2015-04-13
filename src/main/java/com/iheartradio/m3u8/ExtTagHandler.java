@@ -58,7 +58,27 @@ abstract class ExtTagHandler implements IExtTagHandler {
             state.setExtended();
         }
     };
+    
+    static final IExtTagHandler EXT_UNKNOWN_HANDLER = new ExtTagHandler() {
+        @Override
+        public String getTag() {
+            return null;
+        }
 
+        @Override
+        boolean hasData() {
+            return true;
+        }
+        
+        public void handle(String line, ParseState state) throws ParseException {
+            if (state.isMaster()) {
+                state.getMaster().unknownTags.add(line);
+            } else {
+                state.getMedia().unknownTags.add(line);
+            }
+        };
+    };
+    
     static final IExtTagHandler EXT_X_VERSION_HANDLER = new ExtTagHandler() {
         @Override
         public String getTag() {

@@ -1,5 +1,8 @@
 package com.iheartradio.m3u8;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.iheartradio.m3u8.data.Playlist;
 
 class ParseState implements IParseState<Playlist> {
@@ -56,6 +59,14 @@ class ParseState implements IParseState<Playlist> {
         mIsExtended = true;
     }
 
+    public void setIsIframesOnly() throws ParseException {
+        if (isMaster()) {
+            throw new ParseException(ParseExceptionType.MEDIA_IN_MASTER);
+        }
+
+        getMedia().isIframesOnly = true;
+    }
+
     public int getCompatibilityVersion() {
         return mCompatibilityVersion;
     }
@@ -69,9 +80,11 @@ class ParseState implements IParseState<Playlist> {
         final Playlist.Builder builder = new Playlist.Builder();
 
         if (isMaster()) {
-            builder.withMasterPlaylist(mMasterParseState.buildPlaylist());
+            builder.
+                withMasterPlaylist(mMasterParseState.buildPlaylist());
         } else if (isMedia()) {
-            builder.withMediaPlaylist(mMediaParseState.buildPlaylist()).withExtended(mIsExtended);
+            builder.
+                withMediaPlaylist(mMediaParseState.buildPlaylist()).withExtended(mIsExtended);
         } else {
             throw new ParseException(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE);
         }

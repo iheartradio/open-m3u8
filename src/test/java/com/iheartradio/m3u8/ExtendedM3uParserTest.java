@@ -41,7 +41,7 @@ public class ExtendedM3uParserTest {
                         "\n";
 
         final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
-        final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8).parse();
+        final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8).parse(ParsingMode.STRICT);
 
         assertTrue(playlist.isExtended());
         assertEquals(2, playlist.getCompatibilityVersion());
@@ -50,6 +50,27 @@ public class ExtendedM3uParserTest {
         assertEquals(expectedStreamInfo, playlist.getMasterPlaylist().getPlaylists().get(0).getStreamInfo());
     }
 
+    @Test 
+    public void testLenientParsing() throws Exception {
+        final String validData =
+                        "#EXTM3U\n" +
+                        "#EXT-X-VERSION:2\n" +
+                        "#EXT-X-TARGETDURATION:60\n" +
+                        "#EXT-X-MEDIA-SEQUENCE:10\n" +
+                        "#EXT-FAXS-CM:MIIa4QYJKoZIhvcNAQcCoIIa0jCCGs4C...\n" +
+                        "#some comment\n" +
+                        "#EXTINF:120.0,title 1\n" +
+                        "http://www.my.song/file1.mp3\n" +
+                        "\n";
+        
+        final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
+        final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8).parse(ParsingMode.LENIENT);
+
+        assertTrue(playlist.isExtended());
+        assertTrue(playlist.getMediaPlaylist().hasUnknownTags());
+        assertTrue(playlist.getMediaPlaylist().getUnknownTags().get(0).length() > 0);
+    }
+    
     @Test
     public void testParseMedia() throws Exception {
         final String url = "http://www.my.song/file1.mp3";
@@ -73,7 +94,7 @@ public class ExtendedM3uParserTest {
                 new TrackData.Builder().withPath(path).withTrackInfo(new TrackInfo(100, "title 2")).build());
 
         final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
-        final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8).parse();
+        final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8).parse(ParsingMode.STRICT);
 
         assertTrue(playlist.isExtended());
         assertEquals(2, playlist.getCompatibilityVersion());

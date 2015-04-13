@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 public class PlaylistParser {
     /**
-     * This will close the InputStream.
+     * This will close the InputStream and use a strict input stream parsing.
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param filename the extension of this filename will be used to determine the encoding required of the playlist
@@ -16,15 +16,29 @@ public class PlaylistParser {
      * @throws ParseException if the data is not formatted properly
      */
     public Playlist parse(InputStream inputStream, Format format, String filename) throws IOException, ParseException {
+        return parse(inputStream, format, parseExtension(filename), ParsingMode.STRICT);
+    }
+    
+    /**
+     * This will close the InputStream.
+     * @param inputStream an open input stream positioned at the beginning of the file
+     * @param format requires the playlist to be this format
+     * @param filename the extension of this filename will be used to determine the encoding required of the playlist
+     * @param parsingMode indicates how to handle unknown lines in the input stream
+     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
+     * @throws IOException if the InputStream throws an IOException
+     * @throws ParseException if the data is not formatted properly
+     */
+    public Playlist parse(InputStream inputStream, Format format, String filename, ParsingMode parsingMode) throws IOException, ParseException {
         if (filename == null) {
             throw new IllegalArgumentException("filename is null");
         }
 
-        return parse(inputStream, format, parseExtension(filename));
+        return parse(inputStream, format, parseExtension(filename), parsingMode);
     }
-
+    
     /**
-     * This will close the InputStream.
+     * This will close the InputStream and use a strict input stream parsing.
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param extension requires the playlist be encoded according to this extension {M3U : windows-1252, M3U8 : utf-8}
@@ -37,11 +51,29 @@ public class PlaylistParser {
             throw new IllegalArgumentException("extension is null");
         }
 
-        return parse(inputStream, format, extension.encoding);
+        return parse(inputStream, format, extension.encoding, ParsingMode.STRICT);
     }
 
     /**
      * This will close the InputStream.
+     * @param inputStream an open input stream positioned at the beginning of the file
+     * @param format requires the playlist to be this format
+     * @param extension requires the playlist be encoded according to this extension {M3U : windows-1252, M3U8 : utf-8}
+     * @param parsingMode indicates how to handle unknown lines in the input stream
+     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
+     * @throws IOException if the InputStream throws an IOException
+     * @throws ParseException if the data is not formatted properly
+     */
+    public Playlist parse(InputStream inputStream, Format format, Extension extension, ParsingMode parsingMode) throws IOException, ParseException {
+        if (extension == null) {
+            throw new IllegalArgumentException("extension is null");
+        }
+
+        return parse(inputStream, format, extension.encoding, parsingMode);
+    }
+
+    /**
+     * This will close the InputStream and use a strict input stream parsing
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param encoding required encoding for the playlist
@@ -50,6 +82,20 @@ public class PlaylistParser {
      * @throws ParseException if the data is not formatted properly
      */
     public Playlist parse(InputStream inputStream, Format format, Encoding encoding) throws IOException, ParseException {
+        return parse(inputStream, format, encoding, ParsingMode.STRICT);
+    }
+    
+    /**
+     * This will close the InputStream.
+     * @param inputStream an open input stream positioned at the beginning of the file
+     * @param format requires the playlist to be this format
+     * @param encoding required encoding for the playlist
+     * @param parsingMode indicates how to handle unknown lines in the input stream
+     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
+     * @throws IOException if the InputStream throws an IOException
+     * @throws ParseException if the data is not formatted properly
+     */
+    public Playlist parse(InputStream inputStream, Format format, Encoding encoding, ParsingMode parsingMode) throws IOException, ParseException {
         if (inputStream == null) {
             throw new IllegalArgumentException("inputStream is null");
         }
@@ -62,11 +108,15 @@ public class PlaylistParser {
             throw new IllegalArgumentException("encoding is null");
         }
 
+        if (parsingMode == null && format != Format.M3U) {
+            throw new IllegalArgumentException("parsingMode is null");
+        }
+
         switch (format) {
             case M3U:
                 return new M3uParser(inputStream, encoding).parse();
             case EXT_M3U:
-                return new ExtendedM3uParser(inputStream, encoding).parse();
+                return new ExtendedM3uParser(inputStream, encoding).parse(parsingMode);
         }
 
         throw new RuntimeException("unsupported format detected, this should be impossible: " + format);

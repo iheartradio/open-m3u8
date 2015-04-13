@@ -1,5 +1,8 @@
 package com.iheartradio.m3u8.data;
 
+/**
+ * The Playlist is similar to a C style union of a MasterPlaylist and MediaPlaylist in that it has one or the other but not both.
+ */
 public class Playlist {
     public static final int MIN_COMPATIBILITY_VERSION = 1;
 

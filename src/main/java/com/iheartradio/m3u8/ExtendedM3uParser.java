@@ -34,7 +34,7 @@ class ExtendedM3uParser {
         );
     }
 
-    Playlist parse() throws ParseException {
+    Playlist parse(ParsingMode parsingMode) throws ParseException {
         final ParseState state = new ParseState(mEncoding);
         final LineHandler playlistHandler = new PlaylistHandler();
         final LineHandler trackHandler = new TrackHandler();
@@ -49,14 +49,23 @@ class ExtendedM3uParser {
                 } else {
                     if (isExtTag(line)) {
                         final String tagKey = getExtTagKey(line);
-                        final IExtTagHandler handler = mExtTagHandlers.get(tagKey);
+                        IExtTagHandler handler = mExtTagHandlers.get(tagKey);
 
                         if (handler == null) {
-                            // TODO provide lenient mode that ignores unrecognized EXT tags
-                            throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
-                        } else {
-                            handler.handle(line, state);
-                        }
+                            //To support forward compatibility, when parsing Playlists, Clients
+                            //MUST:
+                            //o  ignore any unrecognized tags.
+                            switch(parsingMode) {
+                                case STRICT:
+                                    throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
+                                case LENIENT:
+                                default:
+                                    handler = ExtTagHandler.EXT_UNKNOWN_HANDLER;
+                                    break;
+                            }
+                        } 
+                        handler.handle(line, state);
+                        
                     } else if (state.isMaster()) {
                         playlistHandler.handle(line, state);
                     } else if (state.isMedia()) {

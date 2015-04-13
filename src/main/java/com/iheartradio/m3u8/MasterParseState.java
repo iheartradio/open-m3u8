@@ -11,7 +11,8 @@ import java.util.List;
 class MasterParseState implements IParseState<MasterPlaylist> {
     public final List<PlaylistData> playlists = new ArrayList<PlaylistData>();
     public final List<MediaData> mediaData = new ArrayList<MediaData>();
-
+    public final List<String> unknownTags = new ArrayList<String>();
+    
     public StreamInfo streamInfo;
 
     @Override
@@ -19,6 +20,7 @@ class MasterParseState implements IParseState<MasterPlaylist> {
         return new MasterPlaylist.Builder()
                 .withPlaylists(playlists)
                 .withMediaData(mediaData)
+                .withUnknownTags(unknownTags)
                 .build();
     }
 }

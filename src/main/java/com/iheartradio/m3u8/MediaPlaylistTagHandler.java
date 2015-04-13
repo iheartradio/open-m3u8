@@ -69,6 +69,8 @@ abstract class MediaPlaylistTagHandler extends ExtTagHandler {
             if (state.getCompatibilityVersion() < 4) {
                 throw ParseException.create(ParseExceptionType.REQUIRES_PROTOCOL_VERSION_4_OR_HIGHER, getTag());
             }
+            
+            state.setIsIframesOnly();
         }
     };
     
