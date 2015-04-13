@@ -39,11 +39,25 @@ public class Playlist {
         return mCompatibilityVersion;
     }
 
+    public Builder buildUpon() {
+        return new Builder(mMasterPlaylist, mMediaPlaylist, mIsExtended, mCompatibilityVersion);
+    }
+
     public static class Builder {
-        private boolean mIsExtended;
         private MasterPlaylist mMasterPlaylist;
         private MediaPlaylist mMediaPlaylist;
+        private boolean mIsExtended;
         private int mCompatibilityVersion = MIN_COMPATIBILITY_VERSION;
+
+        public Builder() {
+        }
+
+        private Builder(MasterPlaylist masterPlaylist, MediaPlaylist mediaPlaylist, boolean isExtended, int compatibilityVersion) {
+            mMasterPlaylist = masterPlaylist;
+            mMediaPlaylist = mediaPlaylist;
+            mIsExtended = isExtended;
+            mCompatibilityVersion = compatibilityVersion;
+        }
 
         public Builder withMasterPlaylist(MasterPlaylist masterPlaylist) {
             if (mMediaPlaylist != null) {

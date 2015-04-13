@@ -126,6 +126,21 @@ public class MediaData {
         return mCharacteristics;
     }
 
+    public Builder buildUpon() {
+        return new Builder(
+                mType,
+                mUri,
+                mGroupId,
+                mLanguage,
+                mAssociatedLanguage,
+                mName,
+                mDefault,
+                mAutoSelect,
+                mForced,
+                mInStreamId,
+                mCharacteristics);
+    }
+
     public static class Builder {
         private MediaType mType;
         private String mUri;
@@ -140,6 +155,34 @@ public class MediaData {
         private List<String> mCharacteristics;
         private boolean mAutoSelectSet;
         private boolean mForcedSet;
+
+        public Builder() {
+        }
+
+        private Builder(
+                MediaType type,
+                String uri,
+                String groupId,
+                String language,
+                String associatedLanguage,
+                String name,
+                boolean isDefault,
+                boolean autoSelect,
+                boolean forced,
+                String inStreamId,
+                List<String> characteristics) {
+            mType = type;
+            mUri = uri;
+            mGroupId = groupId;
+            mLanguage = language;
+            mAssociatedLanguage = associatedLanguage;
+            mName = name;
+            mDefault = isDefault;
+            mAutoSelect = autoSelect;
+            mForced = forced;
+            mInStreamId = inStreamId;
+            mCharacteristics = characteristics;
+        }
 
         public Builder withType(MediaType type) {
             if (type == null) {
@@ -247,5 +290,4 @@ public class MediaData {
                 + mAutoSelect + ", mForced=" + mForced + ", mInStreamId="
                 + mInStreamId + ", mCharacteristics=" + mCharacteristics + "]";
     }
-    
 }

@@ -40,11 +40,25 @@ public class TrackData extends LocationData {
         return mEncryptionData;
     }
 
+    public Builder buildUpon() {
+        return new Builder(getLocationType(), getLocation(), mTrackInfo, mEncryptionData);
+    }
+
     public static class Builder {
         private LocationType mLocationType;
         private String mLocation;
         private TrackInfo mTrackInfo;
         private EncryptionData mEncryptionData;
+
+        public Builder() {
+        }
+
+        private Builder(LocationType locationType, String location, TrackInfo trackInfo, EncryptionData encryptionData) {
+            mLocationType = locationType;
+            mLocation = location;
+            mTrackInfo = trackInfo;
+            mEncryptionData = encryptionData;
+        }
 
         public Builder withPath(String path) {
             if (path == null || path.isEmpty()) {

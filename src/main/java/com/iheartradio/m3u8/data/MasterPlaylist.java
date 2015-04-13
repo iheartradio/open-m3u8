@@ -20,9 +20,21 @@ public class MasterPlaylist {
         return mMediaData;
     }
 
+    public Builder buildUpon() {
+        return new Builder(mPlaylists, mMediaData);
+    }
+
     public static class Builder {
         private List<PlaylistData> mPlaylists;
         private List<MediaData> mMediaData;
+
+        public Builder() {
+        }
+
+        private Builder(List<PlaylistData> playlists, List<MediaData> mediaData) {
+            mPlaylists = playlists;
+            mMediaData = mediaData;
+        }
 
         public Builder withPlaylists(List<PlaylistData> playlists) {
             mPlaylists = playlists;

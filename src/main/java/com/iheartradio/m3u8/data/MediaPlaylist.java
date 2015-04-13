@@ -53,12 +53,27 @@ public class MediaPlaylist {
         return mPlaylistType;
     }
 
+    public Builder buildUpon() {
+        return new Builder(mTracks, mTargetDuration, mMediaSequenceNumber, mPlaylistType, mStartData);
+    }
+
     public static class Builder {
         private List<TrackData> mTracks;
         private int mTargetDuration;
         private int mMediaSequenceNumber;
         private PlaylistType mPlaylistType;
         private StartData mStartData;
+
+        public Builder() {
+        }
+
+        private Builder(List<TrackData> tracks, int targetDuration, int mediaSequenceNumber, PlaylistType playlistType, StartData startData) {
+            mTracks = tracks;
+            mTargetDuration = targetDuration;
+            mMediaSequenceNumber = mediaSequenceNumber;
+            mPlaylistType = playlistType;
+            mStartData = startData;
+        }
 
         public Builder withTracks(List<TrackData> tracks) {
             mTracks = tracks;
@@ -88,6 +103,5 @@ public class MediaPlaylist {
         public MediaPlaylist build() {
             return new MediaPlaylist(mTracks, mTargetDuration, mStartData, mMediaSequenceNumber, mPlaylistType);
         }
-
     }
 }

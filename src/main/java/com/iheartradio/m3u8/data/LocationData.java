@@ -50,5 +50,4 @@ public class LocationData {
         return "LocationData [mLocationType=" + mLocationType + ", mLocation="
                 + mLocation + "]";
     }
-    
 }

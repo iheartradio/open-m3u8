@@ -126,6 +126,18 @@ public class StreamInfo {
         return mClosedCaptions;
     }
 
+    public Builder buildUpon() {
+        return new Builder(mBandwidth,
+                mAverageBandwidth,
+                mCodecs,
+                mResolution,
+                mAudio,
+                mUri,
+                mVideo,
+                mSubtitles,
+                mClosedCaptions);
+    }
+
     public static class Builder {
         private int mBandwidth = NONE;
         private int mAverageBandwidth = NONE;
@@ -138,6 +150,30 @@ public class StreamInfo {
         private String mClosedCaptions;
         private boolean mBandwidthSet;
         private boolean mUriSet;
+
+        public Builder() {
+        }
+
+        private Builder(
+                int bandwidth,
+                int averageBandwidth,
+                List<String> codecs,
+                Resolution resolution,
+                String audio,
+                String uri,
+                String video,
+                String subtitles,
+                String closedCaptions) {
+            mBandwidth = bandwidth;
+            mAverageBandwidth = averageBandwidth;
+            mCodecs = codecs;
+            mResolution = resolution;
+            mAudio = audio;
+            mUri = uri;
+            mVideo = video;
+            mSubtitles = subtitles;
+            mClosedCaptions = closedCaptions;
+        }
 
         public Builder withBandwidth(int bandwidth) {
             mBandwidth = bandwidth;

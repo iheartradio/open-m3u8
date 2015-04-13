@@ -26,10 +26,23 @@ public class PlaylistData extends LocationData {
         return super.equals(other) && ObjectUtil.equals(this.mStreamInfo, other.mStreamInfo);
     }
 
+    public Builder buildUpon() {
+        return new Builder(getLocationType(), getLocation(), mStreamInfo);
+    }
+
     public static class Builder {
         private LocationType mLocationType;
         private String mLocation;
         private StreamInfo mStreamInfo;
+
+        public Builder() {
+        }
+
+        private Builder(LocationType locationType, String location, StreamInfo streamInfo) {
+            mLocationType = locationType;
+            mLocation = location;
+            mStreamInfo = streamInfo;
+        }
 
         public Builder withPath(String path) {
             if (path == null || path.isEmpty()) {
@@ -71,5 +84,4 @@ public class PlaylistData extends LocationData {
                 + ", getLocationType()=" + getLocationType()
                 + ", getLocation()=" + getLocation() + "]";
     }
-    
 }

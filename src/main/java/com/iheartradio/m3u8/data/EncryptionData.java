@@ -54,12 +54,27 @@ public class EncryptionData {
         return mKeyFormatVersions;
     }
 
+    public Builder buildUpon() {
+        return new Builder(mMethod, mUri, mInitializationVector, mKeyFormat, mKeyFormatVersions);
+    }
+
     public static class Builder {
         private EncryptionMethod mMethod;
         private String mUri;
         private List<Byte> mInitializationVector;
         private String mKeyFormat;
         private List<Integer> mKeyFormatVersions;
+
+        public Builder() {
+        }
+
+        private Builder(EncryptionMethod method, String uri, List<Byte> initializationVector, String keyFormat, List<Integer> keyFormatVersions) {
+            mMethod = method;
+            mUri = uri;
+            mInitializationVector = initializationVector;
+            mKeyFormat = keyFormat;
+            mKeyFormatVersions = keyFormatVersions;
+        }
 
         public Builder withMethod(EncryptionMethod method) {
             mMethod = method;

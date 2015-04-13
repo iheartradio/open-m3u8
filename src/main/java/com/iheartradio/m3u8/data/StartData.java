@@ -16,10 +16,22 @@ public class StartData {
     public boolean isPrecise() {
         return mPrecise;
     }
-    
+
+    public Builder buildUpon() {
+        return new Builder(mTimeOffset, mPrecise);
+    }
+
     public static class Builder {
         private float mTimeOffset;
         private boolean mPrecise;
+
+        public Builder() {
+        }
+
+        private Builder(float timeOffset, boolean precise) {
+            mTimeOffset = timeOffset;
+            mPrecise = precise;
+        }
 
         public Builder withTimeOffset(float timeOffset) {
             mTimeOffset = timeOffset;
