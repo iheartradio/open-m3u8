@@ -127,7 +127,7 @@ abstract class MasterPlaylistTagParser extends ExtTagParser {
             HANDLERS.put(Constants.CHARACTERISTICS, new AttributeParser<MediaData.Builder>() {
                 @Override
                 public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
-                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.ATTRIBUTE_LIST_SEPARATOR);
+                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.COMMA);
 
                     if (characteristicStrings.length == 0) {
                         throw ParseException.create(ParseExceptionType.EMPTY_MEDIA_CHARACTERISTICS, getTag(), attribute.toString());
@@ -213,7 +213,7 @@ abstract class MasterPlaylistTagParser extends ExtTagParser {
             HANDLERS.put(Constants.CODECS, new AttributeParser<StreamInfo.Builder>() {
                 @Override
                 public void parse(Attribute attribute, StreamInfo.Builder builder, ParseState state) throws ParseException {
-                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.ATTRIBUTE_LIST_SEPARATOR);
+                    final String[] characteristicStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.COMMA);
 
                     if (characteristicStrings.length > 0) {
                         builder.withCodecs(Arrays.asList(characteristicStrings));

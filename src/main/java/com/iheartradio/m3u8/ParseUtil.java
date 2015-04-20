@@ -195,7 +195,7 @@ final class ParseUtil {
             } else {
                 char c = line.charAt(i);
 
-                if (c == Constants.ATTRIBUTE_LIST_SEPARATOR_CHAR) {
+                if (c == Constants.COMMA_CHAR) {
                     splitIndices.add(i);
                 } else if (c == '"') {
                     isQuotedString = true;

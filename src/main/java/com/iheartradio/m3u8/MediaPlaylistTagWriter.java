@@ -201,7 +201,7 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
                 } else {
                     duration = Float.toString(td.getTrackInfo().duration);
                 }
-                tagWriter.writeTag(getTag(), duration + Constants.ATTRIBUTE_LIST_SEPARATOR + td.getTrackInfo().title);
+                tagWriter.writeTag(getTag(), duration + Constants.COMMA + td.getTrackInfo().title);
                 tagWriter.writeLine(td.getLocation());
             }
         };

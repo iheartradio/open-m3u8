@@ -9,8 +9,9 @@ final class Constants {
     public static final String MIME_TYPE_COMPATIBILITY = "audio/mpegurl";
     
     public static final String ATTRIBUTE_SEPARATOR = "=";
-    public static final char ATTRIBUTE_LIST_SEPARATOR_CHAR = ',';
-    public static final String ATTRIBUTE_LIST_SEPARATOR = Character.toString(ATTRIBUTE_LIST_SEPARATOR_CHAR);
+    public static final char COMMA_CHAR = ',';
+    public static final String COMMA = Character.toString(COMMA_CHAR);
+    public static final String ATTRIBUTE_LIST_SEPARATOR = COMMA;
     public static final String LIST_SEPARATOR = "/";
     public static final String COMMENT_PREFIX = "#";
     public static final String EXT_TAG_PREFIX = "#EXT";

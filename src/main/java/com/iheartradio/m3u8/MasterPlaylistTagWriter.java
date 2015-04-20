@@ -146,7 +146,7 @@ abstract class MasterPlaylistTagWriter extends ExtTagWriter {
                 
                 @Override
                 public String write(MediaData mediaData) throws ParseException {
-                    return WriteUtil.writeQuotedString(WriteUtil.join(mediaData.getCharacteristics(), Constants.ATTRIBUTE_LIST_SEPARATOR), getTag());
+                    return WriteUtil.writeQuotedString(WriteUtil.join(mediaData.getCharacteristics(), Constants.COMMA), getTag());
                 }
             });
         }
@@ -198,7 +198,7 @@ abstract class MasterPlaylistTagWriter extends ExtTagWriter {
                 
                 @Override
                 public String write(StreamInfo streamInfo) throws ParseException {
-                    return WriteUtil.writeQuotedString(WriteUtil.join(streamInfo.getCodecs(), Constants.ATTRIBUTE_LIST_SEPARATOR), getTag());
+                    return WriteUtil.writeQuotedString(WriteUtil.join(streamInfo.getCodecs(), Constants.COMMA), getTag());
                 }
             });
 
