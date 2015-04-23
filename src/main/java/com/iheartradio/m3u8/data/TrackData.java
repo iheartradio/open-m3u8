@@ -94,6 +94,7 @@ public class TrackData extends LocationData {
             if (mLocationType == null) {
                 throw new IllegalStateException("cannot build TrackData without a path or url");
             }
+            // Non-extended playlists do not have tags and thus can build tracks without track info.
 
             return new TrackData(mLocationType, mLocation, mTrackInfo, mEncryptionData);
         }

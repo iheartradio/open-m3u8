@@ -195,13 +195,16 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
         @Override
         public void doWrite(TagWriter tagWriter, Playlist playlist, MediaPlaylist mediaPlaylist) throws IOException ,ParseException {
             for (TrackData td : mediaPlaylist.getTracks()) {
-                String duration;
+                StringBuilder sb = new StringBuilder();
                 if (playlist.getCompatibilityVersion() <= 3) {
-                    duration = Integer.toString((int)td.getTrackInfo().duration);
+                    sb.append(Integer.toString((int)td.getTrackInfo().duration));
                 } else {
-                    duration = Float.toString(td.getTrackInfo().duration);
+                    sb.append(Float.toString(td.getTrackInfo().duration));
                 }
-                tagWriter.writeTag(getTag(), duration + Constants.COMMA + td.getTrackInfo().title);
+                if (td.getTrackInfo().title != null) {
+                    sb.append(Constants.COMMA).append(td.getTrackInfo().title);
+                }
+                tagWriter.writeTag(getTag(), sb.toString());
                 tagWriter.writeLine(td.getLocation());
             }
         };

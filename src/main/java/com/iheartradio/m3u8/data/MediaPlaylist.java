@@ -145,6 +145,7 @@ public class MediaPlaylist {
             if (mTracks == null) {
                 throw new IllegalStateException("cannot build MediaPlaylist without Tracks");
             }
+            //TODO check if mTracks are valid (extend playlist: with trackinfo)
             return new MediaPlaylist(mTracks, mUnknownTags, mTargetDuration, mStartData, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType);
         }
     }
