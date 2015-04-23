@@ -135,8 +135,3 @@ if (playlist.hasMasterPlaylist() && playlist.getMasterPlaylist().hasUnknownTags(
     System.out.println("Parsing without unknown tags successful");
 }
 ```
-
-
-## Compatibility
-
-This library needs to support Android which means we are limited to Java 7 sans try-with-resources.
