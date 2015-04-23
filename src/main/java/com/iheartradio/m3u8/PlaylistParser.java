@@ -5,6 +5,13 @@ import java.io.InputStream;
 
 import com.iheartradio.m3u8.data.Playlist;
 
+/**
+ * Getting started with parsing is quite easy: Get a `PlaylistParser` and specify the format 
+<pre>InputStream inputStream = ...
+PlaylistParser parser = new PlaylistParser();
+// The inputStream is automatically closed after this operation
+Playlist playlist = parser.parse(inputStream, Format.EXT_M3U, Encoding.UTF_8);</pre>
+ */
 public class PlaylistParser {
     /**
      * This will close the InputStream and use a strict input stream parsing.

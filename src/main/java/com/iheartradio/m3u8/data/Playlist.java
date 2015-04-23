@@ -1,7 +1,50 @@
 package com.iheartradio.m3u8.data;
 
 /**
- * The Playlist is similar to a C style union of a MasterPlaylist and MediaPlaylist in that it has one or the other but not both.
+ * Creating a new {@link Playlist} works via <code>Builder</code>s 
+ * and their fluent <code>with*()</code> methods. On each <code>build()</code> 
+ * method the provided parameters are validated:
+<pre>TrackData trackData = new TrackData.Builder()
+    .withTrackInfo(new TrackInfo(3.0f, "Example Song"))
+    .withPath("example.mp3")
+    .build();
+
+List<TrackData> tracks = new ArrayList<TrackData>();
+tracks.add(trackData);
+
+MediaPlaylist mediaPlaylist = new MediaPlaylist.Builder()
+    .withMediaSequenceNumber(1)
+    .withTargetDuration(3)
+    .withTracks(tracks)
+    .build();
+
+Playlist playlist = new Playlist.Builder()
+    .withCompatibilityVersion(5)
+    .withMediaPlaylist(mediaPlaylist)
+    .build();</pre>
+ * <p>The Playlist is similar to a C style union of a {@link MasterPlaylist} 
+ * and {@link MediaPlaylist} in that it has one or the other but not both.  
+ * You can check with {@link #hasMasterPlaylist()} or {@link #hasMediaPlaylist()}
+ * which type you got.</p>
+ * <p>Modifying an existing {@link Playlist} work similar to creating via the 
+ * <code>Builder</code>s: Also each data class provides an <code>buildUpon()</code>
+ *  method to generate a new <code>Builder</code> with all the data from the object itself:</p>
+<pre>TrackData additionalTrack = new TrackData.Builder()
+    .withTrackInfo(new TrackInfo(3.0f, "Additional Song"))
+    .withPath("additional.mp3")
+    .build();
+
+List<TrackData> updatedTracks = new ArrayList<TrackData>(playlist.getMediaPlaylist().getTracks());
+updatedTracks.add(additionalTrack);
+
+MediaPlaylist updatedMediaPlaylist = playlist.getMediaPlaylist()
+    .buildUpon()
+    .withTracks(updatedTracks)
+    .build();
+
+Playlist updatedPlaylist = playlist.buildUpon()
+    .withMediaPlaylist(updatedMediaPlaylist)
+    .build();</pre>
  */
 public class Playlist {
     public static final int MIN_COMPATIBILITY_VERSION = 1;
