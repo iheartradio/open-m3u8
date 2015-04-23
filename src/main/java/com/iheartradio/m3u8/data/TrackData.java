@@ -1,5 +1,7 @@
 package com.iheartradio.m3u8.data;
 
+import java.util.Objects;
+
 public class TrackData extends LocationData {
     private final TrackInfo mTrackInfo;
     private final EncryptionData mEncryptionData;
@@ -8,16 +10,6 @@ public class TrackData extends LocationData {
         super(locationType, location);
         mTrackInfo = trackInfo;
         mEncryptionData = encryptionData;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof TrackData)) {
-            return false;
-        }
-
-        TrackData other = (TrackData) o;
-        return super.equals(other) && ObjectUtil.equals(this.mTrackInfo, other.mTrackInfo);
     }
 
     public boolean hasTrackInfo() {
@@ -42,6 +34,24 @@ public class TrackData extends LocationData {
 
     public Builder buildUpon() {
         return new Builder(getLocationType(), getLocation(), mTrackInfo, mEncryptionData);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), mEncryptionData, mTrackInfo);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof TrackData)) {
+            return false;
+        }
+
+        TrackData other = (TrackData) o;
+        
+        return super.equals(other) &&
+                Objects.equals(this.mEncryptionData, other.mEncryptionData) &&
+                Objects.equals(this.mTrackInfo, other.mTrackInfo);
     }
 
     public static class Builder {

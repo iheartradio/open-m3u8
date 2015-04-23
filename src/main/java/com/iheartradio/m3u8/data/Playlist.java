@@ -1,5 +1,7 @@
 package com.iheartradio.m3u8.data;
 
+import java.util.Objects;
+
 public class Playlist {
     public static final int MIN_COMPATIBILITY_VERSION = 1;
 
@@ -47,6 +49,27 @@ public class Playlist {
 
     public Builder buildUpon() {
         return new Builder(mMasterPlaylist, mMediaPlaylist, mIsExtended, mCompatibilityVersion);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(mCompatibilityVersion, mIsExtended, mIsIframesOnly,
+                mMasterPlaylist, mMediaPlaylist);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Playlist)) {
+            return false;
+        }
+
+        Playlist other = (Playlist) o;
+        
+        return this.mCompatibilityVersion == other.mCompatibilityVersion &&
+                this.mIsExtended == other.mIsExtended &&
+                this.mIsIframesOnly == other.mIsIframesOnly &&
+                Objects.equals(this.mMasterPlaylist, other.mMasterPlaylist) &&
+                Objects.equals(this.mMediaPlaylist, other.mMediaPlaylist);
     }
 
     public static class Builder {

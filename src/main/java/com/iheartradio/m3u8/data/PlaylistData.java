@@ -1,5 +1,7 @@
 package com.iheartradio.m3u8.data;
 
+import java.util.Objects;
+
 public class PlaylistData extends LocationData {
     private final StreamInfo mStreamInfo;
 
@@ -16,6 +18,15 @@ public class PlaylistData extends LocationData {
         return mStreamInfo;
     }
 
+    public Builder buildUpon() {
+        return new Builder(getLocationType(), getLocation(), mStreamInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), mStreamInfo);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof PlaylistData)) {
@@ -23,11 +34,9 @@ public class PlaylistData extends LocationData {
         }
 
         PlaylistData other = (PlaylistData) o;
-        return super.equals(other) && ObjectUtil.equals(this.mStreamInfo, other.mStreamInfo);
-    }
-
-    public Builder buildUpon() {
-        return new Builder(getLocationType(), getLocation(), mStreamInfo);
+        
+        return super.equals(other) &&
+                Objects.equals(this.mStreamInfo, other.mStreamInfo);
     }
 
     public static class Builder {

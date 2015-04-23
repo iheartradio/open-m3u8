@@ -1,6 +1,7 @@
 package com.iheartradio.m3u8.data;
 
 import java.util.List;
+import java.util.Objects;
 
 public class StreamInfo {
     private static final int NONE = -1;
@@ -34,24 +35,6 @@ public class StreamInfo {
         mVideo = video;
         mSubtitles = subtitles;
         mClosedCaptions = closedCaptions;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof StreamInfo)) {
-            return false;
-        }
-
-        StreamInfo other = (StreamInfo) o;
-
-        return this.mBandwidth == other.mBandwidth &&
-               this.mAverageBandwidth == other.mAverageBandwidth &&
-               ObjectUtil.equals(this.mResolution, other.mResolution) &&
-               ObjectUtil.equals(this.mAudio, other.mAudio) &&
-               ObjectUtil.equals(this.mUri, other.mUri) &&
-               ObjectUtil.equals(this.mVideo, other.mVideo) &&
-               ObjectUtil.equals(this.mSubtitles, other.mSubtitles) &&
-               ObjectUtil.equals(this.mClosedCaptions, other.mClosedCaptions);
     }
 
     public boolean hasBandwidth() {
@@ -136,6 +119,38 @@ public class StreamInfo {
                 mVideo,
                 mSubtitles,
                 mClosedCaptions);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                mAudio,
+                mAverageBandwidth,
+                mBandwidth,
+                mClosedCaptions,
+                mCodecs,
+                mResolution,
+                mSubtitles,
+                mUri,
+                mVideo);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StreamInfo)) {
+            return false;
+        }
+
+        StreamInfo other = (StreamInfo) o;
+        
+        return Objects.equals(this.mAudio, other.mAudio) &&
+                this.mAverageBandwidth == other.mAverageBandwidth &&
+                this.mBandwidth == other.mBandwidth &&
+                Objects.equals(this.mClosedCaptions, other.mClosedCaptions) &&
+                Objects.equals(this.mCodecs, other.mCodecs) &&
+                Objects.equals(this.mResolution, other.mResolution) &&
+                Objects.equals(this.mUri, other.mUri) &&
+                Objects.equals(this.mVideo, other.mVideo);
     }
 
     public static class Builder {

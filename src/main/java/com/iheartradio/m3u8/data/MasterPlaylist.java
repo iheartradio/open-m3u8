@@ -2,6 +2,7 @@ package com.iheartradio.m3u8.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MasterPlaylist {
     private final List<PlaylistData> mPlaylists;
@@ -32,6 +33,24 @@ public class MasterPlaylist {
 
     public Builder buildUpon() {
         return new Builder(mPlaylists, mMediaData);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(mMediaData, mPlaylists, mUnknownTags);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MasterPlaylist)) {
+            return false;
+        }
+
+        MasterPlaylist other = (MasterPlaylist) o;
+        
+        return Objects.equals(this.mMediaData, other.mMediaData) &&
+                Objects.equals(this.mPlaylists, other.mPlaylists) &&
+                Objects.equals(this.mUnknownTags, other.mUnknownTags);
     }
 
     public static class Builder {

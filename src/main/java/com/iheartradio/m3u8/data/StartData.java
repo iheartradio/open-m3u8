@@ -1,5 +1,7 @@
 package com.iheartradio.m3u8.data;
 
+import java.util.Objects;
+
 public class StartData {
     private final float mTimeOffset;
     private final boolean mPrecise;
@@ -19,6 +21,23 @@ public class StartData {
 
     public Builder buildUpon() {
         return new Builder(mTimeOffset, mPrecise);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(mPrecise, mTimeOffset);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof StartData)) {
+            return false;
+        }
+
+        StartData other = (StartData) o;
+        
+        return this.mPrecise == other.mPrecise &&
+                this.mTimeOffset == other.mTimeOffset;
     }
 
     public static class Builder {

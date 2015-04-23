@@ -2,6 +2,7 @@ package com.iheartradio.m3u8.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class EncryptionData {
     private final EncryptionMethod mMethod;
@@ -56,6 +57,26 @@ public class EncryptionData {
 
     public Builder buildUpon() {
         return new Builder(mMethod, mUri, mInitializationVector, mKeyFormat, mKeyFormatVersions);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(mInitializationVector, mKeyFormat, mKeyFormatVersions, mMethod, mUri);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof EncryptionData)) {
+            return false;
+        }
+
+        EncryptionData other = (EncryptionData) o;
+        
+        return Objects.equals(this.mInitializationVector, other.mInitializationVector) &&
+                Objects.equals(this.mKeyFormat, other.mKeyFormat) &&
+                Objects.equals(this.mKeyFormatVersions, other.mKeyFormatVersions) &&
+                Objects.equals(this.mMethod, other.mMethod) &&
+                Objects.equals(this.mUri, other.mUri);
     }
 
     public static class Builder {

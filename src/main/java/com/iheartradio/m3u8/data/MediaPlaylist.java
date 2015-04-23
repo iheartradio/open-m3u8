@@ -2,6 +2,7 @@ package com.iheartradio.m3u8.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MediaPlaylist {
     private final List<TrackData> mTracks;
@@ -20,23 +21,6 @@ public class MediaPlaylist {
         mIsIframesOnly = isIframesOnly;
         mStartData = startData;
         mPlaylistType = playlistType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof MediaPlaylist)) {
-            return false;
-        }
-
-        MediaPlaylist other = (MediaPlaylist) o;
-
-        return ObjectUtil.equals(this.mTracks, other.mTracks) &&
-               ObjectUtil.equals(this.mUnknownTags, other.mUnknownTags) &&
-               this.mTargetDuration == other.mTargetDuration &&
-               this.mMediaSequenceNumber == other.mMediaSequenceNumber &&
-               this.mIsIframesOnly == other.mIsIframesOnly &&
-               ObjectUtil.equals(this.mStartData, other.mStartData) &&
-               this.mPlaylistType == other.mPlaylistType;
     }
 
     public List<TrackData> getTracks() {
@@ -81,6 +65,29 @@ public class MediaPlaylist {
 
     public Builder buildUpon() {
         return new Builder(mTracks, mUnknownTags, mTargetDuration, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType, mStartData);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(mIsIframesOnly, mMediaSequenceNumber, mPlaylistType,
+                mStartData, mTargetDuration, mTracks, mUnknownTags);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MediaPlaylist)) {
+            return false;
+        }
+
+        MediaPlaylist other = (MediaPlaylist) o;
+        
+        return this.mIsIframesOnly == other.mIsIframesOnly &&
+                this.mMediaSequenceNumber == other.mMediaSequenceNumber &&
+                Objects.equals(this.mPlaylistType, other.mPlaylistType) &&
+                Objects.equals(this.mStartData, other.mStartData) &&
+                this.mTargetDuration == other.mTargetDuration &&
+                Objects.equals(this.mTracks, other.mTracks) &&
+                Objects.equals(this.mUnknownTags, other.mUnknownTags);
     }
 
     public static class Builder {

@@ -1,5 +1,7 @@
 package com.iheartradio.m3u8.data;
 
+import java.util.Objects;
+
 public class Resolution {
     public final int width;
     public final int height;
@@ -10,12 +12,20 @@ public class Resolution {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(height, width);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof Resolution)) {
             return false;
         }
 
         Resolution other = (Resolution) o;
-        return this.width == other.width && this.height == other.height;
+        
+        return this.width == other.width &&
+                this.height == other.height;
     }
+
 }
