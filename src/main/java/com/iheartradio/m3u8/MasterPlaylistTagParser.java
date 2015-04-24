@@ -260,10 +260,10 @@ abstract class MasterPlaylistTagParser extends ExtTagParser {
                 throw new ParseException(ParseExceptionType.MISSING_STREAM_BANDWIDTH, getTag());
             }
             
-            handle(builder, state, streamInfo);
+            doParse(builder, state, streamInfo);
         }
         
-        protected abstract void handle(Builder builder, ParseState state, StreamInfo streamInfo) throws ParseException;
+        protected abstract void doParse(Builder builder, ParseState state, StreamInfo streamInfo) throws ParseException;
 
     }
     
@@ -278,7 +278,7 @@ abstract class MasterPlaylistTagParser extends ExtTagParser {
             });
         }
         
-        protected void handle(Builder streamBuilder, ParseState state, StreamInfo streamInfo) throws ParseException {
+        protected void doParse(Builder streamBuilder, ParseState state, StreamInfo streamInfo) throws ParseException {
 
             if (!streamBuilder.isUriSet()) {
                 throw new ParseException(ParseExceptionType.MISSING_STREAM_URI, getTag());
@@ -296,7 +296,7 @@ abstract class MasterPlaylistTagParser extends ExtTagParser {
             final MasterParseState masterState = state.getMaster();
 
             masterState.playlists.add(builder
-                    .withStreamInfo(masterState.streamInfo)
+                    .withStreamInfo(streamInfo)
                     .build());
         };
         
@@ -333,7 +333,7 @@ abstract class MasterPlaylistTagParser extends ExtTagParser {
             });    
         }
         
-        protected void handle(Builder builder, ParseState state, StreamInfo streamInfo) {
+        protected void doParse(Builder builder, ParseState state, StreamInfo streamInfo) {
             state.getMaster().streamInfo = streamInfo;
         };
         
