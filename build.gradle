@@ -1,3 +1,20 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+    }
+}
+
+plugins {
+    id 'net.saliman.cobertura' version '2.2.7'
+}
+
+repositories {
+    mavenCentral()
+}
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
@@ -10,19 +27,6 @@ idea {
     }
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
 group 'com.iheartradio.m3u8'
 archivesBaseName = 'open-m3u8'
 sourceCompatibility = 1.7
@@ -30,6 +34,8 @@ version '0.1.0'
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    testRuntime "org.slf4j:slf4j-log4j12:1.7.5"
+    testRuntime "log4j:log4j:1.2.7"
 }
 
 task javadocJar(type: Jar) {

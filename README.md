@@ -135,3 +135,18 @@ if (playlist.hasMasterPlaylist() && playlist.getMasterPlaylist().hasUnknownTags(
     System.out.println("Parsing without unknown tags successful");
 }
 ```
+
+=======
+## Build
+
+This is a Gradle 2.1 project. Build via
+```
+gradle build
+```
+which also executes the unit tests.
+
+Cobertura is configured to report the line coverage:
+```
+gradle cobertura
+```
+producing the coverage report at `build/reports/cobertura/index.html`
