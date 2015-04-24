@@ -22,6 +22,8 @@ This library needs to support Android which means we are limited to Java 7 sans 
 * 4 spaces per indent - no tab characters
 * mPrefix private members
 * opening braces on the same line
+* when wrapping long method calls, put each argument on its own line
+* when building long fluent builders, put each method in the chain on its own line
 
 ## Merging
 
