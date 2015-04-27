@@ -4,7 +4,7 @@
 
 This is an open source M3U8 playlist parser java library that attempts to conform to this specification:
 
-http://tools.ietf.org/html/draft-pantos-http-live-streaming-14
+http://tools.ietf.org/html/draft-pantos-http-live-streaming-16
 
 Currently the functionality is more than sufficient for our needs. However, there is still a lot of work to be done before we have full compliance. Pull requests are welcome!
 
