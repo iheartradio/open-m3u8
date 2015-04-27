@@ -17,12 +17,10 @@ import static org.junit.Assert.*;
 
 public class PlaylistParserWriterTest {
 
-    private PlaylistParser parser;
     private PlaylistWriter writer;
 
     @Before
     public void setUp() {
-        parser = new PlaylistParser();
         writer = new PlaylistWriter();
     }
     
@@ -30,7 +28,7 @@ public class PlaylistParserWriterTest {
         assertNotNull(fileName);
         
         try(InputStream is = new FileInputStream("src/test/resources/" + fileName)) {
-            Playlist playlist = parser.parse(is, Format.EXT_M3U, Encoding.UTF_8);
+            Playlist playlist = new PlaylistParser(is, Format.EXT_M3U, Encoding.UTF_8).parse();
             return playlist;
         }
     }

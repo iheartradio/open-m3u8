@@ -5,97 +5,75 @@ import java.io.InputStream;
 
 import com.iheartradio.m3u8.data.Playlist;
 
-public class PlaylistParser {
+public class PlaylistParser implements IPlaylistParser {
+    private final IPlaylistParser mPlaylistParser;
+
     /**
-     * This will close the InputStream and use a strict input stream parsing.
+     * Equivalent to:
+     * <pre>
+     *     new PlaylistParser(inputStream, format, filename, ParsingMode.STRICT);
+     * </pre>
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param filename the extension of this filename will be used to determine the encoding required of the playlist
-     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
-     * @throws IOException if the InputStream throws an IOException
-     * @throws ParseException if the data is not formatted properly
      */
-    public Playlist parse(InputStream inputStream, Format format, String filename) throws IOException, ParseException {
-        return parse(inputStream, format, parseExtension(filename), ParsingMode.STRICT);
+    public PlaylistParser(InputStream inputStream, Format format, String filename) {
+        this(inputStream, format, parseExtension(filename), ParsingMode.STRICT);
     }
     
     /**
-     * This will close the InputStream.
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param filename the extension of this filename will be used to determine the encoding required of the playlist
      * @param parsingMode indicates how to handle unknown lines in the input stream
-     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
-     * @throws IOException if the InputStream throws an IOException
-     * @throws ParseException if the data is not formatted properly
      */
-    public Playlist parse(InputStream inputStream, Format format, String filename, ParsingMode parsingMode) throws IOException, ParseException {
-        if (filename == null) {
-            throw new IllegalArgumentException("filename is null");
-        }
-
-        return parse(inputStream, format, parseExtension(filename), parsingMode);
+    public PlaylistParser(InputStream inputStream, Format format, String filename, ParsingMode parsingMode) {
+        this(inputStream, format, parseExtension(filename), parsingMode);
     }
     
     /**
-     * This will close the InputStream and use a strict input stream parsing.
+     * Equivalent to:
+     * <pre>
+     *     new PlaylistParser(inputStream, format, extension, ParsingMode.STRICT);
+     * </pre>
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param extension requires the playlist be encoded according to this extension {M3U : windows-1252, M3U8 : utf-8}
-     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
-     * @throws IOException if the InputStream throws an IOException
-     * @throws ParseException if the data is not formatted properly
      */
-    public Playlist parse(InputStream inputStream, Format format, Extension extension) throws IOException, ParseException {
-        if (extension == null) {
-            throw new IllegalArgumentException("extension is null");
-        }
-
-        return parse(inputStream, format, extension.encoding, ParsingMode.STRICT);
+    public PlaylistParser(InputStream inputStream, Format format, Extension extension) {
+        this(inputStream, format, extension.encoding, ParsingMode.STRICT);
     }
 
     /**
-     * This will close the InputStream.
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param extension requires the playlist be encoded according to this extension {M3U : windows-1252, M3U8 : utf-8}
      * @param parsingMode indicates how to handle unknown lines in the input stream
-     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
-     * @throws IOException if the InputStream throws an IOException
-     * @throws ParseException if the data is not formatted properly
      */
-    public Playlist parse(InputStream inputStream, Format format, Extension extension, ParsingMode parsingMode) throws IOException, ParseException {
-        if (extension == null) {
-            throw new IllegalArgumentException("extension is null");
-        }
-
-        return parse(inputStream, format, extension.encoding, parsingMode);
+    public PlaylistParser(InputStream inputStream, Format format, Extension extension, ParsingMode parsingMode) {
+        this(inputStream, format, extension.encoding, parsingMode);
     }
 
     /**
-     * This will close the InputStream and use a strict input stream parsing
+     * Equivalent to:
+     * <pre>
+     *     new PlaylistParser(inputStream, format, encoding, ParsingMode.STRICT);
+     * </pre>
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param encoding required encoding for the playlist
-     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
-     * @throws IOException if the InputStream throws an IOException
-     * @throws ParseException if the data is not formatted properly
      */
-    public Playlist parse(InputStream inputStream, Format format, Encoding encoding) throws IOException, ParseException {
-        return parse(inputStream, format, encoding, ParsingMode.STRICT);
+    public PlaylistParser(InputStream inputStream, Format format, Encoding encoding) {
+        this(inputStream, format, encoding, ParsingMode.STRICT);
     }
     
     /**
-     * This will close the InputStream.
      * @param inputStream an open input stream positioned at the beginning of the file
      * @param format requires the playlist to be this format
      * @param encoding required encoding for the playlist
      * @param parsingMode indicates how to handle unknown lines in the input stream
-     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
-     * @throws IOException if the InputStream throws an IOException
-     * @throws ParseException if the data is not formatted properly
      */
-    public Playlist parse(InputStream inputStream, Format format, Encoding encoding, ParsingMode parsingMode) throws IOException, ParseException {
+    public PlaylistParser(InputStream inputStream, Format format, Encoding encoding, ParsingMode parsingMode) {
         if (inputStream == null) {
             throw new IllegalArgumentException("inputStream is null");
         }
@@ -114,29 +92,42 @@ public class PlaylistParser {
 
         switch (format) {
             case M3U:
-                return new M3uParser(inputStream, encoding).parse();
+                mPlaylistParser = new M3uParser(inputStream, encoding);
+                break;
             case EXT_M3U:
-                return new ExtendedM3uParser(inputStream, encoding).parse(parsingMode);
+                mPlaylistParser = new ExtendedM3uParser(inputStream, encoding, parsingMode);
+                break;
             default:
                 throw new RuntimeException("unsupported format detected, this should be impossible: " + format);
         }
+    }
 
+    /**
+     * This will not close the InputStream.
+     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
+     * @throws IOException if the InputStream throws an IOException
+     * @throws ParseException if the data is not formatted properly
+     */
+    public Playlist parse() throws IOException, ParseException {
+        return mPlaylistParser.parse();
     }
 
     private static Extension parseExtension(String filename) {
-        if (filename != null) {
-            int index = filename.lastIndexOf(".");
+        if (filename == null) {
+            throw new IllegalArgumentException("filename is null");
+        }
 
-            if (index != -1 ) {
-                String extension = filename.substring(index + 1);
+        int index = filename.lastIndexOf(".");
 
-                if (Extension.M3U.value.equalsIgnoreCase(extension)) {
-                    return Extension.M3U;
-                } else if (Extension.M3U8.value.equalsIgnoreCase(extension)) {
-                    return Extension.M3U8;
-                } else {
-                    throw new IllegalArgumentException("filename extension should be .m3u or .m3u8: " + filename);
-                }
+        if (index != -1 ) {
+            String extension = filename.substring(index + 1);
+
+            if (Extension.M3U.value.equalsIgnoreCase(extension)) {
+                return Extension.M3U;
+            } else if (Extension.M3U8.value.equalsIgnoreCase(extension)) {
+                return Extension.M3U8;
+            } else {
+                throw new IllegalArgumentException("filename extension should be .m3u or .m3u8: " + filename);
             }
         }
 

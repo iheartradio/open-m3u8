@@ -21,6 +21,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
     public TrackInfo trackInfo;
     public EncryptionData encryptionData;
     public StartData startData;
+    public boolean endOfList;
 
     @Override
     public MediaPlaylist buildPlaylist() throws ParseException {

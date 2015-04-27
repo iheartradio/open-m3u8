@@ -45,7 +45,7 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
             super.parse(line, state);
 
             match(Constants.EXT_X_ENDLIST_PATTERN, line);
-            //TODO we should ensure that no new items are added beyond this point to the playlist
+            state.getMedia().endOfList = true;
         }
     };
     

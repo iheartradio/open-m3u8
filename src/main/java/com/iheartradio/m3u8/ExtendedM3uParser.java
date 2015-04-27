@@ -1,21 +1,24 @@
 package com.iheartradio.m3u8;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.iheartradio.m3u8.data.Playlist;
 
-class ExtendedM3uParser {
-    private final ExtendedM3uScanner mScanner;
+class ExtendedM3uParser implements IPlaylistParser {
+    private final M3uScanner mScanner;
     private final Encoding mEncoding;
+    private final ParsingMode mParsingMode;
     private final Map<String, IExtTagParser> mExtTagParsers = new HashMap<String, IExtTagParser>();
 
-    ExtendedM3uParser(InputStream inputStream, Encoding encoding) {
-        mScanner = new ExtendedM3uScanner(inputStream, encoding);
+    ExtendedM3uParser(InputStream inputStream, Encoding encoding, ParsingMode parsingMode) {
+        mScanner = new M3uScanner(inputStream, encoding);
         mEncoding = encoding;
+        mParsingMode = parsingMode;
 
-        // TODO implement the EXT tag handlers and add them here
+        // TODO implement the remaining EXT tag handlers and add them here
         putParsers(
                 ExtTagParser.EXTM3U_HANDLER,
                 ExtTagParser.EXT_X_VERSION_HANDLER,
@@ -34,7 +37,8 @@ class ExtendedM3uParser {
         );
     }
 
-    Playlist parse(ParsingMode parsingMode) throws ParseException {
+    @Override
+    public Playlist parse() throws IOException, ParseException {
         final ParseState state = new ParseState(mEncoding);
         final LineParser playlistParser = new PlaylistLineParser();
         final LineParser trackLineParser = new TrackLineParser();
@@ -49,23 +53,27 @@ class ExtendedM3uParser {
                 } else {
                     if (isExtTag(line)) {
                         final String tagKey = getExtTagKey(line);
-                        IExtTagParser handler = mExtTagParsers.get(tagKey);
+                        IExtTagParser tagParser = mExtTagParsers.get(tagKey);
 
-                        if (handler == null) {
+                        if (tagParser == null) {
                             //To support forward compatibility, when parsing Playlists, Clients
                             //MUST:
                             //o  ignore any unrecognized tags.
-                            switch(parsingMode) {
+                            switch(mParsingMode) {
                                 case STRICT:
                                     throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
                                 case LENIENT:
                                 default:
-                                    handler = ExtTagParser.EXT_UNKNOWN_HANDLER;
+                                    tagParser = ExtTagParser.EXT_UNKNOWN_HANDLER;
                                     break;
                             }
-                        } 
-                        handler.parse(line, state);
-                        
+                        }
+
+                        tagParser.parse(line, state);
+
+                        if (state.isMedia() && state.getMedia().endOfList) {
+                            break;
+                        }
                     } else if (state.isMaster()) {
                         playlistParser.parse(line, state);
                     } else if (state.isMedia()) {
@@ -80,8 +88,6 @@ class ExtendedM3uParser {
         } catch (ParseException exception) {
             exception.setInput(mScanner.getInput());
             throw exception;
-        } finally {
-            mScanner.close();
         }
     }
 

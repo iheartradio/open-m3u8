@@ -1,20 +1,22 @@
 package com.iheartradio.m3u8;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import com.iheartradio.m3u8.data.MediaPlaylist;
 import com.iheartradio.m3u8.data.Playlist;
 
-class M3uParser {
-    private final ExtendedM3uScanner mScanner;
+class M3uParser implements IPlaylistParser {
+    private final M3uScanner mScanner;
     private final Encoding mEncoding;
 
     M3uParser(InputStream inputStream, Encoding encoding) {
-        mScanner = new ExtendedM3uScanner(inputStream, encoding);
+        mScanner = new M3uScanner(inputStream, encoding);
         mEncoding = encoding;
     }
 
-    Playlist parse() throws ParseException {
+    @Override
+    public Playlist parse() throws IOException, ParseException {
         final ParseState state = new ParseState(mEncoding);
         final TrackLineParser trackLineParser = new TrackLineParser();
 
@@ -40,8 +42,6 @@ class M3uParser {
         } catch (ParseException exception) {
             exception.setInput(mScanner.getInput());
             throw exception;
-        } finally {
-            mScanner.close();
         }
     }
 
