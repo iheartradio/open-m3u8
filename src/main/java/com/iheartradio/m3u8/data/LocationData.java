@@ -42,7 +42,7 @@ public class LocationData {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof LocationData)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
