@@ -40,9 +40,8 @@ Getting started with parsing is quite easy: Get a `PlaylistParser` and specify t
 
 ```java
 InputStream inputStream = ...
-PlaylistParser parser = new PlaylistParser();
-// The inputStream is automatically closed after this operation
-Playlist playlist = parser.parse(inputStream, Format.EXT_M3U, Encoding.UTF_8);
+PlaylistParser parser = new PlaylistParser(inputStream, Format.EXT_M3U, Encoding.UTF_8);
+Playlist playlist = parser.parse();
 ```
 
 Creating a new `Playlist` works via `Builder`s and their fluent `with*()` methods. On each `build()` method the provided parameters are validated:
@@ -119,12 +118,12 @@ additional.mp3
 
 The parser supports a `lenient` mode - by default it operats in a `strict` mode and parsing unknown tags in the `InputStream` cause an `ParseException`.
 
-Activating the `lenient` mode via `com.iheartradio.m3u8.PlaylistParser.parse(InputStream, Format, Encoding, ParsingMode)`:
+Activating the `lenient` mode via `new PlaylistParser(InputStream, Format, Encoding, ParsingMode)`:
 
 ```java
 InputStream inputStream = ...
-PlaylistParser parser = new PlaylistParser();
-Playlist playlist = parser.parse(inputStream, Format.EXT_M3U, Encoding.UTF_8, ParsingMode.LENIENT);
+PlaylistParser parser = new PlaylistParser(inputStream, Format.EXT_M3U, Encoding.UTF_8, ParsingMode.LENIENT);
+Playlist playlist = parser.parse();
 if (playlist.hasMasterPlaylist() && playlist.getMasterPlaylist().hasUnknownTags()) {
     System.err.println(
         playlist.getMasterPlaylist().getUnknownTags());
