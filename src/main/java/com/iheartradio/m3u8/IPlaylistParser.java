@@ -6,4 +6,5 @@ import java.io.IOException;
 
 interface IPlaylistParser {
     Playlist parse() throws IOException, ParseException;
+    boolean isAvailable();
 }

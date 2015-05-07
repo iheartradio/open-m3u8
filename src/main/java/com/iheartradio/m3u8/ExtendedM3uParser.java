@@ -7,15 +7,12 @@ import java.util.Map;
 
 import com.iheartradio.m3u8.data.Playlist;
 
-class ExtendedM3uParser implements IPlaylistParser {
-    private final M3uScanner mScanner;
-    private final Encoding mEncoding;
+class ExtendedM3uParser extends BaseM3uParser {
     private final ParsingMode mParsingMode;
     private final Map<String, IExtTagParser> mExtTagParsers = new HashMap<String, IExtTagParser>();
 
     ExtendedM3uParser(InputStream inputStream, Encoding encoding, ParsingMode parsingMode) {
-        mScanner = new M3uScanner(inputStream, encoding);
-        mEncoding = encoding;
+        super(inputStream, encoding);
         mParsingMode = parsingMode;
 
         // TODO implement the remaining EXT tag handlers and add them here
@@ -39,6 +36,8 @@ class ExtendedM3uParser implements IPlaylistParser {
 
     @Override
     public Playlist parse() throws IOException, ParseException {
+        validateAvailable();
+
         final ParseState state = new ParseState(mEncoding);
         final LineParser playlistParser = new PlaylistLineParser();
         final LineParser trackLineParser = new TrackLineParser();

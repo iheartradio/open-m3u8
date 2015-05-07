@@ -42,8 +42,13 @@ public class ExtendedM3uParserTest {
                         "\n";
 
         final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
-        final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8, ParsingMode.STRICT).parse();
+        final ExtendedM3uParser parser = new ExtendedM3uParser(inputStream, Encoding.UTF_8, ParsingMode.STRICT);
 
+        assertTrue(parser.isAvailable());
+
+        final Playlist playlist = parser.parse();
+
+        assertFalse(parser.isAvailable());
         assertTrue(playlist.isExtended());
         assertEquals(2, playlist.getCompatibilityVersion());
         assertTrue(playlist.hasMasterPlaylist());
@@ -109,8 +114,16 @@ public class ExtendedM3uParserTest {
     public void testParsingMultiplePlaylists() throws Exception {
         try (final InputStream inputStream = inputStreamFromResource("twoMediaPlaylists.m3u8")) {
             final PlaylistParser parser = new PlaylistParser(inputStream, Format.EXT_M3U, Encoding.UTF_8);
+
+            assertTrue(parser.isAvailable());
+
             final Playlist playlist1 = parser.parse();
+
+            assertTrue(parser.isAvailable());
+
             final Playlist playlist2 = parser.parse();
+
+            assertFalse(parser.isAvailable());
 
             List<TrackData> expected1 = Arrays.asList(
                     makeTrackData("http://media.example.com/first.ts", 9.009f),

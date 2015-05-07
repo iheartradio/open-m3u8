@@ -6,17 +6,15 @@ import java.io.InputStream;
 import com.iheartradio.m3u8.data.MediaPlaylist;
 import com.iheartradio.m3u8.data.Playlist;
 
-class M3uParser implements IPlaylistParser {
-    private final M3uScanner mScanner;
-    private final Encoding mEncoding;
-
+class M3uParser extends BaseM3uParser {
     M3uParser(InputStream inputStream, Encoding encoding) {
-        mScanner = new M3uScanner(inputStream, encoding);
-        mEncoding = encoding;
+        super(inputStream, encoding);
     }
 
     @Override
     public Playlist parse() throws IOException, ParseException {
+        validateAvailable();
+
         final ParseState state = new ParseState(mEncoding);
         final TrackLineParser trackLineParser = new TrackLineParser();
 

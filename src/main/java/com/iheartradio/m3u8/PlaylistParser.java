@@ -104,12 +104,22 @@ public class PlaylistParser implements IPlaylistParser {
 
     /**
      * This will not close the InputStream.
-     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist
+     * @return Playlist which is either a MasterPlaylist or a MediaPlaylist, this will never return null
      * @throws IOException if the InputStream throws an IOException
+     * @throws java.io.EOFException if there is no data to parse
      * @throws ParseException if the data is not formatted properly
      */
+    @Override
     public Playlist parse() throws IOException, ParseException {
         return mPlaylistParser.parse();
+    }
+
+    /**
+     * @return true if there is more data to parse, false otherwise
+     */
+    @Override
+    public boolean isAvailable() {
+        return mPlaylistParser.isAvailable();
     }
 
     private static Extension parseExtension(String filename) {
@@ -119,8 +129,10 @@ public class PlaylistParser implements IPlaylistParser {
 
         int index = filename.lastIndexOf(".");
 
-        if (index != -1 ) {
-            String extension = filename.substring(index + 1);
+        if (index == -1) {
+            throw new IllegalArgumentException("filename has no extension: " + filename);
+        } else {
+            final String extension = filename.substring(index + 1);
 
             if (Extension.M3U.value.equalsIgnoreCase(extension)) {
                 return Extension.M3U;
@@ -130,7 +142,5 @@ public class PlaylistParser implements IPlaylistParser {
                 throw new IllegalArgumentException("filename extension should be .m3u or .m3u8: " + filename);
             }
         }
-
-        throw new IllegalArgumentException("filename has no extension: " + filename);
     }
 }
