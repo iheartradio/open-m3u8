@@ -16,14 +16,6 @@ import com.iheartradio.m3u8.data.PlaylistData;
 import static org.junit.Assert.*;
 
 public class PlaylistParserWriterTest {
-
-    private PlaylistWriter writer;
-
-    @Before
-    public void setUp() {
-        writer = new PlaylistWriter();
-    }
-    
     Playlist readPlaylist(String fileName) throws IOException, ParseException {
         assertNotNull(fileName);
         
@@ -37,9 +29,10 @@ public class PlaylistParserWriterTest {
         assertNotNull(playlist);
         
         try(ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-            writer.write(os, playlist, Format.EXT_M3U, Encoding.UTF_8);
+            PlaylistWriter writer = new PlaylistWriter(os, Format.EXT_M3U, Encoding.UTF_8);
+            writer.write(playlist);
             
-            return os.toString(Encoding.UTF_8.getValue());
+            return os.toString(Encoding.UTF_8.value);
         }
     }
     

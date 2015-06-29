@@ -13,8 +13,8 @@ class Attribute {
     public String toString() {
         return new StringBuilder()
                 .append("(Attribute")
-                .append("name=").append(name).append(", ")
-                .append("value=").append(value)
+                .append(" name=").append(name)
+                .append(" value=").append(value)
                 .append(")").toString();
     }
 }

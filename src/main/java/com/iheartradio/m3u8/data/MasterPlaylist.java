@@ -48,9 +48,20 @@ public class MasterPlaylist {
 
         MasterPlaylist other = (MasterPlaylist) o;
         
-        return Objects.equals(this.mMediaData, other.mMediaData) &&
-                Objects.equals(this.mPlaylists, other.mPlaylists) &&
-                Objects.equals(this.mUnknownTags, other.mUnknownTags);
+        return Objects.equals(mMediaData, other.mMediaData) &&
+               Objects.equals(mPlaylists, other.mPlaylists) &&
+               Objects.equals(mUnknownTags, other.mUnknownTags);
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("(MasterPlaylist")
+                .append(" mPlaylists=").append(mPlaylists.toString())
+                .append(" mMediaData=").append(mMediaData.toString())
+                .append(" mUnknownTags=").append(mUnknownTags.toString())
+                .append(")")
+                .toString();
     }
 
     public static class Builder {

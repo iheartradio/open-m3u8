@@ -36,7 +36,7 @@ public class PlaylistData extends LocationData {
         PlaylistData other = (PlaylistData) o;
         
         return super.equals(other) &&
-                Objects.equals(this.mStreamInfo, other.mStreamInfo);
+               Objects.equals(mStreamInfo, other.mStreamInfo);
     }
 
     public static class Builder {

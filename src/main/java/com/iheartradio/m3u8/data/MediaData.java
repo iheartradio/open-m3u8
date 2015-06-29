@@ -144,17 +144,17 @@ public class MediaData {
 
         MediaData other = (MediaData) o;
 
-        return this.mType == other.mType &&
-               Objects.equals(this.mUri, other.mUri) &&
-               Objects.equals(this.mGroupId, other.mGroupId) &&
-               Objects.equals(this.mLanguage, other.mLanguage) &&
-               Objects.equals(this.mAssociatedLanguage, other.mAssociatedLanguage) &&
-               Objects.equals(this.mName, other.mName) &&
-               this.mDefault == other.mDefault &&
-               this.mAutoSelect == other.mAutoSelect &&
-               this.mForced == other.mForced &&
-               Objects.equals(this.mInStreamId, other.mInStreamId) &&
-               Objects.equals(this.mCharacteristics, other.mCharacteristics);
+        return mType == other.mType &&
+               Objects.equals(mUri, other.mUri) &&
+               Objects.equals(mGroupId, other.mGroupId) &&
+               Objects.equals(mLanguage, other.mLanguage) &&
+               Objects.equals(mAssociatedLanguage, other.mAssociatedLanguage) &&
+               Objects.equals(mName, other.mName) &&
+               mDefault == other.mDefault &&
+               mAutoSelect == other.mAutoSelect &&
+               mForced == other.mForced &&
+               Objects.equals(mInStreamId, other.mInStreamId) &&
+               Objects.equals(mCharacteristics, other.mCharacteristics);
     }
 
     public static class Builder {

@@ -14,7 +14,7 @@ We would like to give back to the open source community surrounding Android that
 
 ## Artifacts
 
-We now have artifacts in Maven Central!
+We now have artifacts in Maven Central! Artifacts are typically built with Java 7.
 
 ### Gradle
 
@@ -69,7 +69,7 @@ Playlist playlist = new Playlist.Builder()
 
 The Playlist is similar to a C style union of a `MasterPlaylist` and `MediaPlaylist` in that it has one or the other but not both. You can check with `Playlist.hasMasterPlaylist()` or `Playlist.hasMediaPlaylist()` which type you got.
 
-Modifying an existing `Playlist` work similar to creating via the `Builder`s: Also each data class provides an `buildUpon()` method to generate a new `Builder` with all the data from the object itself:
+Modifying an existing `Playlist` works similar to creating via the `Builder`s. Also, each data class provides a `buildUpon()` method to generate a new `Builder` with all the data from the object itself:
 
 ```java
 TrackData additionalTrack = new TrackData.Builder()
@@ -90,12 +90,21 @@ Playlist updatedPlaylist = playlist.buildUpon()
     .build();
 ```
 
-Writing out a `Playlist` again works the same way as parsing via `PlaylistParser`:
+A `PlaylistWriter` can be obtained directly or via its builder.
 
 ```java
 OutputStream outputStream = ...
-PlaylistWriter writer = new PlaylistWriter();
-writer.write(outputStream, updatedPlaylist, Format.EXT_M3U, Encoding.UTF_8);
+
+PlaylistWriter writer = new PlaylistWriter(outputStream, Format.EXT_M3U, Encoding.UTF_8);
+writer.write(updatedPlaylist);
+
+writer = new PlaylistWriter.Builder()
+                 .withOutputStream(outputStream)
+                 .withFormat(Format.EXT_M3U)
+                 .withEncoding(Encoding.UTF_8)
+                 .build();
+
+writer.write(updatedPlaylist);
 ```
 
 causing this playlist to be written:
@@ -111,6 +120,8 @@ example.mp3
 additional.mp3
 #EXT-X-ENDLIST
 ```
+
+Currently, writing multiple playlists with the same writer is not supported.
 
 ## Advanced usage
 
@@ -138,11 +149,16 @@ if (playlist.hasMasterPlaylist() && playlist.getMasterPlaylist().hasUnknownTags(
 =======
 ## Build
 
-This is a Gradle 2.1 project. Build via
+This is a Gradle project. Known compatible gradle versions:
+
+- 2.1
+- 2.4
+
+Build and test via:
 ```
 gradle build
 ```
-which also executes the unit tests.
+The output can be found in the generated /build/libs/ dir.
 
 Cobertura is configured to report the line coverage:
 ```

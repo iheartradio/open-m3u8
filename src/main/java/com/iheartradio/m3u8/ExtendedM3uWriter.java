@@ -8,7 +8,6 @@ import java.util.List;
 import com.iheartradio.m3u8.data.Playlist;
 
 class ExtendedM3uWriter extends Writer {
-
     private List<IExtTagWriter> mExtTagWriter = new ArrayList<IExtTagWriter>();
 
     public ExtendedM3uWriter(OutputStream outputStream, Encoding encoding) {
@@ -39,10 +38,10 @@ class ExtendedM3uWriter extends Writer {
             }
         }
     }
-    
+
     @Override
     void doWrite(Playlist playlist) throws IOException, ParseException {
-        for(IExtTagWriter singleTagWriter : mExtTagWriter) {
+        for (IExtTagWriter singleTagWriter : mExtTagWriter) {
             singleTagWriter.write(tagWriter, playlist);
         }
     }

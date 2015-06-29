@@ -76,11 +76,11 @@ public class StreamInfo {
     public String getAudio() {
         return mAudio;
     }
-    
+
     public boolean hasUri() {
         return mUri != null;
     }
-    
+
     public String getUri() {
         return mUri;
     }
@@ -110,7 +110,8 @@ public class StreamInfo {
     }
 
     public Builder buildUpon() {
-        return new Builder(mBandwidth,
+        return new Builder(
+                mBandwidth,
                 mAverageBandwidth,
                 mCodecs,
                 mResolution,
@@ -120,19 +121,19 @@ public class StreamInfo {
                 mSubtitles,
                 mClosedCaptions);
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(
-                mAudio,
-                mAverageBandwidth,
                 mBandwidth,
-                mClosedCaptions,
+                mAverageBandwidth,
                 mCodecs,
                 mResolution,
-                mSubtitles,
+                mAudio,
                 mUri,
-                mVideo);
+                mVideo,
+                mSubtitles,
+                mClosedCaptions);
     }
 
     @Override
@@ -142,15 +143,16 @@ public class StreamInfo {
         }
 
         StreamInfo other = (StreamInfo) o;
-        
-        return Objects.equals(this.mAudio, other.mAudio) &&
-                this.mAverageBandwidth == other.mAverageBandwidth &&
-                this.mBandwidth == other.mBandwidth &&
-                Objects.equals(this.mClosedCaptions, other.mClosedCaptions) &&
-                Objects.equals(this.mCodecs, other.mCodecs) &&
-                Objects.equals(this.mResolution, other.mResolution) &&
-                Objects.equals(this.mUri, other.mUri) &&
-                Objects.equals(this.mVideo, other.mVideo);
+
+        return mBandwidth == other.mBandwidth &&
+               mAverageBandwidth == other.mAverageBandwidth &&
+               Objects.equals(mCodecs, other.mCodecs) &&
+               Objects.equals(mResolution, other.mResolution) &&
+               Objects.equals(mAudio, other.mAudio) &&
+               Objects.equals(mUri, other.mUri) &&
+               Objects.equals(mVideo, other.mVideo) &&
+               Objects.equals(mSubtitles, other.mSubtitles) &&
+               Objects.equals(mClosedCaptions, other.mClosedCaptions);
     }
 
     public static class Builder {
@@ -216,7 +218,7 @@ public class StreamInfo {
             mUriSet = true;
             return this;
         }
-        
+
         public Builder withAudio(String audio) {
             mAudio = audio;
             return this;
@@ -240,7 +242,7 @@ public class StreamInfo {
         public boolean isUriSet() {
             return mUriSet;
         }
-        
+
         public boolean isBandwidthSet() {
             return mBandwidthSet;
         }

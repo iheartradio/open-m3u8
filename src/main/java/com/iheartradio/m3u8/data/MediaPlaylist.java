@@ -80,14 +80,29 @@ public class MediaPlaylist {
         }
 
         MediaPlaylist other = (MediaPlaylist) o;
-        
-        return this.mIsIframesOnly == other.mIsIframesOnly &&
-                this.mMediaSequenceNumber == other.mMediaSequenceNumber &&
-                Objects.equals(this.mPlaylistType, other.mPlaylistType) &&
-                Objects.equals(this.mStartData, other.mStartData) &&
-                this.mTargetDuration == other.mTargetDuration &&
-                Objects.equals(this.mTracks, other.mTracks) &&
-                Objects.equals(this.mUnknownTags, other.mUnknownTags);
+
+        return Objects.equals(mTracks, other.mTracks) &&
+               Objects.equals(mUnknownTags, other.mUnknownTags) &&
+               mTargetDuration == other.mTargetDuration &&
+               mMediaSequenceNumber == other.mMediaSequenceNumber &&
+               mIsIframesOnly == other.mIsIframesOnly &&
+               Objects.equals(mPlaylistType, other.mPlaylistType) &&
+               Objects.equals(mStartData, other.mStartData);
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("(MediaPlaylist")
+                .append(" mTracks=").append(mTracks)
+                .append(" mUnknownTags=").append(mUnknownTags)
+                .append(" mTargetDuration=").append(mTargetDuration)
+                .append(" mMediaSequenceNumber=").append(mMediaSequenceNumber)
+                .append(" mIsIframesOnly=").append(mIsIframesOnly)
+                .append(" mPlaylistType=").append(mPlaylistType)
+                .append(" mStartData=").append(mStartData)
+                .append(")")
+                .toString();
     }
 
     public static class Builder {

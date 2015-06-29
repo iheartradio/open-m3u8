@@ -23,9 +23,8 @@ public class Resolution {
         }
 
         Resolution other = (Resolution) o;
-        
-        return this.width == other.width &&
-                this.height == other.height;
-    }
 
+        return width == other.width &&
+               height == other.height;
+    }
 }

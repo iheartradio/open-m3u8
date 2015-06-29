@@ -34,7 +34,7 @@ public class LocationData {
     public String getLocation() {
         return mLocation;
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hash(mLocation, mLocationType);
@@ -47,14 +47,18 @@ public class LocationData {
         }
 
         LocationData other = (LocationData) o;
-        
-        return Objects.equals(this.mLocation, other.mLocation) &&
-                Objects.equals(this.mLocationType, other.mLocationType);
+
+        return Objects.equals(mLocation, other.mLocation) &&
+               Objects.equals(mLocationType, other.mLocationType);
     }
 
     @Override
     public String toString() {
-        return "LocationData [mLocationType=" + mLocationType + ", mLocation="
-                + mLocation + "]";
+        return new StringBuilder()
+                .append("(LocationData")
+                .append(" mLocationType=").append(mLocationType)
+                .append(" mLocation=").append(mLocation)
+                .append(")")
+                .toString();
     }
 }

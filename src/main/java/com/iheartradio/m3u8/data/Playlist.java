@@ -65,11 +65,24 @@ public class Playlist {
 
         Playlist other = (Playlist) o;
         
-        return this.mCompatibilityVersion == other.mCompatibilityVersion &&
-                this.mIsExtended == other.mIsExtended &&
-                this.mIsIframesOnly == other.mIsIframesOnly &&
-                Objects.equals(this.mMasterPlaylist, other.mMasterPlaylist) &&
-                Objects.equals(this.mMediaPlaylist, other.mMediaPlaylist);
+        return Objects.equals(mMasterPlaylist, other.mMasterPlaylist) &&
+               Objects.equals(mMediaPlaylist, other.mMediaPlaylist) &&
+               mIsExtended == other.mIsExtended &&
+               mIsIframesOnly == other.mIsIframesOnly &&
+               mCompatibilityVersion == other.mCompatibilityVersion;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("(Playlist")
+                .append(" mMasterPlaylist=").append(mMasterPlaylist)
+                .append(" mMediaPlaylist=").append(mMediaPlaylist)
+                .append(" mIsExtended=").append(mIsExtended)
+                .append(" mIsIframesOnly=").append(mIsIframesOnly)
+                .append(" mCompatibilityVersion=").append(mCompatibilityVersion)
+                .append(")")
+                .toString();
     }
 
     public static class Builder {

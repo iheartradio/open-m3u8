@@ -6,10 +6,14 @@ import java.util.Scanner;
 
 class M3uScanner {
     private final Scanner mScanner;
+    private final boolean mSupportsByteOrderMark;
     private final StringBuilder mInput = new StringBuilder();
 
+    private boolean mCheckedByteOrderMark;
+
     M3uScanner(InputStream inputStream, Encoding encoding) {
-        mScanner = new Scanner(inputStream, encoding.getValue()).useLocale(Locale.US).useDelimiter(Constants.PARSE_NEW_LINE);
+        mScanner = new Scanner(inputStream, encoding.value).useLocale(Locale.US).useDelimiter(Constants.PARSE_NEW_LINE);
+        mSupportsByteOrderMark = encoding.supportsByteOrderMark;
     }
 
     String getInput() {
@@ -22,6 +26,15 @@ class M3uScanner {
 
     String next() throws ParseException {
         String line = mScanner.next();
+
+        if (mSupportsByteOrderMark && !mCheckedByteOrderMark) {
+            if (!line.isEmpty() && line.charAt(0) == Constants.UNICODE_BOM) {
+                line = line.substring(1);
+            }
+
+            mCheckedByteOrderMark = true;
+        }
+
         mInput.append(line).append("\n");
         return line;
     }

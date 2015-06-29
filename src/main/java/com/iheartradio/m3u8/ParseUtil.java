@@ -131,7 +131,7 @@ final class ParseUtil {
 
     public static String decodeUrl(String encodedUrl, Encoding encoding) throws ParseException {
         try {
-            return URLDecoder.decode(encodedUrl.replace("+", "%2B"), encoding.getValue());
+            return URLDecoder.decode(encodedUrl.replace("+", "%2B"), encoding.value);
         } catch (UnsupportedEncodingException exception) {
             throw new ParseException(ParseExceptionType.INTERNAL_ERROR);
         }
