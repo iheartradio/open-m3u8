@@ -2,7 +2,7 @@
 
 ## Description
 
-This is an open source M3U8 playlist parser java library that attempts to conform to this specification:
+This is an open source M3U8 playlist parser and writer java library that attempts to conform to this specification:
 
 http://tools.ietf.org/html/draft-pantos-http-live-streaming-16
 
