@@ -79,8 +79,8 @@ public class ExtendedM3uParserTest {
 
     @Test
     public void testParseMedia() throws Exception {
-        final String url = "http://www.my.song/file1.mp3";
-        final String path = "/usr/user1/file2.mp3";
+        final String absolute = "http://www.my.song/file1.mp3";
+        final String relative = "user1/file2.mp3";
 
         final String validData =
                 "#EXTM3U\n" +
@@ -89,15 +89,15 @@ public class ExtendedM3uParserTest {
                         "#EXT-X-MEDIA-SEQUENCE:10\n" +
                         "#some comment\n" +
                         "#EXTINF:120.0,title 1\n" +
-                        url + "\n" +
+                        absolute + "\n" +
                         "#EXTINF:100.0,title 2\n" +
                         "\n" +
-                        path + "\n" +
+                        relative + "\n" +
                         "\n";
 
         final List<TrackData> expectedTracks = Arrays.asList(
-                new TrackData.Builder().withUrl(url).withTrackInfo(new TrackInfo(120, "title 1")).build(),
-                new TrackData.Builder().withPath(path).withTrackInfo(new TrackInfo(100, "title 2")).build());
+                new TrackData.Builder().withUri(absolute).withTrackInfo(new TrackInfo(120, "title 1")).build(),
+                new TrackData.Builder().withUri(relative).withTrackInfo(new TrackInfo(100, "title 2")).build());
 
         final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
         final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8, ParsingMode.STRICT).parse();
@@ -144,10 +144,10 @@ public class ExtendedM3uParserTest {
         }
     }
 
-    private static TrackData makeTrackData(String url, float duration) {
+    private static TrackData makeTrackData(String uri, float duration) {
         return new TrackData.Builder()
                 .withTrackInfo(new TrackInfo(duration, null))
-                .withUrl(url)
+                .withUri(uri)
                 .build();
     }
 }

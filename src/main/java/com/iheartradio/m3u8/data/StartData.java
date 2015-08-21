@@ -41,7 +41,7 @@ public class StartData {
     }
 
     public static class Builder {
-        private float mTimeOffset;
+        private float mTimeOffset = Float.NaN;
         private boolean mPrecise;
 
         public Builder() {
@@ -63,10 +63,6 @@ public class StartData {
         }
         
         public StartData build() {
-            if (mTimeOffset == 0.0f) {
-                throw new IllegalStateException("StartData requires a timeOffset");
-            }
-    
             return new StartData(mTimeOffset, mPrecise);
         }
     }

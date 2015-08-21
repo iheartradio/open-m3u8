@@ -14,13 +14,17 @@ public class MediaPlaylist {
     private final StartData mStartData;
 
     private MediaPlaylist(List<TrackData> tracks, List<String> unknownTags, int targetDuration, StartData startData, int mediaSequenceNumber, boolean isIframesOnly, PlaylistType playlistType) {
-        mTracks = Collections.unmodifiableList(tracks);
-        mUnknownTags = Collections.unmodifiableList(unknownTags);
+        mTracks = tracks == null ? Collections.<TrackData>emptyList() : Collections.unmodifiableList(tracks);
+        mUnknownTags = unknownTags == null ? Collections.<String>emptyList() : Collections.unmodifiableList(unknownTags);
         mTargetDuration = targetDuration;
         mMediaSequenceNumber = mediaSequenceNumber;
         mIsIframesOnly = isIframesOnly;
         mStartData = startData;
         mPlaylistType = playlistType;
+    }
+
+    public boolean hasTracks() {
+        return !mTracks.isEmpty();
     }
 
     public List<TrackData> getTracks() {
@@ -40,7 +44,7 @@ public class MediaPlaylist {
     }
     
     public boolean hasUnknownTags() {
-        return mUnknownTags.size() > 0;
+        return !mUnknownTags.isEmpty();
     }
     
     public List<String> getUnknownTags() {
@@ -164,10 +168,6 @@ public class MediaPlaylist {
         }
 
         public MediaPlaylist build() {
-            if (mTracks == null) {
-                throw new IllegalStateException("cannot build MediaPlaylist without Tracks");
-            }
-            //TODO check if mTracks are valid (extend playlist: with trackinfo)
             return new MediaPlaylist(mTracks, mUnknownTags, mTargetDuration, mStartData, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType);
         }
     }

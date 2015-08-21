@@ -40,7 +40,7 @@ class ExtendedM3uWriter extends Writer {
     }
 
     @Override
-    void doWrite(Playlist playlist) throws IOException, ParseException {
+    void doWrite(Playlist playlist) throws IOException, ParseException, PlaylistException {
         for (IExtTagWriter singleTagWriter : mExtTagWriter) {
             singleTagWriter.write(tagWriter, playlist);
         }

@@ -6,17 +6,23 @@ import java.util.Objects;
 
 public class MasterPlaylist {
     private final List<PlaylistData> mPlaylists;
+    private final List<IFrameStreamInfo> mIFramePlaylists;
     private final List<MediaData> mMediaData;
     private final List<String> mUnknownTags;
 
-    private MasterPlaylist(List<PlaylistData> playlists, List<MediaData> mediaData, List<String> unknownTags) {
-        mPlaylists = Collections.unmodifiableList(playlists);
-        mMediaData = Collections.unmodifiableList(mediaData);
-        mUnknownTags = Collections.unmodifiableList(unknownTags);
+    private MasterPlaylist(List<PlaylistData> playlists, List<IFrameStreamInfo> iFramePlaylists, List<MediaData> mediaData, List<String> unknownTags) {
+        mPlaylists = playlists == null ? Collections.<PlaylistData>emptyList() : Collections.unmodifiableList(playlists);
+        mIFramePlaylists = playlists == null ? Collections.<IFrameStreamInfo>emptyList() : Collections.unmodifiableList(iFramePlaylists);
+        mMediaData = mediaData == null ? Collections.<MediaData>emptyList() : Collections.unmodifiableList(mediaData);
+        mUnknownTags = unknownTags == null ? Collections.<String>emptyList() : Collections.unmodifiableList(unknownTags);
     }
 
     public List<PlaylistData> getPlaylists() {
         return mPlaylists;
+    }
+
+    public List<IFrameStreamInfo> getIFramePlaylists() {
+        return mIFramePlaylists;
     }
 
     public List<MediaData> getMediaData() {
@@ -37,7 +43,7 @@ public class MasterPlaylist {
     
     @Override
     public int hashCode() {
-        return Objects.hash(mMediaData, mPlaylists, mUnknownTags);
+        return Objects.hash(mMediaData, mPlaylists, mIFramePlaylists, mUnknownTags);
     }
 
     @Override
@@ -50,6 +56,7 @@ public class MasterPlaylist {
         
         return Objects.equals(mMediaData, other.mMediaData) &&
                Objects.equals(mPlaylists, other.mPlaylists) &&
+               Objects.equals(mIFramePlaylists, other.mIFramePlaylists) &&
                Objects.equals(mUnknownTags, other.mUnknownTags);
     }
 
@@ -58,6 +65,7 @@ public class MasterPlaylist {
         return new StringBuilder()
                 .append("(MasterPlaylist")
                 .append(" mPlaylists=").append(mPlaylists.toString())
+                .append(" mIFramePlaylists=").append(mIFramePlaylists.toString())
                 .append(" mMediaData=").append(mMediaData.toString())
                 .append(" mUnknownTags=").append(mUnknownTags.toString())
                 .append(")")
@@ -66,6 +74,7 @@ public class MasterPlaylist {
 
     public static class Builder {
         private List<PlaylistData> mPlaylists;
+        private List<IFrameStreamInfo> mIFramePlaylists;
         private List<MediaData> mMediaData;
         private List<String> mUnknownTags = Collections.emptyList();
 
@@ -82,6 +91,11 @@ public class MasterPlaylist {
             return this;
         }
 
+        public Builder withIFramePlaylists(List<IFrameStreamInfo> iFramePlaylists) {
+            mIFramePlaylists = iFramePlaylists;
+            return this;
+        }
+
         public Builder withMediaData(List<MediaData> mediaData) {
             mMediaData = mediaData;
             return this;
@@ -93,7 +107,7 @@ public class MasterPlaylist {
         }
 
         public MasterPlaylist build() {
-            return new MasterPlaylist(mPlaylists, mMediaData, mUnknownTags);
+            return new MasterPlaylist(mPlaylists, mIFramePlaylists, mMediaData, mUnknownTags);
         }
     }
 }

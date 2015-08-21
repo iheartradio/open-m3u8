@@ -13,58 +13,71 @@ import com.iheartradio.m3u8.data.PlaylistType;
 import com.iheartradio.m3u8.data.StartData;
 import com.iheartradio.m3u8.data.TrackInfo;
 
-abstract class MediaPlaylistTagParser extends ExtTagParser {
-    @Override
-    public void parse(String line, ParseState state) throws ParseException {
-        validateNotMaster(state);
-        state.setMedia();
-        super.parse(line, state);
+class MediaPlaylistLineParser implements LineParser {
+    private final IExtTagParser tagParser;
+    private final LineParser lineParser;
+
+    MediaPlaylistLineParser(IExtTagParser parser) {
+        this(parser, new ExtLineParser(parser));
     }
 
-    private void validateNotMaster(ParseState state) throws ParseException {
-        if (state.isMaster()) {
-            throw ParseException.create(ParseExceptionType.MEDIA_IN_MASTER, getTag());
-        }
+    MediaPlaylistLineParser(IExtTagParser tagParser, LineParser lineParser) {
+        this.tagParser = tagParser;
+        this.lineParser = lineParser;
     }
-    
+
+    @Override
+    public void parse(String line, ParseState state) throws ParseException {
+        if (state.isMaster()) {
+            throw ParseException.create(ParseExceptionType.MEDIA_IN_MASTER, tagParser.getTag());
+        }
+
+        state.setMedia();
+        lineParser.parse(line, state);
+    }
+
     // media playlist tags
     
-    static final IExtTagParser EXT_X_ENDLIST = new MediaPlaylistTagParser() {
+    static final IExtTagParser EXT_X_ENDLIST = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
         @Override
         public String getTag() {
             return Constants.EXT_X_ENDLIST_TAG;
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return false;
         }
 
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
-            match(Constants.EXT_X_ENDLIST_PATTERN, line);
+            ParseUtil.match(Constants.EXT_X_ENDLIST_PATTERN, line, getTag());
             state.getMedia().endOfList = true;
         }
     };
     
-    static final IExtTagParser EXT_X_I_FRAMES_ONLY = new MediaPlaylistTagParser() {
+    static final IExtTagParser EXT_X_I_FRAMES_ONLY = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
         @Override
         public String getTag() {
             return Constants.EXT_X_I_FRAMES_ONLY_TAG;
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return false;
         }
 
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
             
-            match(Constants.EXT_X_I_FRAMES_ONLY_PATTERN, line);
+            ParseUtil.match(Constants.EXT_X_I_FRAMES_ONLY_PATTERN, line, getTag());
             
             if (state.getCompatibilityVersion() < 4) {
                 throw ParseException.create(ParseExceptionType.REQUIRES_PROTOCOL_VERSION_4_OR_HIGHER, getTag());
@@ -74,22 +87,24 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
         }
     };
     
-    static final IExtTagParser EXT_X_PLAYLIST_TYPE = new MediaPlaylistTagParser() {
+    static final IExtTagParser EXT_X_PLAYLIST_TYPE = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
         @Override
         public String getTag() {
             return Constants.EXT_X_PLAYLIST_TYPE_TAG;
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return true;
         }
         
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
-            final Matcher matcher = match(Constants.EXT_X_PLAYLIST_TYPE_PATTERN, line);
+            final Matcher matcher = ParseUtil.match(Constants.EXT_X_PLAYLIST_TYPE_PATTERN, line, getTag());
 
             if (state.getMedia().playlistType != null) {
                 throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
@@ -99,31 +114,22 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
         }
     };
     
-    static final IExtTagParser EXT_X_START = new MediaPlaylistTagParser() {
-        private final Map<String, AttributeParser<StartData.Builder>> HANDLERS = new HashMap<String, AttributeParser<StartData.Builder>>();
+    static final IExtTagParser EXT_X_START = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+        private final Map<String, AttributeParser<StartData.Builder>> HANDLERS = new HashMap<>();
         
         {
             HANDLERS.put(Constants.TIME_OFFSET, new AttributeParser<StartData.Builder>() {
                 @Override
                 public void parse(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
-                    try {
-                        final float timeOffset = Float.parseFloat(attribute.value);
-                        builder.withTimeOffset(timeOffset);
-                    } catch (NumberFormatException e) {
-                        throw ParseException.create(ParseExceptionType.INVALID_FLOATING_POINT, getTag(), attribute.toString());
-                    }
+                    builder.withTimeOffset(ParseUtil.parseFloat(attribute.value, getTag()));
                 }
             });
             
             HANDLERS.put(Constants.PRECISE, new AttributeParser<StartData.Builder>() {
                 @Override
                 public void parse(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
-                    try {
-                        final boolean precise = ParseUtil.parseYesNo(attribute.value, getTag());
-                        builder.withPrecise(precise);
-                    } catch (ParseException e) {
-                        throw ParseException.create(ParseExceptionType.INVALID_YES_NO, getTag(), attribute.toString());
-                    }
+                    builder.withPrecise(ParseUtil.parseYesNo(attribute, getTag()));
                 }
             });
         }
@@ -134,38 +140,40 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return true;
         }
         
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
             final StartData.Builder builder = new StartData.Builder();
-            parseAttributes(line, builder, state, HANDLERS);
+            ParseUtil.parseAttributes(line, builder, state, HANDLERS, getTag());
             final StartData startData = builder.build();
 
             state.getMedia().startData = startData;
         }
     };
     
-    static final IExtTagParser EXT_X_TARGETDURATION = new MediaPlaylistTagParser() {
+    static final IExtTagParser EXT_X_TARGETDURATION = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
         @Override
         public String getTag() {
             return Constants.EXT_X_TARGETDURATION_TAG;
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return true;
         }
 
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
-            final Matcher matcher = match(Constants.EXT_X_TARGETDURATION_PATTERN, line);
+            final Matcher matcher = ParseUtil.match(Constants.EXT_X_TARGETDURATION_PATTERN, line, getTag());
 
             if (state.getMedia().targetDuration != null) {
                 throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
@@ -175,22 +183,24 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
         }
     };
 
-    static final IExtTagParser EXT_X_MEDIA_SEQUENCE = new MediaPlaylistTagParser() {
+    static final IExtTagParser EXT_X_MEDIA_SEQUENCE = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
         @Override
         public String getTag() {
             return Constants.EXT_X_MEDIA_SEQUENCE_TAG;
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return true;
         }
 
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
-            final Matcher matcher = match(Constants.EXT_X_MEDIA_SEQUENCE_PATTERN, line);
+            final Matcher matcher = ParseUtil.match(Constants.EXT_X_MEDIA_SEQUENCE_PATTERN, line, getTag());
 
             if (state.getMedia().mediaSequenceNumber != null) {
                 throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
@@ -200,20 +210,22 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
         }
     };
 
-    static final IExtTagParser EXT_X_ALLOW_CACHE = new MediaPlaylistTagParser() {
+    static final IExtTagParser EXT_X_ALLOW_CACHE = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
         @Override
         public String getTag() {
             return Constants.EXT_X_ALLOW_CACHE_TAG;
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return true;
         }
 
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
             // deprecated
         }
@@ -221,29 +233,32 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
 
     // media segment tags
 
-    static final IExtTagParser EXTINF = new MediaPlaylistTagParser() {
+    static final IExtTagParser EXTINF = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
         @Override
         public String getTag() {
             return Constants.EXTINF_TAG;
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return true;
         }
 
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
-            final Matcher matcher = match(Constants.EXTINF_PATTERN, line);
+            final Matcher matcher = ParseUtil.match(Constants.EXTINF_PATTERN, line, getTag());
 
             state.getMedia().trackInfo = new TrackInfo(ParseUtil.parseFloat(matcher.group(1), getTag()), matcher.group(2));
         }
     };
 
-    static final IExtTagParser EXT_X_KEY = new MediaPlaylistTagParser() {
-        private final Map<String, AttributeParser<EncryptionData.Builder>> HANDLERS = new HashMap<String, AttributeParser<EncryptionData.Builder>>();
+    static final IExtTagParser EXT_X_KEY = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+        private final Map<String, AttributeParser<EncryptionData.Builder>> HANDLERS = new HashMap<>();
 
         {
             HANDLERS.put(Constants.METHOD, new AttributeParser<EncryptionData.Builder>() {
@@ -262,7 +277,7 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
             HANDLERS.put(Constants.URI, new AttributeParser<EncryptionData.Builder>() {
                 @Override
                 public void parse(Attribute attribute, Builder builder, ParseState state) throws ParseException {
-                    builder.withUri(ParseUtil.decodeUrl(ParseUtil.parseQuotedString(attribute.value, getTag()), state.encoding));
+                    builder.withUri(ParseUtil.decodeUri(ParseUtil.parseQuotedString(attribute.value, getTag()), state.encoding));
                 }
             });
 
@@ -290,8 +305,8 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
             HANDLERS.put(Constants.KEY_FORMAT_VERSIONS, new AttributeParser<EncryptionData.Builder>() {
                 @Override
                 public void parse(Attribute attribute, Builder builder, ParseState state) throws ParseException {
-                    String[] versionStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.LIST_SEPARATOR);
-                    final List<Integer> versions = new ArrayList<Integer>();
+                    final String[] versionStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.LIST_SEPARATOR);
+                    final List<Integer> versions = new ArrayList<>();
 
                     for (String version : versionStrings) {
                         try {
@@ -312,19 +327,20 @@ abstract class MediaPlaylistTagParser extends ExtTagParser {
         }
 
         @Override
-        boolean hasData() {
+        public boolean hasData() {
             return true;
         }
         
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            super.parse(line, state);
+            lineParser.parse(line, state);
 
             final EncryptionData.Builder builder = new EncryptionData.Builder()
                     .withKeyFormat(Constants.DEFAULT_KEY_FORMAT)
                     .withKeyFormatVersions(Constants.DEFAULT_KEY_FORMAT_VERSIONS);
 
-            parseAttributes(line, builder, state, HANDLERS);
+            ParseUtil.parseAttributes(line, builder, state, HANDLERS, getTag());
+
             final EncryptionData encryptionData = builder.build();
 
             if (encryptionData.getMethod() != EncryptionMethod.NONE && encryptionData.getUri() == null) {

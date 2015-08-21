@@ -17,25 +17,25 @@ class ExtendedM3uParser extends BaseM3uParser {
 
         // TODO implement the remaining EXT tag handlers and add them here
         putParsers(
-                ExtTagParser.EXTM3U_HANDLER,
-                ExtTagParser.EXT_X_VERSION_HANDLER,
-                MediaPlaylistTagParser.EXT_X_PLAYLIST_TYPE,
-                MediaPlaylistTagParser.EXT_X_KEY,
-                MediaPlaylistTagParser.EXT_X_TARGETDURATION,
-                MediaPlaylistTagParser.EXT_X_START,
-                MediaPlaylistTagParser.EXT_X_MEDIA_SEQUENCE,
-                MediaPlaylistTagParser.EXT_X_I_FRAMES_ONLY,
-                MasterPlaylistTagParser.EXT_X_MEDIA,
-                MediaPlaylistTagParser.EXT_X_ALLOW_CACHE,
-                MasterPlaylistTagParser.EXT_X_STREAM_INF,
-                MasterPlaylistTagParser.EXT_X_I_FRAME_STREAM_INF,
-                MediaPlaylistTagParser.EXTINF,
-                MediaPlaylistTagParser.EXT_X_ENDLIST
+                ExtLineParser.EXTM3U_HANDLER,
+                ExtLineParser.EXT_X_VERSION_HANDLER,
+                MediaPlaylistLineParser.EXT_X_PLAYLIST_TYPE,
+                MediaPlaylistLineParser.EXT_X_KEY,
+                MediaPlaylistLineParser.EXT_X_TARGETDURATION,
+                MediaPlaylistLineParser.EXT_X_START,
+                MediaPlaylistLineParser.EXT_X_MEDIA_SEQUENCE,
+                MediaPlaylistLineParser.EXT_X_I_FRAMES_ONLY,
+                MasterPlaylistLineParser.EXT_X_MEDIA,
+                MediaPlaylistLineParser.EXT_X_ALLOW_CACHE,
+                MasterPlaylistLineParser.EXT_X_STREAM_INF,
+                MasterPlaylistLineParser.EXT_X_I_FRAME_STREAM_INF,
+                MediaPlaylistLineParser.EXTINF,
+                MediaPlaylistLineParser.EXT_X_ENDLIST
         );
     }
 
     @Override
-    public Playlist parse() throws IOException, ParseException {
+    public Playlist parse() throws IOException, ParseException, PlaylistException {
         validateAvailable();
 
         final ParseState state = new ParseState(mEncoding);
@@ -63,7 +63,7 @@ class ExtendedM3uParser extends BaseM3uParser {
                                     throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
                                 case LENIENT:
                                 default:
-                                    tagParser = ExtTagParser.EXT_UNKNOWN_HANDLER;
+                                    tagParser = ExtLineParser.EXT_UNKNOWN_HANDLER;
                                     break;
                             }
                         }
@@ -83,7 +83,14 @@ class ExtendedM3uParser extends BaseM3uParser {
                 }
             }
 
-            return state.buildPlaylist();
+            Playlist playlist = state.buildPlaylist();
+            PlaylistValidation validation = PlaylistValidation.from(playlist);
+
+            if (validation.isValid()) {
+                return playlist;
+            } else {
+                throw new PlaylistException(mScanner.getInput(), validation.getErrors());
+            }
         } catch (ParseException exception) {
             exception.setInput(mScanner.getInput());
             throw exception;

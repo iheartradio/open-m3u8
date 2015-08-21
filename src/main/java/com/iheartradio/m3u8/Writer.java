@@ -31,12 +31,12 @@ abstract class Writer {
         tagWriter.write("\n");
     }
     
-    final void write(Playlist playlist) throws IOException, ParseException {
+    final void write(Playlist playlist) throws IOException, ParseException, PlaylistException {
         doWrite(playlist);
         
         tagWriter.flush();
     }
 
-    abstract void doWrite(Playlist playlist) throws IOException, ParseException;
+    abstract void doWrite(Playlist playlist) throws IOException, ParseException, PlaylistException;
 
 }

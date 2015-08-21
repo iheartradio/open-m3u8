@@ -12,13 +12,8 @@ class TrackLineParser implements LineParser {
             throw ParseException.create(ParseExceptionType.MISSING_TRACK_INFO, line);
         }
 
-        if (Constants.URL_PATTERN.matcher(line).matches()) {
-            builder.withUrl(line);
-        } else {
-            builder.withPath(line);
-        }
-
         mediaState.tracks.add(builder
+                .withUri(line)
                 .withTrackInfo(mediaState.trackInfo)
                 .withEncryptionData(mediaState.encryptionData)
                 .build());

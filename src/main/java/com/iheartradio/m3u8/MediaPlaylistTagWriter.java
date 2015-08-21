@@ -50,7 +50,7 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
         
         @Override
         public void doWrite(TagWriter tagWriter,Playlist playlist, MediaPlaylist mediaPlaylist) throws IOException {
-            if (playlist.isIframesOnly()) {
+            if (mediaPlaylist.isIframesOnly()) {
                 tagWriter.writeTag(getTag());
             }
         }
@@ -194,18 +194,18 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
         
         @Override
         public void doWrite(TagWriter tagWriter, Playlist playlist, MediaPlaylist mediaPlaylist) throws IOException ,ParseException {
-            for (TrackData td : mediaPlaylist.getTracks()) {
+            for (TrackData trackData : mediaPlaylist.getTracks()) {
                 StringBuilder sb = new StringBuilder();
                 if (playlist.getCompatibilityVersion() <= 3) {
-                    sb.append(Integer.toString((int)td.getTrackInfo().duration));
+                    sb.append(Integer.toString((int)trackData.getTrackInfo().duration));
                 } else {
-                    sb.append(Float.toString(td.getTrackInfo().duration));
+                    sb.append(Float.toString(trackData.getTrackInfo().duration));
                 }
-                if (td.getTrackInfo().title != null) {
-                    sb.append(Constants.COMMA).append(td.getTrackInfo().title);
+                if (trackData.getTrackInfo().title != null) {
+                    sb.append(Constants.COMMA).append(trackData.getTrackInfo().title);
                 }
                 tagWriter.writeTag(getTag(), sb.toString());
-                tagWriter.writeLine(td.getLocation());
+                tagWriter.writeLine(trackData.getUri());
             }
         };
     };

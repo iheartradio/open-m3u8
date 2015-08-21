@@ -54,9 +54,9 @@ public class WriteUtil {
         return builder.toString();
     }
 
-    public static String encodeUrl(String decodedUrl) throws ParseException {
+    public static String encodeUri(String decodedUri) throws ParseException {
         try {
-            return URLEncoder.encode(decodedUrl.replace("%2B", "+"), "utf-8");
+            return URLEncoder.encode(decodedUri.replace("%2B", "+"), "utf-8");
         } catch (UnsupportedEncodingException exception) {
             throw new ParseException(ParseExceptionType.INTERNAL_ERROR);
         }

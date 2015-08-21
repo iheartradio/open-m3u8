@@ -59,9 +59,17 @@ public class PlaylistWriter {
      * Writes the given Playlist to the contained OutputStream.
      *
      * @throws IOException
-     * @throws ParseException
+     * @throws ParseException if the data is improperly formatted
+     * @throws PlaylistException if the representation of the playlist is invalid,
+     *                           that is, if PlaylistValidation.from(playlist).isValid() == false
      */
-    public void write(Playlist playlist) throws IOException, ParseException {
+    public void write(Playlist playlist) throws IOException, ParseException, PlaylistException {
+        final PlaylistValidation validation = PlaylistValidation.from(playlist);
+
+        if (!validation.isValid()) {
+            throw new PlaylistException("", validation.getErrors());
+        }
+
         writeByteOrderMark();
         mWriter.write(playlist);
         mFirstWrite = false;

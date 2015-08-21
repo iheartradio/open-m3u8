@@ -1,5 +1,8 @@
 package com.iheartradio.m3u8;
 
+/**
+ * Represents a syntactic error in the input that prevented further parsing.
+ */
 public class ParseException extends Exception {
     private static final long serialVersionUID = -2217152001086567983L;
 

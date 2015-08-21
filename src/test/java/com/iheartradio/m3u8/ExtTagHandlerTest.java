@@ -5,7 +5,7 @@ import org.junit.Test;
 public class ExtTagHandlerTest extends ParserStateHandlerTestCase {
     @Test
     public void testEXTM3U() throws Exception {
-        final IExtTagParser handler = ExtTagParser.EXTM3U_HANDLER;
+        final IExtTagParser handler = ExtLineParser.EXTM3U_HANDLER;
         final String tag = Constants.EXTM3U_TAG;
         final String line = "#" + tag;
 
@@ -19,7 +19,7 @@ public class ExtTagHandlerTest extends ParserStateHandlerTestCase {
 
     @Test
     public void testEXT_X_VERSION() throws Exception {
-        final IExtTagParser handler = ExtTagParser.EXT_X_VERSION_HANDLER;
+        final IExtTagParser handler = ExtLineParser.EXT_X_VERSION_HANDLER;
         final String tag = Constants.EXT_X_VERSION_TAG;
         final String line = "#" + tag + ":2";
 

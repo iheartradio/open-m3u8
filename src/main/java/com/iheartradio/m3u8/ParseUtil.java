@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.iheartradio.m3u8.data.Resolution;
 
@@ -61,13 +63,13 @@ final class ParseUtil {
         }
     }
 
-    public static boolean parseYesNo(String yesNoString, String tag) throws ParseException {
-        if (yesNoString.equals(Constants.YES)) {
+    public static boolean parseYesNo(Attribute attribute, String tag) throws ParseException {
+        if (attribute.value.equals(Constants.YES)) {
             return true;
-        } else if (yesNoString.equals(Constants.NO)) {
+        } else if (attribute.value.equals(Constants.NO)) {
             return false;
         } else {
-            throw new ParseException(ParseExceptionType.NOT_YES_OR_NO, tag);
+            throw ParseException.create(ParseExceptionType.NOT_YES_OR_NO, tag, attribute.toString());
         }
     }
 
@@ -129,11 +131,31 @@ final class ParseUtil {
         return c == ' ' || c == '\t' || c == '\r' || c == '\n';
     }
 
-    public static String decodeUrl(String encodedUrl, Encoding encoding) throws ParseException {
+    public static String decodeUri(String encodedUri, Encoding encoding) throws ParseException {
         try {
-            return URLDecoder.decode(encodedUrl.replace("+", "%2B"), encoding.value);
+            return URLDecoder.decode(encodedUri.replace("+", "%2B"), encoding.value);
         } catch (UnsupportedEncodingException exception) {
             throw new ParseException(ParseExceptionType.INTERNAL_ERROR);
+        }
+    }
+
+    public static Matcher match(Pattern pattern, String line, String tag) throws ParseException {
+        final Matcher matcher = pattern.matcher(line);
+
+        if (!matcher.matches()) {
+            throw ParseException.create(ParseExceptionType.BAD_EXT_TAG_FORMAT, tag, line);
+        }
+
+        return matcher;
+    }
+
+    public static <T> void parseAttributes(String line, T builder, ParseState state, Map<String, ? extends AttributeParser<T>> handlers, String tag) throws ParseException {
+        for (Attribute attribute : parseAttributeList(line, tag)) {
+            if (handlers.containsKey(attribute.name)) {
+                handlers.get(attribute.name).parse(attribute, builder, state);
+            } else {
+                throw ParseException.create(ParseExceptionType.INVALID_ATTRIBUTE_NAME, tag, line);
+            }
         }
     }
 

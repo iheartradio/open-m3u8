@@ -107,10 +107,11 @@ public class PlaylistParser implements IPlaylistParser {
      * @return Playlist which is either a MasterPlaylist or a MediaPlaylist, this will never return null
      * @throws IOException if the InputStream throws an IOException
      * @throws java.io.EOFException if there is no data to parse
-     * @throws ParseException if the data is not formatted properly
+     * @throws ParseException if there is a syntactic error in the playlist
+     * @throws PlaylistException if the data in the parsed playlist is invalid
      */
     @Override
-    public Playlist parse() throws IOException, ParseException {
+    public Playlist parse() throws IOException, ParseException, PlaylistException {
         return mPlaylistParser.parse();
     }
 

@@ -24,7 +24,7 @@ public class EncryptionData {
     }
 
     public boolean hasUri() {
-        return mUri != null;
+        return mUri != null && !mUri.isEmpty();
     }
 
     public String getUri() {
@@ -123,10 +123,6 @@ public class EncryptionData {
         }
 
         public EncryptionData build() {
-            if (mMethod == null) {
-                throw new IllegalStateException("EncryptionData requires a method");
-            }
-
             return new EncryptionData(mMethod, mUri, mInitializationVector, mKeyFormat, mKeyFormatVersions);
         }
     }

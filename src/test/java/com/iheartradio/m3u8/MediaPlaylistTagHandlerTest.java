@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
     @Test
     public void testEXT_X_TARGETDURATION() throws Exception {
-        final IExtTagParser handler = MediaPlaylistTagParser.EXT_X_TARGETDURATION;
+        final IExtTagParser handler = MediaPlaylistLineParser.EXT_X_TARGETDURATION;
         final String tag = Constants.EXT_X_TARGETDURATION_TAG;
         final String line = "#" + tag + ":60";
 
@@ -24,7 +24,7 @@ public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
 
     @Test
     public void testEXT_X_KEY() throws Exception {
-        final IExtTagParser handler = MediaPlaylistTagParser.EXT_X_KEY;
+        final IExtTagParser handler = MediaPlaylistLineParser.EXT_X_KEY;
         final String tag = Constants.EXT_X_KEY_TAG;
         final String uri = "http://foo.bar.com/";
         final String format = "format";

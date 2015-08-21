@@ -1,5 +1,6 @@
 package com.iheartradio.m3u8.data;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,7 +39,7 @@ public class MediaData {
         mAutoSelect = isAutoSelect;
         mForced = isForced;
         mInStreamId = inStreamId;
-        mCharacteristics = characteristics;
+        mCharacteristics = characteristics == null ? Collections.<String>emptyList() : Collections.unmodifiableList(characteristics);
     }
 
     public MediaType getType() {
@@ -46,7 +47,7 @@ public class MediaData {
     }
 
     public boolean hasUri() {
-        return mUri != null;
+        return mUri != null && !mUri.isEmpty();
     }
 
     public String getUri() {
@@ -98,7 +99,7 @@ public class MediaData {
     }
 
     public boolean hasCharacteristics() {
-        return mCharacteristics != null;
+        return !mCharacteristics.isEmpty();
     }
 
     public List<String> getCharacteristics() {
@@ -169,8 +170,6 @@ public class MediaData {
         private boolean mForced;
         private String mInStreamId;
         private List<String> mCharacteristics;
-        private boolean mAutoSelectSet;
-        private boolean mForcedSet;
 
         public Builder() {
         }
@@ -201,10 +200,6 @@ public class MediaData {
         }
 
         public Builder withType(MediaType type) {
-            if (type == null) {
-                throw new IllegalArgumentException("type is null");
-            }
-
             mType = type;
             return this;
         }
@@ -241,13 +236,11 @@ public class MediaData {
 
         public Builder withAutoSelect(boolean isAutoSelect) {
             mAutoSelect = isAutoSelect;
-            mAutoSelectSet = true;
             return this;
         }
 
         public Builder withForced(boolean isForced) {
             mForced = isForced;
-            mForcedSet = true;
             return this;
         }
 
@@ -261,27 +254,7 @@ public class MediaData {
             return this;
         }
 
-        public boolean isAutoSelectSet() {
-            return mAutoSelectSet;
-        }
-
-        public boolean isForcedSet() {
-            return mForcedSet;
-        }
-
         public MediaData build() {
-            if (mType == null) {
-                throw new IllegalStateException("MediaData requires a type");
-            }
-
-            if (mGroupId == null) {
-                throw new IllegalStateException("MediaData requires a group ID");
-            }
-
-            if (mName == null) {
-                throw new IllegalStateException("MediaData requires a name");
-            }
-
             return new MediaData(
                     mType,
                     mUri,

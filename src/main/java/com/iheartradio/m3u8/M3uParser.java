@@ -12,7 +12,7 @@ class M3uParser extends BaseM3uParser {
     }
 
     @Override
-    public Playlist parse() throws IOException, ParseException {
+    public Playlist parse() throws IOException, ParseException, PlaylistException {
         validateAvailable();
 
         final ParseState state = new ParseState(mEncoding);
@@ -32,11 +32,19 @@ class M3uParser extends BaseM3uParser {
                 }
             }
 
-            return new Playlist.Builder()
+            Playlist playlist = new Playlist.Builder()
                     .withMediaPlaylist(new MediaPlaylist.Builder()
                             .withTracks(state.getMedia().tracks)
                             .build())
                     .build();
+
+            PlaylistValidation validation = PlaylistValidation.from(playlist);
+
+            if (validation.isValid()) {
+                return playlist;
+            } else {
+                throw new PlaylistException(mScanner.getInput(), validation.getErrors());
+            }
         } catch (ParseException exception) {
             exception.setInput(mScanner.getInput());
             throw exception;

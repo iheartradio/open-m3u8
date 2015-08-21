@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.iheartradio.m3u8.data.IFrameStreamInfo;
+import com.iheartradio.m3u8.data.IStreamInfo;
 import com.iheartradio.m3u8.data.MasterPlaylist;
 import com.iheartradio.m3u8.data.MediaData;
 import com.iheartradio.m3u8.data.Playlist;
@@ -186,78 +188,90 @@ abstract class MasterPlaylistTagWriter extends ExtTagWriter {
         }
     };
 
-    static abstract class EXT_STREAM_INF extends MasterPlaylistTagWriter {
-        final Map<String, AttributeWriter<StreamInfo>> HANDLERS = new HashMap<String, AttributeWriter<StreamInfo>>();
+    static abstract class EXT_STREAM_INF<T extends IStreamInfo> extends MasterPlaylistTagWriter {
+        final Map<String, AttributeWriter<T>> HANDLERS = new HashMap<>();
 
         {
-            HANDLERS.put(Constants.BANDWIDTH, new AttributeWriter<StreamInfo>() {
+            HANDLERS.put(Constants.BANDWIDTH, new AttributeWriter<T>() {
                 @Override
-                public boolean containsAttribute(StreamInfo streamInfo) {
-                    return streamInfo.hasBandwidth();
+                public boolean containsAttribute(T streamInfo) {
+                    return true;
                 }
                 
                 @Override
-                public String write(StreamInfo streamInfo) {
+                public String write(T streamInfo) {
                     return Integer.toString(streamInfo.getBandwidth());
                 }
             });
 
-            HANDLERS.put(Constants.AVERAGE_BANDWIDTH, new AttributeWriter<StreamInfo>() {
+            HANDLERS.put(Constants.AVERAGE_BANDWIDTH, new AttributeWriter<T>() {
                 @Override
-                public boolean containsAttribute(StreamInfo streamInfo) {
+                public boolean containsAttribute(T streamInfo) {
                     return streamInfo.hasAverageBandwidth();
                 }
                 
                 @Override
-                public String write(StreamInfo streamInfo)  {
+                public String write(T streamInfo)  {
                     return Integer.toString(streamInfo.getAverageBandwidth());
                 }
             });
 
-            HANDLERS.put(Constants.CODECS, new AttributeWriter<StreamInfo>() {
+            HANDLERS.put(Constants.CODECS, new AttributeWriter<T>() {
                 @Override
-                public boolean containsAttribute(StreamInfo streamInfo) {
+                public boolean containsAttribute(T streamInfo) {
                     return streamInfo.hasCodecs();
                 }
                 
                 @Override
-                public String write(StreamInfo streamInfo) throws ParseException {
+                public String write(T streamInfo) throws ParseException {
                     return WriteUtil.writeQuotedString(WriteUtil.join(streamInfo.getCodecs(), Constants.COMMA), getTag());
                 }
             });
 
-            HANDLERS.put(Constants.RESOLUTION, new AttributeWriter<StreamInfo>() {
+            HANDLERS.put(Constants.RESOLUTION, new AttributeWriter<T>() {
                 @Override
-                public boolean containsAttribute(StreamInfo streamInfo) {
+                public boolean containsAttribute(T streamInfo) {
                     return streamInfo.hasResolution();
                 }
                 
                 @Override
-                public String write(StreamInfo streamInfo) throws ParseException {
+                public String write(T streamInfo) throws ParseException {
                     return WriteUtil.writeResolution(streamInfo.getResolution());
                 }
             });
 
-            HANDLERS.put(Constants.VIDEO, new AttributeWriter<StreamInfo>() {
+            HANDLERS.put(Constants.FRAME_RATE, new AttributeWriter<T>() {
                 @Override
-                public boolean containsAttribute(StreamInfo streamInfo) {
+                public boolean containsAttribute(T streamInfo) {
+                    return streamInfo.hasFrameRate();
+                }
+
+                @Override
+                public String write(T streamInfo) throws ParseException {
+                    return String.valueOf(streamInfo.getFrameRate());
+                }
+            });
+
+            HANDLERS.put(Constants.VIDEO, new AttributeWriter<T>() {
+                @Override
+                public boolean containsAttribute(T streamInfo) {
                     return streamInfo.hasVideo();
                 }
                 
                 @Override
-                public String write(StreamInfo streamInfo) throws ParseException {
+                public String write(T streamInfo) throws ParseException {
                     return WriteUtil.writeQuotedString(streamInfo.getVideo(), getTag());
                 }
             });
 
-            HANDLERS.put(Constants.PROGRAM_ID, new AttributeWriter<StreamInfo>() {
+            HANDLERS.put(Constants.PROGRAM_ID, new AttributeWriter<T>() {
                 @Override
-                public boolean containsAttribute(StreamInfo streamInfo) {
+                public boolean containsAttribute(T streamInfo) {
                     return false;
                 }
                 
                 @Override
-                public String write(StreamInfo streamInfo) {
+                public String write(T streamInfo) {
                     // deprecated
                     return "";
                 }
@@ -272,17 +286,17 @@ abstract class MasterPlaylistTagWriter extends ExtTagWriter {
         public abstract void doWrite(TagWriter tagWriter, Playlist playlist, MasterPlaylist masterPlaylist) throws IOException, ParseException;
     }
     
-    static final IExtTagWriter EXT_X_I_FRAME_STREAM_INF = new EXT_STREAM_INF() {
+    static final IExtTagWriter EXT_X_I_FRAME_STREAM_INF = new EXT_STREAM_INF<IFrameStreamInfo>() {
         
         {
-            HANDLERS.put(Constants.URI, new AttributeWriter<StreamInfo>() {
+            HANDLERS.put(Constants.URI, new AttributeWriter<IFrameStreamInfo>() {
                 @Override
-                public boolean containsAttribute(StreamInfo streamInfo) {
-                    return streamInfo.hasUri();
+                public boolean containsAttribute(IFrameStreamInfo streamInfo) {
+                    return true;
                 };
                 
                 @Override
-                public String write(StreamInfo streamInfo) throws ParseException {
+                public String write(IFrameStreamInfo streamInfo) throws ParseException {
                     return WriteUtil.writeQuotedString(streamInfo.getUri(), getTag());
                 }
             });
@@ -295,17 +309,13 @@ abstract class MasterPlaylistTagWriter extends ExtTagWriter {
         
         @Override
         public void doWrite(TagWriter tagWriter, Playlist playlist, MasterPlaylist masterPlaylist) throws IOException, ParseException {
-            if (masterPlaylist.getPlaylists().size() > 0) {
-                for(PlaylistData pd : masterPlaylist.getPlaylists()) {
-                    if (pd.getStreamInfo().hasUri()) {
-                        writeAttributes(tagWriter, pd.getStreamInfo(), HANDLERS);
-                    }
-                }
+            for(IFrameStreamInfo streamInfo : masterPlaylist.getIFramePlaylists()) {
+                writeAttributes(tagWriter, streamInfo, HANDLERS);
             }
-        };
+        }
     };
     
-    static final IExtTagWriter EXT_X_STREAM_INF = new EXT_STREAM_INF() {
+    static final IExtTagWriter EXT_X_STREAM_INF = new EXT_STREAM_INF<StreamInfo>() {
         
         {
             HANDLERS.put(Constants.AUDIO, new AttributeWriter<StreamInfo>() {
@@ -351,14 +361,12 @@ abstract class MasterPlaylistTagWriter extends ExtTagWriter {
         
         @Override
         public void doWrite(TagWriter tagWriter, Playlist playlist, MasterPlaylist masterPlaylist) throws IOException, ParseException {
-            if (masterPlaylist.getPlaylists().size() > 0) {
-                for(PlaylistData pd : masterPlaylist.getPlaylists()) {
-                    if (!pd.getStreamInfo().hasUri()) {
-                        writeAttributes(tagWriter, pd.getStreamInfo(), HANDLERS);
-                        tagWriter.writeLine(pd.getLocation());
-                    }
+            for(PlaylistData playlistData : masterPlaylist.getPlaylists()) {
+                if (playlistData.hasStreamInfo()) {
+                    writeAttributes(tagWriter, playlistData.getStreamInfo(), HANDLERS);
+                    tagWriter.writeLine(playlistData.getUri());
                 }
             }
-        };
+        }
     };
 }

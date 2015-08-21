@@ -2,14 +2,19 @@ package com.iheartradio.m3u8.data;
 
 import java.util.Objects;
 
-public class TrackData extends LocationData {
+public class TrackData {
+    private final String mUri;
     private final TrackInfo mTrackInfo;
     private final EncryptionData mEncryptionData;
 
-    private TrackData(LocationType locationType, String location, TrackInfo trackInfo, EncryptionData encryptionData) {
-        super(locationType, location);
+    private TrackData(String uri, TrackInfo trackInfo, EncryptionData encryptionData) {
+        mUri = uri;
         mTrackInfo = trackInfo;
         mEncryptionData = encryptionData;
+    }
+
+    public String getUri() {
+        return mUri;
     }
 
     public boolean hasTrackInfo() {
@@ -25,7 +30,9 @@ public class TrackData extends LocationData {
     }
 
     public boolean isEncrypted() {
-        return hasEncryptionData() && mEncryptionData.getMethod() != EncryptionMethod.NONE;
+        return hasEncryptionData() &&
+               mEncryptionData.getMethod() != null &&
+               mEncryptionData.getMethod() != EncryptionMethod.NONE;
     }
 
     public EncryptionData getEncryptionData() {
@@ -33,12 +40,12 @@ public class TrackData extends LocationData {
     }
 
     public Builder buildUpon() {
-        return new Builder(getLocationType(), getLocation(), mTrackInfo, mEncryptionData);
+        return new Builder(getUri(), mTrackInfo, mEncryptionData);
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), mEncryptionData, mTrackInfo);
+        return Objects.hash(mUri, mEncryptionData, mTrackInfo);
     }
 
     @Override
@@ -49,44 +56,27 @@ public class TrackData extends LocationData {
 
         TrackData other = (TrackData) o;
         
-        return super.equals(other) &&
-                Objects.equals(this.mEncryptionData, other.mEncryptionData) &&
-                Objects.equals(this.mTrackInfo, other.mTrackInfo);
+        return Objects.equals(mUri, other.getUri()) &&
+               Objects.equals(this.mEncryptionData, other.mEncryptionData) &&
+               Objects.equals(this.mTrackInfo, other.mTrackInfo);
     }
 
     public static class Builder {
-        private LocationType mLocationType;
-        private String mLocation;
+        private String mUri;
         private TrackInfo mTrackInfo;
         private EncryptionData mEncryptionData;
 
         public Builder() {
         }
 
-        private Builder(LocationType locationType, String location, TrackInfo trackInfo, EncryptionData encryptionData) {
-            mLocationType = locationType;
-            mLocation = location;
+        private Builder(String uri, TrackInfo trackInfo, EncryptionData encryptionData) {
+            mUri = uri;
             mTrackInfo = trackInfo;
             mEncryptionData = encryptionData;
         }
 
-        public Builder withPath(String path) {
-            if (path == null || path.isEmpty()) {
-                throw new IllegalStateException("path cannot be empty");
-            }
-
-            mLocationType = LocationType.PATH;
-            mLocation = path;
-            return this;
-        }
-
-        public Builder withUrl(String url) {
-            if (url == null || url.isEmpty()) {
-                throw new IllegalStateException("url cannot be empty");
-            }
-
-            mLocationType = LocationType.URL;
-            mLocation = url;
+        public Builder withUri(String url) {
+            mUri = url;
             return this;
         }
 
@@ -101,12 +91,7 @@ public class TrackData extends LocationData {
         }
 
         public TrackData build() {
-            if (mLocationType == null) {
-                throw new IllegalStateException("cannot build TrackData without a path or url");
-            }
-            // Non-extended playlists do not have tags and thus can build tracks without track info.
-
-            return new TrackData(mLocationType, mLocation, mTrackInfo, mEncryptionData);
+            return new TrackData(mUri, mTrackInfo, mEncryptionData);
         }
     }
 }

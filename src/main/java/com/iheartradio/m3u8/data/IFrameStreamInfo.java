@@ -3,7 +3,7 @@ package com.iheartradio.m3u8.data;
 import java.util.List;
 import java.util.Objects;
 
-public class StreamInfo implements IStreamInfo {
+public class IFrameStreamInfo implements IStreamInfo {
     public static final int NO_BANDWIDTH = -1;
 
     private final int mBandwidth;
@@ -11,30 +11,24 @@ public class StreamInfo implements IStreamInfo {
     private final List<String> mCodecs;
     private final Resolution mResolution;
     private final float mFrameRate;
-    private final String mAudio;
     private final String mVideo;
-    private final String mSubtitles;
-    private final String mClosedCaptions;
+    private final String mUri;
 
-    private StreamInfo(
+    private IFrameStreamInfo(
             int bandwidth,
             int averageBandwidth,
             List<String> codecs,
             Resolution resolution,
             float frameRate,
-            String audio,
             String video,
-            String subtitles,
-            String closedCaptions) {
+            String uri) {
         mBandwidth = bandwidth;
         mAverageBandwidth = averageBandwidth;
         mCodecs = codecs;
         mResolution = resolution;
         mFrameRate = frameRate;
-        mAudio = audio;
         mVideo = video;
-        mSubtitles = subtitles;
-        mClosedCaptions = closedCaptions;
+        mUri = uri;
     }
 
     @Override
@@ -82,14 +76,6 @@ public class StreamInfo implements IStreamInfo {
         return mFrameRate;
     }
 
-    public boolean hasAudio() {
-        return mAudio != null;
-    }
-
-    public String getAudio() {
-        return mAudio;
-    }
-
     @Override
     public boolean hasVideo() {
         return mVideo != null;
@@ -100,20 +86,8 @@ public class StreamInfo implements IStreamInfo {
         return mVideo;
     }
 
-    public boolean hasSubtitles() {
-        return mSubtitles != null;
-    }
-
-    public String getSubtitles() {
-        return mSubtitles;
-    }
-
-    public boolean hasClosedCaptions() {
-        return mClosedCaptions != null;
-    }
-
-    public String getClosedCaptions() {
-        return mClosedCaptions;
+    public String getUri() {
+        return mUri;
     }
 
     public Builder buildUpon() {
@@ -123,10 +97,8 @@ public class StreamInfo implements IStreamInfo {
                 mCodecs,
                 mResolution,
                 mFrameRate,
-                mAudio,
                 mVideo,
-                mSubtitles,
-                mClosedCaptions);
+                mUri);
     }
 
     @Override
@@ -137,29 +109,25 @@ public class StreamInfo implements IStreamInfo {
                 mCodecs,
                 mResolution,
                 mFrameRate,
-                mAudio,
                 mVideo,
-                mSubtitles,
-                mClosedCaptions);
+                mUri);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof StreamInfo)) {
+        if (!(o instanceof IFrameStreamInfo)) {
             return false;
         }
 
-        StreamInfo other = (StreamInfo) o;
+        IFrameStreamInfo other = (IFrameStreamInfo) o;
 
         return mBandwidth == other.mBandwidth &&
                mAverageBandwidth == other.mAverageBandwidth &&
                Objects.equals(mCodecs, other.mCodecs) &&
                Objects.equals(mResolution, other.mResolution) &&
                Objects.equals(mFrameRate, other.mFrameRate) &&
-               Objects.equals(mAudio, other.mAudio) &&
                Objects.equals(mVideo, other.mVideo) &&
-               Objects.equals(mSubtitles, other.mSubtitles) &&
-               Objects.equals(mClosedCaptions, other.mClosedCaptions);
+               Objects.equals(mUri, other.mUri);
     }
 
     public static class Builder implements StreamInfoBuilder {
@@ -168,10 +136,8 @@ public class StreamInfo implements IStreamInfo {
         private List<String> mCodecs;
         private Resolution mResolution;
         private float mFrameRate = Float.NaN;
-        private String mAudio;
         private String mVideo;
-        private String mSubtitles;
-        private String mClosedCaptions;
+        private String mUri;
 
         public Builder() {
         }
@@ -182,19 +148,15 @@ public class StreamInfo implements IStreamInfo {
                 List<String> codecs,
                 Resolution resolution,
                 float frameRate,
-                String audio,
                 String video,
-                String subtitles,
-                String closedCaptions) {
+                String uri) {
             mBandwidth = bandwidth;
             mAverageBandwidth = averageBandwidth;
             mCodecs = codecs;
             mResolution = resolution;
             mFrameRate = frameRate;
-            mAudio = audio;
             mVideo = video;
-            mSubtitles = subtitles;
-            mClosedCaptions = closedCaptions;
+            mUri = uri;
         }
 
         @Override
@@ -227,38 +189,26 @@ public class StreamInfo implements IStreamInfo {
             return this;
         }
 
-        public Builder withAudio(String audio) {
-            mAudio = audio;
-            return this;
-        }
-
         @Override
         public Builder withVideo(String video) {
             mVideo = video;
             return this;
         }
 
-        public Builder withSubtitles(String subtitles) {
-            mSubtitles = subtitles;
+        public Builder withUri(String uri) {
+            mUri = uri;
             return this;
         }
 
-        public Builder withClosedCaptions(String closedCaptions) {
-            mClosedCaptions = closedCaptions;
-            return this;
-        }
-
-        public StreamInfo build() {
-            return new StreamInfo(
+        public IFrameStreamInfo build() {
+            return new IFrameStreamInfo(
                     mBandwidth,
                     mAverageBandwidth,
                     mCodecs,
                     mResolution,
                     mFrameRate,
-                    mAudio,
                     mVideo,
-                    mSubtitles,
-                    mClosedCaptions);
+                    mUri);
         }
     }
 }

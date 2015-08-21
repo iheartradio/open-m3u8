@@ -6,16 +6,10 @@ class PlaylistLineParser implements LineParser {
     @Override
     public void parse(String line, ParseState state) {
         final PlaylistData.Builder builder = new PlaylistData.Builder();
-
-        if (Constants.URL_PATTERN.matcher(line).matches()) {
-            builder.withUrl(line);
-        } else {
-            builder.withPath(line);
-        }
-
         final MasterParseState masterState = state.getMaster();
 
         masterState.playlists.add(builder
+                .withUri(line)
                 .withStreamInfo(masterState.streamInfo)
                 .build());
 

@@ -2,12 +2,17 @@ package com.iheartradio.m3u8.data;
 
 import java.util.Objects;
 
-public class PlaylistData extends LocationData {
+public class PlaylistData {
+    private final String mUri;
     private final StreamInfo mStreamInfo;
 
-    private PlaylistData(LocationType locationType, String location, StreamInfo streamInfo) {
-        super(locationType, location);
+    private PlaylistData(String uri, StreamInfo streamInfo) {
+        mUri = uri;
         mStreamInfo = streamInfo;
+    }
+
+    public String getUri() {
+        return mUri;
     }
 
     public boolean hasStreamInfo() {
@@ -19,7 +24,7 @@ public class PlaylistData extends LocationData {
     }
 
     public Builder buildUpon() {
-        return new Builder(getLocationType(), getLocation(), mStreamInfo);
+        return new Builder(mUri, mStreamInfo);
     }
 
     @Override
@@ -35,41 +40,34 @@ public class PlaylistData extends LocationData {
 
         PlaylistData other = (PlaylistData) o;
         
-        return super.equals(other) &&
-               Objects.equals(mStreamInfo, other.mStreamInfo);
+        return super.equals(other) && Objects.equals(mStreamInfo, other.mStreamInfo);
+    }
+
+    @Override
+    public String toString() {
+        return "PlaylistData [mStreamInfo=" + mStreamInfo
+                + ", mUri=" + mUri + "]";
     }
 
     public static class Builder {
-        private LocationType mLocationType;
-        private String mLocation;
+        private String mUri;
         private StreamInfo mStreamInfo;
 
         public Builder() {
         }
 
-        private Builder(LocationType locationType, String location, StreamInfo streamInfo) {
-            mLocationType = locationType;
-            mLocation = location;
+        private Builder(String uri, StreamInfo streamInfo) {
+            mUri = uri;
             mStreamInfo = streamInfo;
         }
 
         public Builder withPath(String path) {
-            if (path == null || path.isEmpty()) {
-                throw new IllegalStateException("path cannot be empty");
-            }
-
-            mLocationType = LocationType.PATH;
-            mLocation = path;
+            mUri = path;
             return this;
         }
 
-        public Builder withUrl(String url) {
-            if (url == null || url.isEmpty()) {
-                throw new IllegalStateException("url cannot be empty");
-            }
-
-            mLocationType = LocationType.URL;
-            mLocation = url;
+        public Builder withUri(String uri) {
+            mUri = uri;
             return this;
         }
 
@@ -79,18 +77,7 @@ public class PlaylistData extends LocationData {
         }
 
         public PlaylistData build() {
-            if (mLocationType == null) {
-                throw new IllegalStateException("cannot build PlaylistData without a path or url");
-            }
-
-            return new PlaylistData(mLocationType, mLocation, mStreamInfo);
+            return new PlaylistData(mUri, mStreamInfo);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "PlaylistData [mStreamInfo=" + mStreamInfo
-                + ", getLocationType()=" + getLocationType()
-                + ", getLocation()=" + getLocation() + "]";
     }
 }
