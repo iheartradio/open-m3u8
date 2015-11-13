@@ -36,6 +36,8 @@ dependencies {
 
 ## Getting started
 
+Important: The public API is still volatile. It will remain subject to frequent change until a 1.0.0 release is made.
+
 Getting started with parsing is quite easy: Get a `PlaylistParser` and specify the format.
 
 ```java
@@ -125,12 +127,16 @@ Currently, writing multiple playlists with the same writer is not supported.
 
 ## Advanced usage
 
-### Lenient mode
+### Parsing mode
 
-The parser supports a `lenient` mode - by default it operats in a `strict` mode and parsing unknown tags in the `InputStream` cause an `ParseException`.
+The parser supports a mode configuration - by default it operats in a `strict` mode which attemps to adhere to the specification as much as possible.
 
-Activating the `lenient` mode via `new PlaylistParser(InputStream, Format, Encoding, ParsingMode)`:
-
+Providing the parser a `ParsingMode` you can relax some of the requirements. Two parsing modes are made available, or you can build your own custom mode.
+```java
+ParsingMode.LENIENT // lenient about everything
+ParsingMode.STRICT // strict about everything
+```
+Example:
 ```java
 InputStream inputStream = ...
 PlaylistParser parser = new PlaylistParser(inputStream, Format.EXT_M3U, Encoding.UTF_8, ParsingMode.LENIENT);
