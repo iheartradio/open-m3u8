@@ -23,6 +23,19 @@ public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
     }
 
     @Test
+    public void testEXTINF() throws Exception {
+        final IExtTagParser handler = MediaPlaylistLineParser.EXTINF;
+        final String tag = Constants.EXTINF_TAG;
+        final String line = "#" + tag + ":-1,TOP 100";
+
+        assertEquals(tag, handler.getTag());
+
+        handler.parse(line, mParseState);
+        assertEquals(-1f, mParseState.getMedia().trackInfo.duration);
+        assertEquals("TOP 100", mParseState.getMedia().trackInfo.title);
+    }
+
+    @Test
     public void testEXT_X_KEY() throws Exception {
         final IExtTagParser handler = MediaPlaylistLineParser.EXT_X_KEY;
         final String tag = Constants.EXT_X_KEY_TAG;

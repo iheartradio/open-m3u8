@@ -58,13 +58,10 @@ class ExtendedM3uParser extends BaseM3uParser {
                             //To support forward compatibility, when parsing Playlists, Clients
                             //MUST:
                             //o  ignore any unrecognized tags.
-                            switch(mParsingMode) {
-                                case STRICT:
-                                    throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
-                                case LENIENT:
-                                default:
-                                    tagParser = ExtLineParser.EXT_UNKNOWN_HANDLER;
-                                    break;
+                            if (mParsingMode.allowUnknownTags) {
+                                tagParser = ExtLineParser.EXT_UNKNOWN_HANDLER;
+                            } else {
+                                throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
                             }
                         }
 
@@ -83,8 +80,8 @@ class ExtendedM3uParser extends BaseM3uParser {
                 }
             }
 
-            Playlist playlist = state.buildPlaylist();
-            PlaylistValidation validation = PlaylistValidation.from(playlist);
+            final Playlist playlist = state.buildPlaylist();
+            final PlaylistValidation validation = PlaylistValidation.from(playlist, mParsingMode);
 
             if (validation.isValid()) {
                 return playlist;

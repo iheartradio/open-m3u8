@@ -31,7 +31,14 @@ public class PlaylistValidation {
         return mErrors;
     }
 
+    /**
+     * Equivalent to: PlaylistValidation.from(playlist, ParsingMode.STRICT)
+     */
     public static PlaylistValidation from(Playlist playlist) {
+        return PlaylistValidation.from(playlist, ParsingMode.STRICT);
+    }
+
+    public static PlaylistValidation from(Playlist playlist, ParsingMode parsingMode) {
         Set<PlaylistError> errors = new HashSet<>();
 
         if (playlist == null) {
@@ -58,7 +65,7 @@ public class PlaylistValidation {
         }
 
         if (playlist.hasMediaPlaylist()) {
-            addMediaPlaylistErrors(playlist.getMediaPlaylist(), errors, playlist.isExtended());
+            addMediaPlaylistErrors(playlist.getMediaPlaylist(), errors, playlist.isExtended(), parsingMode);
         }
 
         return new PlaylistValidation(errors);
@@ -86,13 +93,13 @@ public class PlaylistValidation {
         }
     }
 
-    private static void addMediaPlaylistErrors(MediaPlaylist playlist, Set<PlaylistError> errors, boolean isExtended) {
+    private static void addMediaPlaylistErrors(MediaPlaylist playlist, Set<PlaylistError> errors, boolean isExtended, ParsingMode parsingMode) {
         if (isExtended && playlist.hasStartData()) {
             addStartErrors(playlist.getStartData(), errors);
         }
 
         for (TrackData trackData : playlist.getTracks()) {
-            addTrackDataErrors(trackData, errors, isExtended);
+            addTrackDataErrors(trackData, errors, isExtended, parsingMode);
         }
     }
 
@@ -169,7 +176,7 @@ public class PlaylistValidation {
         }
     }
 
-    private static void addTrackDataErrors(TrackData trackData, Set<PlaylistError> errors, boolean isExtended) {
+    private static void addTrackDataErrors(TrackData trackData, Set<PlaylistError> errors, boolean isExtended, ParsingMode parsingMode) {
         if (trackData.getUri() == null || trackData.getUri().isEmpty()) {
             errors.add(PlaylistError.TRACK_DATA_WITHOUT_URI);
         }
@@ -181,6 +188,12 @@ public class PlaylistValidation {
         if (trackData.hasEncryptionData()) {
             if (trackData.getEncryptionData().getMethod() == null) {
                 errors.add(PlaylistError.ENCRYPTION_DATA_WITHOUT_METHOD);
+            }
+        }
+
+        if (trackData.hasTrackInfo()) {
+            if (!parsingMode.allowNegativeNumbers && trackData.getTrackInfo().duration < 0) {
+                errors.add(PlaylistError.TRACK_INFO_WITH_NEGATIVE_DURATION);
             }
         }
     }

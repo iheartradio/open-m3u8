@@ -28,11 +28,23 @@ class MediaParseState implements IParseState<MediaPlaylist> {
         return new MediaPlaylist.Builder()
                 .withTracks(tracks)
                 .withUnknownTags(unknownTags)
-                .withTargetDuration(targetDuration)
+                .withTargetDuration(targetDuration == null ? maximumDuration(tracks, 0) : targetDuration)
                 .withIsIframesOnly(isIframesOnly == null ? false : true)
                 .withStartData(startData)
                 .withMediaSequenceNumber(mediaSequenceNumber == null ? 0 : mediaSequenceNumber)
                 .withPlaylistType(playlistType)
                 .build();
+    }
+
+    private static int maximumDuration(List<TrackData> tracks, float minValue) {
+        float max = minValue;
+
+        for (final TrackData trackData : tracks) {
+            if (trackData.hasTrackInfo()) {
+                max = Math.max(max, trackData.getTrackInfo().duration);
+            }
+        }
+
+        return 0;
     }
 }

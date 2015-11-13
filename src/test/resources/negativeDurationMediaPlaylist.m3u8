@@ -1,0 +1,7 @@
+#EXTM3U
+#EXTINF:-1,TOP 100
+http://radio.promodj.com:8000/top100-192
+#EXTINF:-1,Channel 5
+http://radio.promodj.com:8000/channel5-192
+#EXTINF:-1,Klubb
+http://radio.promodj.com:8000/klubb-192
