@@ -1,6 +1,5 @@
 package com.iheartradio.m3u8.data;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +38,7 @@ public class MediaData {
         mAutoSelect = isAutoSelect;
         mForced = isForced;
         mInStreamId = inStreamId;
-        mCharacteristics = characteristics == null ? Collections.<String>emptyList() : Collections.unmodifiableList(characteristics);
+        mCharacteristics = DataUtil.emptyOrUnmodifiable(characteristics);
     }
 
     public MediaType getType() {

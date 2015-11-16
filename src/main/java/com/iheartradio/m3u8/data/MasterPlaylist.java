@@ -1,6 +1,5 @@
 package com.iheartradio.m3u8.data;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,10 +10,10 @@ public class MasterPlaylist {
     private final List<String> mUnknownTags;
 
     private MasterPlaylist(List<PlaylistData> playlists, List<IFrameStreamInfo> iFramePlaylists, List<MediaData> mediaData, List<String> unknownTags) {
-        mPlaylists = playlists == null ? Collections.<PlaylistData>emptyList() : Collections.unmodifiableList(playlists);
-        mIFramePlaylists = playlists == null ? Collections.<IFrameStreamInfo>emptyList() : Collections.unmodifiableList(iFramePlaylists);
-        mMediaData = mediaData == null ? Collections.<MediaData>emptyList() : Collections.unmodifiableList(mediaData);
-        mUnknownTags = unknownTags == null ? Collections.<String>emptyList() : Collections.unmodifiableList(unknownTags);
+        mPlaylists = DataUtil.emptyOrUnmodifiable(playlists);
+        mIFramePlaylists = DataUtil.emptyOrUnmodifiable(iFramePlaylists);
+        mMediaData = DataUtil.emptyOrUnmodifiable(mediaData);
+        mUnknownTags = DataUtil.emptyOrUnmodifiable(unknownTags);
     }
 
     public List<PlaylistData> getPlaylists() {
@@ -76,7 +75,7 @@ public class MasterPlaylist {
         private List<PlaylistData> mPlaylists;
         private List<IFrameStreamInfo> mIFramePlaylists;
         private List<MediaData> mMediaData;
-        private List<String> mUnknownTags = Collections.emptyList();
+        private List<String> mUnknownTags;
 
         public Builder() {
         }

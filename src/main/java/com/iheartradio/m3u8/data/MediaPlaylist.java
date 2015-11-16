@@ -1,6 +1,5 @@
 package com.iheartradio.m3u8.data;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,8 +13,8 @@ public class MediaPlaylist {
     private final StartData mStartData;
 
     private MediaPlaylist(List<TrackData> tracks, List<String> unknownTags, int targetDuration, StartData startData, int mediaSequenceNumber, boolean isIframesOnly, PlaylistType playlistType) {
-        mTracks = tracks == null ? Collections.<TrackData>emptyList() : Collections.unmodifiableList(tracks);
-        mUnknownTags = unknownTags == null ? Collections.<String>emptyList() : Collections.unmodifiableList(unknownTags);
+        mTracks = DataUtil.emptyOrUnmodifiable(tracks);
+        mUnknownTags = DataUtil.emptyOrUnmodifiable(unknownTags);
         mTargetDuration = targetDuration;
         mMediaSequenceNumber = mediaSequenceNumber;
         mIsIframesOnly = isIframesOnly;
@@ -119,7 +118,6 @@ public class MediaPlaylist {
         private StartData mStartData;
 
         public Builder() {
-            mUnknownTags = Collections.emptyList();
         }
 
         private Builder(List<TrackData> tracks, List<String> unknownTags, int targetDuration, int mediaSequenceNumber, boolean isIframesOnly, PlaylistType playlistType, StartData startData) {
