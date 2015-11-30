@@ -1,0 +1,16 @@
+#EXTM3U
+#EXT-X-VERSION:3
+#EXT-X-TARGETDURATION:10
+#EXT-X-MEDIA-SEQUENCE:0
+#EXTINF:10,Advertisement
+http://myserver/api/data/params?pubid=e4ac7b50-0422-4938-be6a-b0f49c50ebfc&chname=sample12.mp4&profid=1&slotid=1&pcrpts=0&ssid=<1234567890123456>&breakid=1&contenturl=
+#EXTINF:10,Advertisement
+http://myserver/api/data/params?pubid=e4ac7b50-0422-4938-be6a-b0f49c50ebfc&chname=sample12.mp4&profid=1&slotid=2&pcrpts=0&ssid=<1234567890123456>&breakid=1&contenturl=
+#EXTINF:10,Advertisement
+http://myserver/api/data/params?pubid=e4ac7b50-0422-4938-be6a-b0f49c50ebfc&chname=sample12.mp4&profid=1&slotid=3&pcrpts=0&ssid=<1234567890123456>&breakid=1&contenturl=
+#EXT-X-DISCONTINUITY
+#EXTINF:10
+http://contentserver/vod/sample.mp4/media_w1013470664_0.ts
+#EXTINF:10
+http://contentserver/vod/sample.mp4/media_w1013470664_1.ts
+#EXT-X-ENDLIST

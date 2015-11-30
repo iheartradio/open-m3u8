@@ -204,6 +204,9 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
                 if (trackData.getTrackInfo().title != null) {
                     sb.append(Constants.COMMA).append(trackData.getTrackInfo().title);
                 }
+                if (trackData.hasDiscontinuity()) {
+                    tagWriter.writeTag(Constants.EXT_X_DISCONTINUITY_TAG);
+                }
                 tagWriter.writeTag(getTag(), sb.toString());
                 tagWriter.writeLine(trackData.getUri());
             }

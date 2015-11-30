@@ -256,6 +256,27 @@ class MediaPlaylistLineParser implements LineParser {
         }
     };
 
+    static final IExtTagParser EXT_X_DISCONTINUITY = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_DISCONTINUITY_TAG;
+        }
+
+        @Override
+        public boolean hasData() {
+            return false;
+        }
+
+        @Override
+        public void parse(String line, ParseState state) throws ParseException {
+            lineParser.parse(line, state);
+            final Matcher matcher = ParseUtil.match(Constants.EXT_X_DISCONTINUITY_PATTERN, line, getTag());
+            state.getMedia().hasDiscontinuity = true;
+        }
+    };
+
     static final IExtTagParser EXT_X_KEY = new IExtTagParser() {
         private final LineParser lineParser = new MediaPlaylistLineParser(this);
         private final Map<String, AttributeParser<EncryptionData.Builder>> HANDLERS = new HashMap<>();

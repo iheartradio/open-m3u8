@@ -6,12 +6,15 @@ public class TrackData {
     private final String mUri;
     private final TrackInfo mTrackInfo;
     private final EncryptionData mEncryptionData;
+    private final boolean mHasDiscontinuity;
 
-    private TrackData(String uri, TrackInfo trackInfo, EncryptionData encryptionData) {
+    private TrackData(String uri, TrackInfo trackInfo, EncryptionData encryptionData, boolean hasDiscontinuity) {
         mUri = uri;
         mTrackInfo = trackInfo;
         mEncryptionData = encryptionData;
+        mHasDiscontinuity = hasDiscontinuity;
     }
+
 
     public String getUri() {
         return mUri;
@@ -35,17 +38,21 @@ public class TrackData {
                mEncryptionData.getMethod() != EncryptionMethod.NONE;
     }
 
+    public boolean hasDiscontinuity() {
+        return mHasDiscontinuity;
+    }
+
     public EncryptionData getEncryptionData() {
         return mEncryptionData;
     }
 
     public Builder buildUpon() {
-        return new Builder(getUri(), mTrackInfo, mEncryptionData);
+        return new Builder(getUri(), mTrackInfo, mEncryptionData, mHasDiscontinuity);
     }
-    
+
     @Override
     public int hashCode() {
-        return Objects.hash(mUri, mEncryptionData, mTrackInfo);
+        return Objects.hash(mUri, mEncryptionData, mTrackInfo, mHasDiscontinuity);
     }
 
     @Override
@@ -55,24 +62,32 @@ public class TrackData {
         }
 
         TrackData other = (TrackData) o;
-        
+
         return Objects.equals(mUri, other.getUri()) &&
-               Objects.equals(this.mEncryptionData, other.mEncryptionData) &&
-               Objects.equals(this.mTrackInfo, other.mTrackInfo);
+               Objects.equals(mEncryptionData, other.mEncryptionData) &&
+               Objects.equals(mTrackInfo, other.mTrackInfo) &&
+               Objects.equals(mHasDiscontinuity, other.mHasDiscontinuity);
+    }
+
+    @Override
+    public String toString() {
+        return "TrackData [mUri=" + mUri + ", mTrackInfo=" + mTrackInfo + ", mEncryptionData=" + mEncryptionData + ", mHasDiscontinuity=" + mHasDiscontinuity + "]";
     }
 
     public static class Builder {
         private String mUri;
         private TrackInfo mTrackInfo;
         private EncryptionData mEncryptionData;
+        private boolean mHasDiscontinuity;
 
         public Builder() {
         }
 
-        private Builder(String uri, TrackInfo trackInfo, EncryptionData encryptionData) {
+        private Builder(String uri, TrackInfo trackInfo, EncryptionData encryptionData, boolean hasDiscontinuity) {
             mUri = uri;
             mTrackInfo = trackInfo;
             mEncryptionData = encryptionData;
+            mHasDiscontinuity = hasDiscontinuity;
         }
 
         public Builder withUri(String url) {
@@ -90,8 +105,13 @@ public class TrackData {
             return this;
         }
 
+        public Builder withDiscontinuity(boolean hasDiscontinuity) {
+            mHasDiscontinuity = hasDiscontinuity;
+            return this;
+        }
+
         public TrackData build() {
-            return new TrackData(mUri, mTrackInfo, mEncryptionData);
+            return new TrackData(mUri, mTrackInfo, mEncryptionData, mHasDiscontinuity);
         }
     }
 }

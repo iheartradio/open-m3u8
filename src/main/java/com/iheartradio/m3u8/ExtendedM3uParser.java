@@ -30,7 +30,8 @@ class ExtendedM3uParser extends BaseM3uParser {
                 MasterPlaylistLineParser.EXT_X_STREAM_INF,
                 MasterPlaylistLineParser.EXT_X_I_FRAME_STREAM_INF,
                 MediaPlaylistLineParser.EXTINF,
-                MediaPlaylistLineParser.EXT_X_ENDLIST
+                MediaPlaylistLineParser.EXT_X_ENDLIST,
+                MediaPlaylistLineParser.EXT_X_DISCONTINUITY
         );
     }
 

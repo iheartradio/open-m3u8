@@ -22,6 +22,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
     public EncryptionData encryptionData;
     public StartData startData;
     public boolean endOfList;
+    public boolean hasDiscontinuity;
 
     @Override
     public MediaPlaylist buildPlaylist() throws ParseException {

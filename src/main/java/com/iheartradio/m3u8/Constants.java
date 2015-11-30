@@ -67,6 +67,7 @@ final class Constants {
     public static final String EXT_X_ALLOW_CACHE_TAG = "EXT-X-ALLOW-CACHE";
     public static final String EXT_X_ENDLIST_TAG = "EXT-X-ENDLIST";
     public static final String EXT_X_I_FRAMES_ONLY_TAG = "EXT-X-I-FRAMES-ONLY";
+    public static final String EXT_X_DISCONTINUITY_TAG = "EXT-X-DISCONTINUITY";
 
     // media segment tags
 
@@ -94,6 +95,7 @@ final class Constants {
     public static final Pattern EXTINF_PATTERN = Pattern.compile("^#" + EXTINF_TAG + EXT_TAG_END + "(" + SIGNED_FLOAT_REGEX + ")(?:,(.+)?)?$");
     public static final Pattern EXT_X_ENDLIST_PATTERN = Pattern.compile("^#" + EXT_X_ENDLIST_TAG + "$");
     public static final Pattern EXT_X_I_FRAMES_ONLY_PATTERN = Pattern.compile("^#" + EXT_X_I_FRAMES_ONLY_TAG);
+    public static final Pattern EXT_X_DISCONTINUITY_PATTERN = Pattern.compile("^#" + EXT_X_DISCONTINUITY_TAG + "$");
     
     // other
 
