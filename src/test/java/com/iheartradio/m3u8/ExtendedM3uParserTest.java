@@ -169,6 +169,8 @@ public class ExtendedM3uParserTest {
 
         assertFalse(mediaPlaylist.getTracks().get(0).hasDiscontinuity());
         assertTrue(mediaPlaylist.getTracks().get(1).hasDiscontinuity());
+        assertEquals(0, mediaPlaylist.getDiscontinuitySequenceNumber(0));
+        assertEquals(1, mediaPlaylist.getDiscontinuitySequenceNumber(1));
     }
 
     private static TrackData makeTrackData(String uri, float duration) {

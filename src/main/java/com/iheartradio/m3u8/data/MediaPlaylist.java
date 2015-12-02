@@ -66,6 +66,22 @@ public class MediaPlaylist {
         return mPlaylistType != null;
     }
 
+    public int getDiscontinuitySequenceNumber(final int segmentIndex) {
+        if (segmentIndex < 0 || segmentIndex >= mTracks.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        int discontinuitySequenceNumber = 0;
+
+        for (int i = 0; i <= segmentIndex; ++i) {
+            if (mTracks.get(i).hasDiscontinuity()) {
+                ++discontinuitySequenceNumber;
+            }
+        }
+
+        return discontinuitySequenceNumber;
+    }
+
     public Builder buildUpon() {
         return new Builder(mTracks, mUnknownTags, mTargetDuration, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType, mStartData);
     }
