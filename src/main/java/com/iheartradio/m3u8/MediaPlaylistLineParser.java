@@ -114,6 +114,33 @@ class MediaPlaylistLineParser implements LineParser {
         }
     };
     
+    static final IExtTagParser EXT_X_PROGRAM_DATE_TIME = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_PROGRAM_DATE_TIME_TAG;
+        }
+
+        @Override
+        public boolean hasData() {
+            return true;
+        }
+        
+        @Override
+        public void parse(String line, ParseState state) throws ParseException {
+            lineParser.parse(line, state);
+
+            final Matcher matcher = ParseUtil.match(Constants.EXT_X_PROGRAM_DATE_TIME_PATTERN, line, getTag());
+
+            if (state.getMedia().playlistDateTime != null) {
+                throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
+            }
+
+            state.getMedia().playlistDateTime = ParseUtil.parseDateTime(line,getTag());
+        }
+    };
+    
     static final IExtTagParser EXT_X_START = new IExtTagParser() {
         private final LineParser lineParser = new MediaPlaylistLineParser(this);
         private final Map<String, AttributeParser<StartData.Builder>> HANDLERS = new HashMap<>();

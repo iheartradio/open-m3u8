@@ -29,6 +29,16 @@ final class ParseUtil {
             throw ParseException.create(ParseExceptionType.NOT_JAVA_ENUM, tag, string);
         }
     }
+    
+    public static String parseDateTime(String string, String tag) throws ParseException {
+        Matcher matcher = Constants.EXT_X_PROGRAM_DATE_TIME_PATTERN.matcher(string);
+
+        if (!matcher.matches()) {
+            throw new ParseException(ParseExceptionType.INVALID_DATE_TIME_FORMAT, tag);
+        }
+
+        return matcher.group(1);
+    }
 
     public static float parseFloat(String string, String tag) throws ParseException {
         try {

@@ -20,6 +20,7 @@ class ExtendedM3uParser extends BaseM3uParser {
                 ExtLineParser.EXTM3U_HANDLER,
                 ExtLineParser.EXT_X_VERSION_HANDLER,
                 MediaPlaylistLineParser.EXT_X_PLAYLIST_TYPE,
+                MediaPlaylistLineParser.EXT_X_PROGRAM_DATE_TIME,
                 MediaPlaylistLineParser.EXT_X_KEY,
                 MediaPlaylistLineParser.EXT_X_TARGETDURATION,
                 MediaPlaylistLineParser.EXT_X_START,

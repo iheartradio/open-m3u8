@@ -21,6 +21,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
     public TrackInfo trackInfo;
     public EncryptionData encryptionData;
     public StartData startData;
+    public String playlistDateTime;
     public boolean endOfList;
     public boolean hasDiscontinuity;
 

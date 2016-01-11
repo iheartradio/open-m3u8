@@ -18,6 +18,7 @@ public enum ParseExceptionType {
     INVALID_MEDIA_TYPE("invalid media TYPE"),
     INVALID_RESOLUTION_FORMAT("a resolution was not formatted properly"),
     INVALID_QUOTED_STRING("a quoted string was not properly formatted"),
+    INVALID_DATE_TIME_FORMAT("a date-time string was not properly formatted"),
     MASTER_IN_MEDIA("master playlist tags we found in a media playlist"),
     MEDIA_IN_MASTER("media playlist tags we found in a master playlist"),
     MISSING_ATTRIBUTE_NAME("missing the name of an attribute"),
