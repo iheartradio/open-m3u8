@@ -11,8 +11,8 @@ import com.iheartradio.m3u8.data.TrackData;
 import com.iheartradio.m3u8.data.TrackInfo;
 
 class MediaParseState implements IParseState<MediaPlaylist> {
-    public final List<TrackData> tracks = new ArrayList<TrackData>();
-    public final List<String> unknownTags = new ArrayList<String>();
+    public final List<TrackData> tracks = new ArrayList<>();
+    public final List<String> unknownTags = new ArrayList<>();
 
     public Integer targetDuration;
     public Integer mediaSequenceNumber;
@@ -21,7 +21,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
     public TrackInfo trackInfo;
     public EncryptionData encryptionData;
     public StartData startData;
-    public String playlistDateTime;
+    public String programDateTime;
     public boolean endOfList;
     public boolean hasDiscontinuity;
 

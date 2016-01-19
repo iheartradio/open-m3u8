@@ -92,13 +92,14 @@ public class ExtendedM3uParserTest {
                         "#EXTINF:120.0,title 1\n" +
                         absolute + "\n" +
                         "#EXTINF:100.0,title 2\n" +
+                        "#EXT-X-PROGRAM-DATE-TIME:2010-02-19T14:54:23.031+08:00\n" +
                         "\n" +
                         relative + "\n" +
                         "\n";
 
         final List<TrackData> expectedTracks = Arrays.asList(
                 new TrackData.Builder().withUri(absolute).withTrackInfo(new TrackInfo(120, "title 1")).build(),
-                new TrackData.Builder().withUri(relative).withTrackInfo(new TrackInfo(100, "title 2")).build());
+                new TrackData.Builder().withUri(relative).withTrackInfo(new TrackInfo(100, "title 2")).withProgramDateTime("2010-02-19T14:54:23.031+08:00").build());
 
         final InputStream inputStream = new ByteArrayInputStream(validData.getBytes("utf-8"));
         final Playlist playlist = new ExtendedM3uParser(inputStream, Encoding.UTF_8, ParsingMode.STRICT).parse();

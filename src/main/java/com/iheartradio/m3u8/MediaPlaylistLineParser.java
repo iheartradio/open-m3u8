@@ -133,11 +133,11 @@ class MediaPlaylistLineParser implements LineParser {
 
             final Matcher matcher = ParseUtil.match(Constants.EXT_X_PROGRAM_DATE_TIME_PATTERN, line, getTag());
 
-            if (state.getMedia().playlistDateTime != null) {
+            if (state.getMedia().programDateTime != null) {
                 throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
             }
 
-            state.getMedia().playlistDateTime = ParseUtil.parseDateTime(line,getTag());
+            state.getMedia().programDateTime = ParseUtil.parseDateTime(line,getTag());
         }
     };
     

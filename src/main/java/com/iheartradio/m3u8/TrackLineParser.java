@@ -16,10 +16,12 @@ class TrackLineParser implements LineParser {
                 .withUri(line)
                 .withTrackInfo(mediaState.trackInfo)
                 .withEncryptionData(mediaState.encryptionData)
+                .withProgramDateTime(mediaState.programDateTime)
                 .withDiscontinuity(mediaState.hasDiscontinuity)
                 .build());
 
         mediaState.trackInfo = null;
+        mediaState.programDateTime = null;
         mediaState.hasDiscontinuity = false;
     }
 }
