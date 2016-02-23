@@ -35,6 +35,13 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
         boolean hasData() {
             return false;
         }
+
+        @Override
+        public void doWrite(TagWriter tagWriter,Playlist playlist, MediaPlaylist mediaPlaylist) throws IOException {
+            if (!mediaPlaylist.isOngoing()) {
+                tagWriter.writeTag(getTag());
+            }
+        }
     };
     
     static final IExtTagWriter EXT_X_I_FRAMES_ONLY = new MediaPlaylistTagWriter() {

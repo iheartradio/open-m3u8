@@ -9,15 +9,17 @@ public class MediaPlaylist {
     private final int mTargetDuration;
     private final int mMediaSequenceNumber;
     private final boolean mIsIframesOnly;
+    private final boolean mIsOngoing;
     private final PlaylistType mPlaylistType;
     private final StartData mStartData;
 
-    private MediaPlaylist(List<TrackData> tracks, List<String> unknownTags, int targetDuration, StartData startData, int mediaSequenceNumber, boolean isIframesOnly, PlaylistType playlistType) {
+    private MediaPlaylist(List<TrackData> tracks, List<String> unknownTags, int targetDuration, StartData startData, int mediaSequenceNumber, boolean isIframesOnly, boolean isOngoing, PlaylistType playlistType) {
         mTracks = DataUtil.emptyOrUnmodifiable(tracks);
         mUnknownTags = DataUtil.emptyOrUnmodifiable(unknownTags);
         mTargetDuration = targetDuration;
         mMediaSequenceNumber = mediaSequenceNumber;
         mIsIframesOnly = isIframesOnly;
+        mIsOngoing = isOngoing;
         mStartData = startData;
         mPlaylistType = playlistType;
     }
@@ -41,7 +43,11 @@ public class MediaPlaylist {
     public boolean isIframesOnly() {
         return mIsIframesOnly;
     }
-    
+
+    public boolean isOngoing() {
+        return mIsOngoing;
+    }
+
     public boolean hasUnknownTags() {
         return !mUnknownTags.isEmpty();
     }
@@ -83,7 +89,7 @@ public class MediaPlaylist {
     }
 
     public Builder buildUpon() {
-        return new Builder(mTracks, mUnknownTags, mTargetDuration, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType, mStartData);
+        return new Builder(mTracks, mUnknownTags, mTargetDuration, mMediaSequenceNumber, mIsIframesOnly, mIsOngoing, mPlaylistType, mStartData);
     }
     
     @Override
@@ -130,18 +136,20 @@ public class MediaPlaylist {
         private int mTargetDuration;
         private int mMediaSequenceNumber;
         private boolean mIsIframesOnly;
+        private boolean mIsOngoing;
         private PlaylistType mPlaylistType;
         private StartData mStartData;
 
         public Builder() {
         }
 
-        private Builder(List<TrackData> tracks, List<String> unknownTags, int targetDuration, int mediaSequenceNumber, boolean isIframesOnly, PlaylistType playlistType, StartData startData) {
+        private Builder(List<TrackData> tracks, List<String> unknownTags, int targetDuration, int mediaSequenceNumber, boolean isIframesOnly, boolean isOngoing, PlaylistType playlistType, StartData startData) {
             mTracks = tracks;
             mUnknownTags = unknownTags;
             mTargetDuration = targetDuration;
             mMediaSequenceNumber = mediaSequenceNumber;
             mIsIframesOnly = isIframesOnly;
+            mIsOngoing = isOngoing;
             mPlaylistType = playlistType;
             mStartData = startData;
         }
@@ -175,14 +183,19 @@ public class MediaPlaylist {
             mIsIframesOnly = isIframesOnly;
             return this;
         }
-        
+
+        public Builder withIsOngoing(boolean isOngoing) {
+            mIsOngoing = isOngoing;
+            return this;
+        }
+
         public Builder withPlaylistType(PlaylistType playlistType) {
             mPlaylistType = playlistType;
             return this;
         }
 
         public MediaPlaylist build() {
-            return new MediaPlaylist(mTracks, mUnknownTags, mTargetDuration, mStartData, mMediaSequenceNumber, mIsIframesOnly, mPlaylistType);
+            return new MediaPlaylist(mTracks, mUnknownTags, mTargetDuration, mStartData, mMediaSequenceNumber, mIsIframesOnly, mIsOngoing, mPlaylistType);
         }
     }
 }

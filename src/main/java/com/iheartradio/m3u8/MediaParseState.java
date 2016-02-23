@@ -32,6 +32,7 @@ class MediaParseState implements IParseState<MediaPlaylist> {
                 .withUnknownTags(unknownTags)
                 .withTargetDuration(targetDuration == null ? maximumDuration(tracks, 0) : targetDuration)
                 .withIsIframesOnly(isIframesOnly == null ? false : true)
+                .withIsOngoing(!endOfList)
                 .withStartData(startData)
                 .withMediaSequenceNumber(mediaSequenceNumber == null ? 0 : mediaSequenceNumber)
                 .withPlaylistType(playlistType)
