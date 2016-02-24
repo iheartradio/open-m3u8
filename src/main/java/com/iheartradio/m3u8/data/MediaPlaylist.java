@@ -94,8 +94,15 @@ public class MediaPlaylist {
     
     @Override
     public int hashCode() {
-        return Objects.hash(mIsIframesOnly, mMediaSequenceNumber, mPlaylistType,
-                mStartData, mTargetDuration, mTracks, mUnknownTags);
+        return Objects.hash(
+                mTracks,
+                mUnknownTags,
+                mTargetDuration,
+                mMediaSequenceNumber,
+                mIsIframesOnly,
+                mIsOngoing,
+                mPlaylistType,
+                mStartData);
     }
 
     @Override
@@ -111,6 +118,7 @@ public class MediaPlaylist {
                mTargetDuration == other.mTargetDuration &&
                mMediaSequenceNumber == other.mMediaSequenceNumber &&
                mIsIframesOnly == other.mIsIframesOnly &&
+               mIsOngoing == other.mIsOngoing &&
                Objects.equals(mPlaylistType, other.mPlaylistType) &&
                Objects.equals(mStartData, other.mStartData);
     }
@@ -124,6 +132,7 @@ public class MediaPlaylist {
                 .append(" mTargetDuration=").append(mTargetDuration)
                 .append(" mMediaSequenceNumber=").append(mMediaSequenceNumber)
                 .append(" mIsIframesOnly=").append(mIsIframesOnly)
+                .append(" mIsOngoing=").append(mIsOngoing)
                 .append(" mPlaylistType=").append(mPlaylistType)
                 .append(" mStartData=").append(mStartData)
                 .append(")")
