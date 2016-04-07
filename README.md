@@ -20,7 +20,7 @@ We now have artifacts in Maven Central! Artifacts are typically built with Java 
 
 ```
 dependencies {
-  compile 'com.iheartradio.m3u8:open-m3u8:0.2.1'
+  compile 'com.iheartradio.m3u8:open-m3u8:0.2.4'
 }
 ```
 
@@ -30,7 +30,7 @@ dependencies {
 <dependency>
   <groupId>com.iheartradio.m3u8</groupId>
   <artifactId>open-m3u8</artifactId>
-  <version>0.2.1</version>
+  <version>0.2.4</version>
 </dependency>
 ```
 
