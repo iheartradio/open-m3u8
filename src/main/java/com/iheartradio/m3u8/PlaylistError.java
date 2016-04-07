@@ -85,7 +85,7 @@ public enum PlaylistError {
 
     /**
      * TrackInfo duration must be non-nagative.
-     * @see com.iheartradio.m3u8.ParsingMode.allowNegativeNumbers
+     * @see com.iheartradio.m3u8.ParsingMode#allowNegativeNumbers
      */
     TRACK_INFO_WITH_NEGATIVE_DURATION,
 
