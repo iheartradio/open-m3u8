@@ -188,40 +188,45 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
 
     // media segment tags
 
-    static final IExtTagWriter EXTINF = new MediaPlaylistTagWriter() {
+    static final SectionWriter MEDIA_SEGMENTS = new SectionWriter() {
         @Override
-        public String getTag() {
-            return Constants.EXTINF_TAG;
-        }
+        public void write(TagWriter tagWriter, Playlist playlist) throws IOException, ParseException {
+            if (playlist.hasMediaPlaylist()) {
+                KeyWriter keyWriter = new KeyWriter();
 
-        @Override
-        boolean hasData() {
-            return true;
-        }
-        
-        @Override
-        public void doWrite(TagWriter tagWriter, Playlist playlist, MediaPlaylist mediaPlaylist) throws IOException ,ParseException {
-            for (TrackData trackData : mediaPlaylist.getTracks()) {
-                StringBuilder sb = new StringBuilder();
-                if (playlist.getCompatibilityVersion() <= 3) {
-                    sb.append(Integer.toString((int)trackData.getTrackInfo().duration));
-                } else {
-                    sb.append(Float.toString(trackData.getTrackInfo().duration));
+                for (TrackData trackData : playlist.getMediaPlaylist().getTracks()) {
+                    if (trackData.hasDiscontinuity()) {
+                        tagWriter.writeTag(Constants.EXT_X_DISCONTINUITY_TAG);
+                    }
+
+                    keyWriter.writeTrackData(tagWriter, playlist, trackData);
+                    writeExtinf(tagWriter, playlist, trackData);
+                    tagWriter.writeLine(trackData.getUri());
                 }
-                if (trackData.getTrackInfo().title != null) {
-                    sb.append(Constants.COMMA).append(trackData.getTrackInfo().title);
-                }
-                if (trackData.hasDiscontinuity()) {
-                    tagWriter.writeTag(Constants.EXT_X_DISCONTINUITY_TAG);
-                }
-                tagWriter.writeTag(getTag(), sb.toString());
-                tagWriter.writeLine(trackData.getUri());
             }
-        };
+        }
     };
 
-    static final ExtTagWriter EXT_X_KEY = new MediaPlaylistTagWriter() {
+    private static void writeExtinf(TagWriter tagWriter, Playlist playlist, TrackData trackData) throws IOException {
+        final StringBuilder builder = new StringBuilder();
+
+        if (playlist.getCompatibilityVersion() <= 3) {
+            builder.append(Integer.toString((int) trackData.getTrackInfo().duration));
+        } else {
+            builder.append(Float.toString(trackData.getTrackInfo().duration));
+        }
+
+        if (trackData.getTrackInfo().title != null) {
+            builder.append(Constants.COMMA).append(trackData.getTrackInfo().title);
+        }
+
+        tagWriter.writeTag(Constants.EXTINF_TAG, builder.toString());
+    }
+
+    static class KeyWriter extends MediaPlaylistTagWriter {
         private final Map<String, AttributeWriter<EncryptionData>> HANDLERS = new HashMap<String, AttributeWriter<EncryptionData>>();
+
+        private EncryptionData mEncryptionData;
 
         {
             HANDLERS.put(Constants.METHOD, new AttributeWriter<EncryptionData>() {
@@ -299,13 +304,18 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
 
         @Override
         public void doWrite(TagWriter tagWriter, Playlist playlist, MediaPlaylist mediaPlaylist) throws IOException, ParseException {
-            if (mediaPlaylist.getTracks().size() > 0) {
-                TrackData td = mediaPlaylist.getTracks().get(0);
-                if (td.hasEncryptionData()) {
-                    EncryptionData ed = td.getEncryptionData();
-                    writeAttributes(tagWriter, ed, HANDLERS);
+            writeAttributes(tagWriter, mEncryptionData, HANDLERS);
+        }
+
+        void writeTrackData(TagWriter tagWriter, Playlist playlist, TrackData trackData) throws IOException, ParseException {
+            if (trackData != null && trackData.hasEncryptionData()) {
+                final EncryptionData encryptionData = trackData.getEncryptionData();
+
+                if (!encryptionData.equals(mEncryptionData)) {
+                    mEncryptionData = encryptionData;
+                    write(tagWriter, playlist);
                 }
             }
         }
-    };
+    }
 }
