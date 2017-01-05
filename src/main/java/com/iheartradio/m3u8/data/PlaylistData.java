@@ -29,7 +29,7 @@ public class PlaylistData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), mStreamInfo);
+        return Objects.hash(mUri, mStreamInfo);
     }
 
     @Override
@@ -39,8 +39,7 @@ public class PlaylistData {
         }
 
         PlaylistData other = (PlaylistData) o;
-        
-        return super.equals(other) && Objects.equals(mStreamInfo, other.mStreamInfo);
+        return Objects.equals(mUri, other.mUri) && Objects.equals(mStreamInfo, other.mStreamInfo);
     }
 
     @Override
