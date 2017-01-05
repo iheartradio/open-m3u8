@@ -25,6 +25,7 @@ final class Constants {
     public static final String EXT_X_TARGETDURATION_TAG = "EXT-X-TARGETDURATION";
     public static final String EXT_X_MEDIA_SEQUENCE_TAG = "EXT-X-MEDIA-SEQUENCE";
     public static final String EXT_X_ALLOW_CACHE_TAG = "EXT-X-ALLOW-CACHE";
+    public static final String EXT_X_PROGRAM_DATE_TIME_TAG = "EXT-X-PROGRAM-DATE-TIME";
 
     // media segment tags
 
