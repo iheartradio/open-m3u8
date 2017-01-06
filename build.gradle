@@ -11,6 +11,12 @@ idea {
 }
 
 buildscript {
+
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = JavaVersion.VERSION_1_7
+        targetCompatibility = JavaVersion.VERSION_1_7
+    }
+
     repositories {
         mavenCentral()
     }
@@ -25,7 +31,7 @@ repositories {
 
 group 'com.iheartradio.m3u8'
 archivesBaseName = 'open-m3u8'
-version '0.0.3.2'
+version '0.0.3.3'
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
