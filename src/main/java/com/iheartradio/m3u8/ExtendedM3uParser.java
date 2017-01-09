@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 class ExtendedM3uParser {
+
+    private static final boolean THROW_EXCEPTION_ON_UNKNOWN_TAG = false;
+
     private final ExtendedM3uScanner mScanner;
     private final Encoding mEncoding;
     private final Map<String, IExtTagHandler> mExtTagHandlers = new HashMap<String, IExtTagHandler>();
@@ -19,9 +22,6 @@ class ExtendedM3uParser {
         putHandlers(
                 ExtTagHandler.EXTM3U_HANDLER,
                 ExtTagHandler.EXT_X_VERSION_HANDLER,
-                ExtTagHandler.EXT_X_ALLOW_CACHE,
-                ExtTagHandler.EXT_X_PROGRAM_DATE_TIME,
-                ExtTagHandler.EXT_X_START,
                 MasterPlaylistTagHandler.EXT_X_MEDIA,
                 MasterPlaylistTagHandler.EXT_X_STREAM_INF,
                 MediaPlaylistTagHandler.EXT_X_TARGETDURATION,
@@ -49,7 +49,7 @@ class ExtendedM3uParser {
                         final IExtTagHandler handler = mExtTagHandlers.get(tagKey);
 
                         if (handler == null) {
-                            throw ParseException.create(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
+                            handleParseException(ParseExceptionType.UNSUPPORTED_EXT_TAG_DETECTED, tagKey, line);
                         } else {
                             handler.handle(line, state);
                         }
@@ -58,7 +58,7 @@ class ExtendedM3uParser {
                     } else if (state.isMedia()) {
                         trackHandler.handle(line, state);
                     } else {
-                        throw ParseException.create(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE, line);
+                        handleParseException(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE, line, null);
                     }
                 }
             }
@@ -69,6 +69,12 @@ class ExtendedM3uParser {
             throw exception;
         } finally {
             mScanner.close();
+        }
+    }
+
+    private void handleParseException(final ParseExceptionType parseExceptionType, final String tag, final String line) throws ParseException {
+        if (THROW_EXCEPTION_ON_UNKNOWN_TAG) {
+            throw ParseException.create(parseExceptionType, tag, line);
         }
     }
 
