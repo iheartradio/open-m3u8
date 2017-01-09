@@ -93,4 +93,57 @@ abstract class ExtTagHandler implements IExtTagHandler {
             state.setCompatibilityVersion(compatibilityVersion);
         }
     };
+
+
+    static final IExtTagHandler EXT_X_ALLOW_CACHE = new ExtTagHandler() {
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_ALLOW_CACHE_TAG;
+        }
+
+        @Override
+        boolean hasData() {
+            return false;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+        }
+    };
+
+    static final IExtTagHandler EXT_X_PROGRAM_DATE_TIME = new ExtTagHandler() {
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_PROGRAM_DATE_TIME_TAG;
+        }
+
+        @Override
+        public boolean hasData() {
+            return false;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+        }
+    };
+
+    static final IExtTagHandler EXT_X_START = new ExtTagHandler() {
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_START_TAG;
+        }
+
+        @Override
+        public boolean hasData() {
+            return false;
+        }
+
+        @Override
+        public void handle(String line, ParseState state) throws ParseException {
+        }
+    };
+
+
 }
