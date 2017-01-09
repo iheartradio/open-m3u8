@@ -210,7 +210,7 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
     private static void writeExtinf(TagWriter tagWriter, Playlist playlist, TrackData trackData) throws IOException {
         final StringBuilder builder = new StringBuilder();
 
-        if (playlist.getCompatibilityVersion() <= 3) {
+        if (playlist.getCompatibilityVersion() < 3) {
             builder.append(Integer.toString((int) trackData.getTrackInfo().duration));
         } else {
             builder.append(Float.toString(trackData.getTrackInfo().duration));
