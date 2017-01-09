@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-public class ParserStateHandlerTestCase extends TestCase {
+public class LineParserStateTestCase extends TestCase {
     protected ParseState mParseState;
 
     @Override
@@ -12,7 +12,7 @@ public class ParserStateHandlerTestCase extends TestCase {
         mParseState = new ParseState(Encoding.UTF_8);
     }
 
-    protected void assertHandleThrows(IExtTagParser handler, String line, ParseExceptionType exceptionType) {
+    protected void assertParseThrows(IExtTagParser handler, String line, ParseExceptionType exceptionType) {
         try {
             handler.parse(line, mParseState);
             assertFalse(true);

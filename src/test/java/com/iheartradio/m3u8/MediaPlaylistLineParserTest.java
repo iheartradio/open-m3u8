@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
+public class MediaPlaylistLineParserTest extends LineParserStateTestCase {
     @Test
     public void testEXT_X_TARGETDURATION() throws Exception {
         final IExtTagParser handler = MediaPlaylistLineParser.EXT_X_TARGETDURATION;
@@ -19,7 +19,7 @@ public class MediaPlaylistTagHandlerTest extends ParserStateHandlerTestCase {
         handler.parse(line, mParseState);
         assertEquals(60, (int) mParseState.getMedia().targetDuration);
 
-        assertHandleThrows(handler, line, ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES);
+        assertParseThrows(handler, line, ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES);
     }
 
     @Test

@@ -1,8 +1,11 @@
 package com.iheartradio.m3u8;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 import com.iheartradio.m3u8.data.Playlist;
+import com.iheartradio.m3u8.data.StartData;
 
 class ExtLineParser implements LineParser {
     private final IExtTagParser mTagParser;
@@ -54,18 +57,12 @@ class ExtLineParser implements LineParser {
         
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            if (state.isMaster()) {
-                state.getMaster().unknownTags.add(line);
-            } else if (state.isMedia()) {
-                state.getMedia().unknownTags.add(line);
-            } else {
-                // nowhere to put the tag
-            }
+            state.unknownTags.add(line);
         }
     };
     
     static final IExtTagParser EXT_X_VERSION_HANDLER = new IExtTagParser() {
-        private final ExtLineParser mLineParser = new ExtLineParser(this);
+        private final ExtLineParser lineParser = new ExtLineParser(this);
 
         @Override
         public String getTag() {
@@ -79,7 +76,7 @@ class ExtLineParser implements LineParser {
         
         @Override
         public void parse(String line, ParseState state) throws ParseException {
-            mLineParser.parse(line, state);
+            lineParser.parse(line, state);
 
             final Matcher matcher = ParseUtil.match(Constants.EXT_X_VERSION_PATTERN, line, getTag());
 
@@ -98,6 +95,50 @@ class ExtLineParser implements LineParser {
             }
 
             state.setCompatibilityVersion(compatibilityVersion);
+        }
+    };
+
+    static final IExtTagParser EXT_X_START = new IExtTagParser() {
+        private final LineParser lineParser = new ExtLineParser(this);
+        private final Map<String, AttributeParser<StartData.Builder>> HANDLERS = new HashMap<>();
+
+        {
+            HANDLERS.put(Constants.TIME_OFFSET, new AttributeParser<StartData.Builder>() {
+                @Override
+                public void parse(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
+                    builder.withTimeOffset(ParseUtil.parseFloat(attribute.value, getTag()));
+                }
+            });
+
+            HANDLERS.put(Constants.PRECISE, new AttributeParser<StartData.Builder>() {
+                @Override
+                public void parse(Attribute attribute, StartData.Builder builder, ParseState state) throws ParseException {
+                    builder.withPrecise(ParseUtil.parseYesNo(attribute, getTag()));
+                }
+            });
+        }
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_START_TAG;
+        }
+
+        @Override
+        public boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void parse(String line, ParseState state) throws ParseException {
+            if (state.startData != null) {
+                throw ParseException.create(ParseExceptionType.MULTIPLE_EXT_TAG_INSTANCES, getTag(), line);
+            }
+
+            final StartData.Builder builder = new StartData.Builder();
+
+            lineParser.parse(line, state);
+            ParseUtil.parseAttributes(line, builder, state, HANDLERS, getTag());
+            state.startData = builder.build();
         }
     };
 }

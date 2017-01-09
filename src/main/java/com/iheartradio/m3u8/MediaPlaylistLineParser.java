@@ -114,6 +114,7 @@ class MediaPlaylistLineParser implements LineParser {
         }
     };
     
+
     static final IExtTagParser EXT_X_PROGRAM_DATE_TIME = new IExtTagParser() {
         private final LineParser lineParser = new MediaPlaylistLineParser(this);
 
@@ -179,10 +180,11 @@ class MediaPlaylistLineParser implements LineParser {
             ParseUtil.parseAttributes(line, builder, state, HANDLERS, getTag());
             final StartData startData = builder.build();
 
-            state.getMedia().startData = startData;
+            state.getMedia().setStartData(startData);
         }
     };
     
+
     static final IExtTagParser EXT_X_TARGETDURATION = new IExtTagParser() {
         private final LineParser lineParser = new MediaPlaylistLineParser(this);
 

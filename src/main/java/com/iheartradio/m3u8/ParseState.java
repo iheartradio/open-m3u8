@@ -1,17 +1,23 @@
 package com.iheartradio.m3u8;
 
 import com.iheartradio.m3u8.data.Playlist;
+import com.iheartradio.m3u8.data.StartData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class ParseState implements IParseState<Playlist> {
     static final int NONE = -1;
 
     public final Encoding encoding;
+    public final List<String> unknownTags = new ArrayList<>();
 
     private MasterParseState mMasterParseState;
     private MediaParseState mMediaParseState;
     private boolean mIsExtended;
-    private boolean mIsIframesOnly;
     private int mCompatibilityVersion = NONE;
+
+    public StartData startData;
 
     public ParseState(Encoding encoding) {
         this.encoding = encoding;
@@ -57,10 +63,6 @@ class ParseState implements IParseState<Playlist> {
         mIsExtended = true;
     }
     
-    public boolean isIframesOnly() {
-        return mIsIframesOnly;
-    }
-    
     public void setIsIframesOnly() throws ParseException {
         if (isMaster()) {
             throw new ParseException(ParseExceptionType.MEDIA_IN_MASTER);
@@ -82,10 +84,10 @@ class ParseState implements IParseState<Playlist> {
         final Playlist.Builder playlistBuilder = new Playlist.Builder();
 
         if (isMaster()) {
-            playlistBuilder.withMasterPlaylist(mMasterParseState.buildPlaylist());
+            playlistBuilder.withMasterPlaylist(buildInnerPlaylist(getMaster()));
         } else if (isMedia()) {
             playlistBuilder
-                    .withMediaPlaylist(mMediaParseState.buildPlaylist())
+                    .withMediaPlaylist(buildInnerPlaylist(getMedia()))
                     .withExtended(mIsExtended);
         } else {
             throw new ParseException(ParseExceptionType.UNKNOWN_PLAYLIST_TYPE);
@@ -94,5 +96,12 @@ class ParseState implements IParseState<Playlist> {
         return playlistBuilder
                 .withCompatibilityVersion(mCompatibilityVersion == NONE ? Playlist.MIN_COMPATIBILITY_VERSION : mCompatibilityVersion)
                 .build();
+    }
+
+    private <T> T buildInnerPlaylist(PlaylistParseState<T> innerParseState) throws ParseException {
+        return innerParseState
+                .setUnknownTags(unknownTags)
+                .setStartData(startData)
+                .buildPlaylist();
     }
 }

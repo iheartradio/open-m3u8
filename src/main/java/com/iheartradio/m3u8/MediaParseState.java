@@ -10,30 +10,43 @@ import com.iheartradio.m3u8.data.StartData;
 import com.iheartradio.m3u8.data.TrackData;
 import com.iheartradio.m3u8.data.TrackInfo;
 
-class MediaParseState implements IParseState<MediaPlaylist> {
+class MediaParseState implements PlaylistParseState<MediaPlaylist> {
+    private List<String> mUnknownTags;
+    private StartData mStartData;
+
     public final List<TrackData> tracks = new ArrayList<>();
-    public final List<String> unknownTags = new ArrayList<>();
 
     public Integer targetDuration;
     public Integer mediaSequenceNumber;
-    public Boolean isIframesOnly;
+    public boolean isIframesOnly;
     public PlaylistType playlistType;
     public TrackInfo trackInfo;
     public EncryptionData encryptionData;
-    public StartData startData;
     public String programDateTime;
     public boolean endOfList;
     public boolean hasDiscontinuity;
 
     @Override
+    public PlaylistParseState<MediaPlaylist> setUnknownTags(final List<String> unknownTags) {
+        mUnknownTags = unknownTags;
+        return this;
+    }
+
+    @Override
+    public PlaylistParseState<MediaPlaylist> setStartData(final StartData startData) {
+        mStartData = startData;
+        return this;
+    }
+
+    @Override
     public MediaPlaylist buildPlaylist() throws ParseException {
         return new MediaPlaylist.Builder()
                 .withTracks(tracks)
-                .withUnknownTags(unknownTags)
+                .withUnknownTags(mUnknownTags)
                 .withTargetDuration(targetDuration == null ? maximumDuration(tracks, 0) : targetDuration)
-                .withIsIframesOnly(isIframesOnly == null ? false : true)
+                .withIsIframesOnly(isIframesOnly)
+                .withStartData(mStartData)
                 .withIsOngoing(!endOfList)
-                .withStartData(startData)
                 .withMediaSequenceNumber(mediaSequenceNumber == null ? 0 : mediaSequenceNumber)
                 .withPlaylistType(playlistType)
                 .build();
