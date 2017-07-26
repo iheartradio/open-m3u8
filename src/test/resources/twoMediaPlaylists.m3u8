@@ -1,0 +1,15 @@
+#EXTM3U
+#EXT-X-TARGETDURATION:10
+#EXTINF:9.009
+http://media.example.com/first.ts
+#EXTINF:9.009
+http://media.example.com/second.ts
+#EXTINF:3.003
+http://media.example.com/third.ts
+#EXT-X-ENDLIST
+#EXTM3U
+#EXT-X-TARGETDURATION:10
+#EXTINF:9.010
+http://media.example.com/fourth.ts
+#EXTINF:9.011
+http://media.example.com/fifth.ts

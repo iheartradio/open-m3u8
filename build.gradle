@@ -1,0 +1,106 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+    }
+}
+
+plugins {
+    id 'net.saliman.cobertura' version '2.2.7'
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+group 'com.iheartradio.m3u8'
+archivesBaseName = 'open-m3u8'
+sourceCompatibility = 1.7
+version '0.2.6'
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testRuntime "org.slf4j:slf4j-log4j12:1.7.5"
+    testRuntime "log4j:log4j:1.2.7"
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Open M3U8'
+                packaging 'jar'
+                description 'An open source M3U8 playlist parser java library.'
+                url 'https://github.com/iheartradio/open-m3u8/'
+
+                scm {
+                    connection 'scm:git:https://github.com/iheartradio/open-m3u8.git/'
+                    developerConnection 'scm:git:https://github.com/iheartradio/open-m3u8.git/'
+                    url 'https://github.com/iheartradio/open-m3u8/'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License'
+                        url 'http://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'iheartradio-oss'
+                        name 'Daniel Tashjian'
+                        email 'danieltashjian@iheartmedia.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.8"
+}

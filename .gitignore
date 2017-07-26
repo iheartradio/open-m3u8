@@ -1,0 +1,27 @@
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs
+hs_err_pid*
+
+# android
+local.properties
+
+# gradle
+/.gradle/
+build/
+
+# idea
+/.idea/
+*.iml
+/bin/
+/.settings/
+/.classpath
+/.project
