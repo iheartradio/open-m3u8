@@ -118,4 +118,15 @@ public enum PlaylistError {
      * The average bandwidth in IFrameStreamInfo must be non-negative or StreamInfo.NO_BANDWIDTH.
      */
     I_FRAME_STREAM_WITH_INVALID_AVERAGE_BANDWIDTH,
+
+    /**
+     * MapInfo requires a URI.
+     */
+    MAP_INFO_WITHOUT_URI,
+
+    /**
+     * If a byte range offset is not present, a previous media segment must appear in the playlist
+     * with a sub-range of the same media resource.
+     */
+    BYTERANGE_WITH_UNDEFINED_OFFSET,
 }

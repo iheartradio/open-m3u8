@@ -1,17 +1,13 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.ByteRange;
+import com.iheartradio.m3u8.data.Resolution;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.iheartradio.m3u8.data.Resolution;
 
 final class ParseUtil {
     public static int parseInt(String string, String tag) throws ParseException {
@@ -135,6 +131,12 @@ final class ParseUtil {
         }
 
         return builder.toString();
+    }
+
+    public static ByteRange matchByteRange(Matcher matcher) {
+        long subRangeLength = Long.parseLong(matcher.group(1));
+        Long offset = matcher.group(2) != null ? Long.parseLong(matcher.group(2)) : null;
+        return new ByteRange(subRangeLength, offset);
     }
 
     static boolean isWhitespace(char c) {

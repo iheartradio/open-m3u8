@@ -1,14 +1,11 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.*;
+
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
-import com.iheartradio.m3u8.data.EncryptionData;
-import com.iheartradio.m3u8.data.MediaPlaylist;
-import com.iheartradio.m3u8.data.Playlist;
-import com.iheartradio.m3u8.data.StartData;
-import com.iheartradio.m3u8.data.TrackData;
 
 abstract class MediaPlaylistTagWriter extends ExtTagWriter {
     
@@ -193,6 +190,7 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
         public void write(TagWriter tagWriter, Playlist playlist) throws IOException, ParseException {
             if (playlist.hasMediaPlaylist()) {
                 KeyWriter keyWriter = new KeyWriter();
+                MapInfoWriter mapInfoWriter = new MapInfoWriter();
 
                 for (TrackData trackData : playlist.getMediaPlaylist().getTracks()) {
                     if (trackData.hasDiscontinuity()) {
@@ -200,6 +198,12 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
                     }
 
                     keyWriter.writeTrackData(tagWriter, playlist, trackData);
+                    mapInfoWriter.writeTrackData(tagWriter, playlist, trackData);
+
+                    if (trackData.hasByteRange()) {
+                        writeByteRange(tagWriter, trackData.getByteRange());
+                    }
+
                     writeExtinf(tagWriter, playlist, trackData);
                     tagWriter.writeLine(trackData.getUri());
                 }
@@ -221,6 +225,19 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
         }
 
         tagWriter.writeTag(Constants.EXTINF_TAG, builder.toString());
+    }
+
+    private static void writeByteRange(TagWriter tagWriter, ByteRange byteRange) throws IOException {
+        String value;
+
+        if (byteRange.getOffset() != null) {
+            value = String.valueOf(byteRange.getSubRangeLength())
+                    + '@' + String.valueOf(byteRange.getOffset());
+        } else {
+            value = String.valueOf(byteRange.getSubRangeLength());
+        }
+
+        tagWriter.writeTag(Constants.EXT_X_BYTERANGE_TAG, value);
     }
 
     static class KeyWriter extends MediaPlaylistTagWriter {
@@ -313,6 +330,72 @@ abstract class MediaPlaylistTagWriter extends ExtTagWriter {
 
                 if (!encryptionData.equals(mEncryptionData)) {
                     mEncryptionData = encryptionData;
+                    write(tagWriter, playlist);
+                }
+            }
+        }
+    }
+
+    static class MapInfoWriter extends MediaPlaylistTagWriter {
+        private final Map<String, AttributeWriter<MapInfo>> HANDLERS = new LinkedHashMap<>();
+
+        private MapInfo mMapInfo;
+
+        {
+            HANDLERS.put(Constants.URI, new AttributeWriter<MapInfo>() {
+                @Override
+                public String write(MapInfo attributes) throws ParseException {
+                    return WriteUtil.writeQuotedString(attributes.getUri(), getTag());
+                }
+
+                @Override
+                public boolean containsAttribute(MapInfo attributes) {
+                    return true;
+                }
+            });
+
+            HANDLERS.put(Constants.BYTERANGE, new AttributeWriter<MapInfo>() {
+                @Override
+                public String write(MapInfo attributes) throws ParseException {
+                    ByteRange byteRange = attributes.getByteRange();
+                    String value;
+                    if (byteRange.hasOffset()) {
+                        value = String.valueOf(byteRange.getSubRangeLength())
+                                + '@' + String.valueOf(byteRange.getOffset());
+                    } else {
+                        value = String.valueOf(byteRange.getSubRangeLength());
+                    }
+
+                    return WriteUtil.writeQuotedString(value, getTag());
+                }
+
+                @Override
+                public boolean containsAttribute(MapInfo mapInfo) {
+                    return mapInfo.hasByteRange();
+                }
+            });
+        }
+
+        @Override
+        boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_MAP;
+        }
+
+        @Override
+        public void doWrite(TagWriter tagWriter, Playlist playlist, MediaPlaylist mediaPlaylist) throws IOException, ParseException {
+            writeAttributes(tagWriter, mMapInfo, HANDLERS);
+        }
+
+        void writeTrackData(TagWriter tagWriter, Playlist playlist, TrackData trackData) throws IOException, ParseException {
+            if (trackData != null && trackData.getMapInfo() != null) {
+                final MapInfo mapInfo = trackData.getMapInfo();
+                if (!mapInfo.equals(mMapInfo)) {
+                    mMapInfo = mapInfo;
                     write(tagWriter, playlist);
                 }
             }

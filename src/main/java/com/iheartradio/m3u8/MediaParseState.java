@@ -1,14 +1,9 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import com.iheartradio.m3u8.data.EncryptionData;
-import com.iheartradio.m3u8.data.MediaPlaylist;
-import com.iheartradio.m3u8.data.PlaylistType;
-import com.iheartradio.m3u8.data.StartData;
-import com.iheartradio.m3u8.data.TrackData;
-import com.iheartradio.m3u8.data.TrackInfo;
 
 class MediaParseState implements PlaylistParseState<MediaPlaylist> {
     private List<String> mUnknownTags;
@@ -25,6 +20,8 @@ class MediaParseState implements PlaylistParseState<MediaPlaylist> {
     public String programDateTime;
     public boolean endOfList;
     public boolean hasDiscontinuity;
+    public MapInfo mapInfo;
+    public ByteRange byteRange;
 
     @Override
     public PlaylistParseState<MediaPlaylist> setUnknownTags(final List<String> unknownTags) {

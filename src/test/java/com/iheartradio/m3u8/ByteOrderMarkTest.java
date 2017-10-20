@@ -22,6 +22,7 @@ public class ByteOrderMarkTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testWritingByteOrderMark() throws Exception {
         final Playlist playlist1;

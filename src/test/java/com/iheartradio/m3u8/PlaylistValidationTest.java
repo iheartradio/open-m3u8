@@ -4,6 +4,9 @@ import com.iheartradio.m3u8.data.Playlist;
 import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static com.iheartradio.m3u8.TestUtil.inputStreamFromResource;
 import static org.junit.Assert.assertEquals;
@@ -28,5 +31,16 @@ public class PlaylistValidationTest {
         }
 
         assertEquals(-1f, playlist.getMediaPlaylist().getTracks().get(0).getTrackInfo().duration, 0f);
+    }
+
+    @Test
+    public void testInvalidBytRange() throws Exception {
+        List<PlaylistError> errors = new ArrayList<>();
+        try {
+            TestUtil.parsePlaylistFromResource("mediaPlaylistWithInvalidByteRanges.m3u8");
+        } catch (PlaylistException e) {
+            errors.addAll(e.getErrors());
+        }
+        assertEquals(Collections.singletonList(PlaylistError.BYTERANGE_WITH_UNDEFINED_OFFSET), errors);
     }
 }

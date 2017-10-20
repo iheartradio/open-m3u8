@@ -1,17 +1,13 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.*;
+import com.iheartradio.m3u8.data.EncryptionData.Builder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
-
-import com.iheartradio.m3u8.data.EncryptionData;
-import com.iheartradio.m3u8.data.EncryptionData.Builder;
-import com.iheartradio.m3u8.data.EncryptionMethod;
-import com.iheartradio.m3u8.data.PlaylistType;
-import com.iheartradio.m3u8.data.StartData;
-import com.iheartradio.m3u8.data.TrackInfo;
 
 class MediaPlaylistLineParser implements LineParser {
     private final IExtTagParser tagParser;
@@ -398,6 +394,73 @@ class MediaPlaylistLineParser implements LineParser {
             }
 
             state.getMedia().encryptionData = encryptionData;
+        }
+    };
+
+    static final IExtTagParser EXT_X_MAP = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+        private final Map<String, AttributeParser<MapInfo.Builder>> HANDLERS = new HashMap<>();
+
+        {
+            HANDLERS.put(Constants.URI, new AttributeParser<MapInfo.Builder>() {
+                @Override
+                public void parse(Attribute attribute, MapInfo.Builder builder, ParseState state) throws ParseException {
+                    builder.withUri(ParseUtil.decodeUri(ParseUtil.parseQuotedString(attribute.value, getTag()), state.encoding));
+                }
+            });
+
+            HANDLERS.put(Constants.BYTERANGE, new AttributeParser<MapInfo.Builder>() {
+                @Override
+                public void parse(Attribute attribute, MapInfo.Builder builder, ParseState state) throws ParseException {
+                    Matcher matcher = Constants.EXT_X_BYTERANGE_VALUE_PATTERN.matcher(ParseUtil.parseQuotedString(attribute.value, getTag()));
+                    if (!matcher.matches()) {
+                        throw ParseException.create(ParseExceptionType.INVALID_BYTERANGE_FORMAT, getTag(), attribute.toString());
+                    }
+
+                    builder.withByteRange(ParseUtil.matchByteRange(matcher));
+                }
+            });
+        }
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_MAP;
+        }
+
+        @Override
+        public boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void parse(String line, ParseState state) throws ParseException {
+            lineParser.parse(line, state);
+
+            final MapInfo.Builder builder = new MapInfo.Builder();
+
+            ParseUtil.parseAttributes(line, builder, state, HANDLERS, getTag());
+            state.getMedia().mapInfo = builder.build();
+        }
+    };
+
+    static final IExtTagParser EXT_X_BYTERANGE = new IExtTagParser() {
+        private final LineParser lineParser = new MediaPlaylistLineParser(this);
+
+        @Override
+        public String getTag() {
+            return Constants.EXT_X_BYTERANGE_TAG;
+        }
+
+        @Override
+        public boolean hasData() {
+            return true;
+        }
+
+        @Override
+        public void parse(String line, ParseState state) throws ParseException {
+            lineParser.parse(line, state);
+            final Matcher matcher = ParseUtil.match(Constants.EXT_X_BYTERANGE_PATTERN, line, getTag());
+            state.getMedia().byteRange = ParseUtil.matchByteRange(matcher);
         }
     };
 }

@@ -4,6 +4,7 @@ import com.iheartradio.m3u8.data.*;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class PlaylistValidation {
@@ -98,8 +99,25 @@ public class PlaylistValidation {
             addStartErrors(playlist.getStartData(), errors);
         }
 
+        addByteRangeErrors(playlist.getTracks(), errors, parsingMode);
+
         for (TrackData trackData : playlist.getTracks()) {
             addTrackDataErrors(trackData, errors, isExtended, parsingMode);
+        }
+    }
+
+    private static void addByteRangeErrors(List<TrackData> tracks, Set<PlaylistError> errors, ParsingMode parsingMode) {
+        Set<String> knownOffsets = new HashSet<>();
+        for (TrackData track : tracks) {
+            if (!track.hasByteRange()) {
+                continue;
+            }
+
+            if (track.getByteRange().hasOffset()) {
+                knownOffsets.add(track.getUri());
+            } else if (!knownOffsets.contains(track.getUri())) {
+                errors.add(PlaylistError.BYTERANGE_WITH_UNDEFINED_OFFSET);
+            }
         }
     }
 
@@ -194,6 +212,12 @@ public class PlaylistValidation {
         if (trackData.hasTrackInfo()) {
             if (!parsingMode.allowNegativeNumbers && trackData.getTrackInfo().duration < 0) {
                 errors.add(PlaylistError.TRACK_INFO_WITH_NEGATIVE_DURATION);
+            }
+        }
+
+        if (trackData.hasMapInfo()) {
+            if (trackData.getMapInfo().getUri() == null || trackData.getMapInfo().getUri().isEmpty()) {
+                errors.add(PlaylistError.MAP_INFO_WITHOUT_URI);
             }
         }
     }

@@ -1,0 +1,13 @@
+#EXTM3U
+#EXT-X-VERSION:4
+#EXT-X-TARGETDURATION:10
+#EXT-X-BYTERANGE:0@10
+#EXTINF:9.009,
+http://media.example.com/first.ts
+#EXT-X-BYTERANGE:20
+#EXTINF:9.009,
+http://media.example.com/first.ts
+#EXT-X-BYTERANGE:30
+#EXTINF:3.003,
+http://media.example.com/first.ts
+#EXT-X-ENDLIST

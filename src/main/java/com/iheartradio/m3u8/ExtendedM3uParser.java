@@ -1,11 +1,11 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.Playlist;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.iheartradio.m3u8.data.Playlist;
 
 class ExtendedM3uParser extends BaseM3uParser {
     private final ParsingMode mParsingMode;
@@ -32,7 +32,9 @@ class ExtendedM3uParser extends BaseM3uParser {
                 MasterPlaylistLineParser.EXT_X_I_FRAME_STREAM_INF,
                 MediaPlaylistLineParser.EXTINF,
                 MediaPlaylistLineParser.EXT_X_ENDLIST,
-                MediaPlaylistLineParser.EXT_X_DISCONTINUITY
+                MediaPlaylistLineParser.EXT_X_DISCONTINUITY,
+                MediaPlaylistLineParser.EXT_X_MAP,
+                MediaPlaylistLineParser.EXT_X_BYTERANGE
         );
     }
 

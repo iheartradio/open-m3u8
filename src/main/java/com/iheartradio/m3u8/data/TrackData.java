@@ -8,13 +8,17 @@ public class TrackData {
     private final EncryptionData mEncryptionData;
     private final String mProgramDateTime;
     private final boolean mHasDiscontinuity;
+    private final MapInfo mMapInfo;
+    private final ByteRange mByteRange;
 
-    private TrackData(String uri, TrackInfo trackInfo, EncryptionData encryptionData, String programDateTime, boolean hasDiscontinuity) {
+    private TrackData(String uri, TrackInfo trackInfo, EncryptionData encryptionData, String programDateTime, boolean hasDiscontinuity, MapInfo mapInfo, ByteRange byteRange) {
         mUri = uri;
         mTrackInfo = trackInfo;
         mEncryptionData = encryptionData;
         mProgramDateTime = programDateTime;
         mHasDiscontinuity = hasDiscontinuity;
+        mMapInfo = mapInfo;
+        mByteRange = byteRange;
     }
 
     public String getUri() {
@@ -55,41 +59,56 @@ public class TrackData {
         return mEncryptionData;
     }
 
-    public Builder buildUpon() {
-        return new Builder(getUri(), mTrackInfo, mEncryptionData, mHasDiscontinuity);
+    public boolean hasMapInfo() {
+        return mMapInfo != null;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(mUri, mEncryptionData, mTrackInfo, mHasDiscontinuity);
+    public MapInfo getMapInfo() {
+        return mMapInfo;
+    }
+
+    public boolean hasByteRange() {
+        return mByteRange != null;
+    }
+
+    public ByteRange getByteRange() {
+        return mByteRange;
+    }
+
+    public Builder buildUpon() {
+        return new Builder(getUri(), mTrackInfo, mEncryptionData, mHasDiscontinuity, mMapInfo, mByteRange);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof TrackData)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TrackData trackData = (TrackData) o;
+        return mHasDiscontinuity == trackData.mHasDiscontinuity &&
+                Objects.equals(mUri, trackData.mUri) &&
+                Objects.equals(mTrackInfo, trackData.mTrackInfo) &&
+                Objects.equals(mEncryptionData, trackData.mEncryptionData) &&
+                Objects.equals(mProgramDateTime, trackData.mProgramDateTime) &&
+                Objects.equals(mMapInfo, trackData.mMapInfo) &&
+                Objects.equals(mByteRange, trackData.mByteRange);
+    }
 
-        TrackData other = (TrackData) o;
-
-        return Objects.equals(mUri, other.mUri) &&
-               Objects.equals(mTrackInfo, other.mTrackInfo) &&
-               Objects.equals(mEncryptionData, other.mEncryptionData) &&
-               Objects.equals(mProgramDateTime, other.mProgramDateTime) &&
-               Objects.equals(mHasDiscontinuity, other.mHasDiscontinuity);
+    @Override
+    public int hashCode() {
+        return Objects.hash(mUri, mTrackInfo, mEncryptionData, mProgramDateTime, mHasDiscontinuity, mMapInfo, mByteRange);
     }
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("(TrackData")
-                .append(" mUri=").append(mUri)
-                .append(" mTrackInfo=").append(mTrackInfo)
-                .append(" mEncryptionData=").append(mEncryptionData)
-                .append(" mProgramDateTime=").append(mProgramDateTime)
-                .append(" mHasDiscontinuity=").append(mHasDiscontinuity)
-                .append(")")
-                .toString();
+        return "TrackData{" +
+                "mUri='" + mUri + '\'' +
+                ", mTrackInfo=" + mTrackInfo +
+                ", mEncryptionData=" + mEncryptionData +
+                ", mProgramDateTime='" + mProgramDateTime + '\'' +
+                ", mHasDiscontinuity=" + mHasDiscontinuity +
+                ", mMapInfo=" + mMapInfo +
+                ", mByteRange=" + mByteRange +
+                '}';
     }
 
     public static class Builder {
@@ -98,15 +117,19 @@ public class TrackData {
         private EncryptionData mEncryptionData;
         private String mProgramDateTime;
         private boolean mHasDiscontinuity;
+        private MapInfo mMapInfo;
+        private ByteRange mByteRange;
 
         public Builder() {
         }
 
-        private Builder(String uri, TrackInfo trackInfo, EncryptionData encryptionData, boolean hasDiscontinuity) {
+        private Builder(String uri, TrackInfo trackInfo, EncryptionData encryptionData, boolean hasDiscontinuity, MapInfo mapInfo, ByteRange byteRange) {
             mUri = uri;
             mTrackInfo = trackInfo;
             mEncryptionData = encryptionData;
             mHasDiscontinuity = hasDiscontinuity;
+            mMapInfo = mapInfo;
+            mByteRange = byteRange;
         }
 
         public Builder withUri(String url) {
@@ -134,8 +157,18 @@ public class TrackData {
             return this;
         }
 
+        public Builder withMapInfo(MapInfo mapInfo) {
+            mMapInfo = mapInfo;
+            return this;
+        }
+
+        public Builder withByteRange(ByteRange byteRange) {
+            mByteRange = byteRange;
+            return this;
+        }
+
         public TrackData build() {
-            return new TrackData(mUri, mTrackInfo, mEncryptionData, mProgramDateTime, mHasDiscontinuity);
+            return new TrackData(mUri, mTrackInfo, mEncryptionData, mProgramDateTime, mHasDiscontinuity, mMapInfo, mByteRange);
         }
     }
 }
