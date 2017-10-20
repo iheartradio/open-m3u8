@@ -30,7 +30,7 @@ idea {
 group 'com.iheartradio.m3u8'
 archivesBaseName = 'open-m3u8'
 sourceCompatibility = 1.7
-version '0.2.6'
+version '0.2.7-SNAPSHOT'
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'

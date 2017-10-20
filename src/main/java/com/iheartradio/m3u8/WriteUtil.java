@@ -35,23 +35,30 @@ public class WriteUtil {
     }
 
     public static String writeQuotedString(String unquotedString, String tag) throws ParseException {
-        final StringBuilder builder = new StringBuilder(unquotedString.length() + 2);
-        builder.append("\"");
-        
-        for (int i = 0; i < unquotedString.length(); ++i) {
-            final char c = unquotedString.charAt(i);
-    
-            if (i == 0 && ParseUtil.isWhitespace(c)) {
-                throw new ParseException(ParseExceptionType.ILLEGAL_WHITESPACE, tag);
-            } else if (c == '"') {
-                builder.append('\\').append(c);
-            } else {
-                builder.append(c);
+        return writeQuotedString(unquotedString, tag, false);
+    }
+    public static String writeQuotedString(String unquotedString, String tag, boolean optional) throws ParseException {
+        if (unquotedString != null || !optional) {
+            final StringBuilder builder = new StringBuilder(unquotedString.length() + 2);
+            builder.append("\"");
+
+            for (int i = 0; i < unquotedString.length(); ++i) {
+                final char c = unquotedString.charAt(i);
+
+                if (i == 0 && ParseUtil.isWhitespace(c)) {
+                    throw new ParseException(ParseExceptionType.ILLEGAL_WHITESPACE, tag);
+                } else if (c == '"') {
+                    builder.append('\\').append(c);
+                } else {
+                    builder.append(c);
+                }
             }
+
+            builder.append("\"");
+            return builder.toString();
         }
-        
-        builder.append("\"");
-        return builder.toString();
+
+        return "\"\"";
     }
 
     public static String encodeUri(String decodedUri) throws ParseException {
