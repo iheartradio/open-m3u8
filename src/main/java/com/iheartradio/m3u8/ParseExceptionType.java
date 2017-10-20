@@ -3,6 +3,7 @@ package com.iheartradio.m3u8;
 public enum ParseExceptionType {
     AUTO_SELECT_DISABLED_FOR_DEFAULT("default media data must be auto selected"),
     BAD_EXT_TAG_FORMAT("bad format found for an EXT tag"),
+    EMPTY_MEDIA_CHANNELS("CHANNELS is empty"),
     EMPTY_MEDIA_CHARACTERISTICS("CHARACTERISTICS is empty"),
     EMPTY_MEDIA_GROUP_ID("GROUP-ID is empty"),
     EMPTY_MEDIA_NAME("NAME is empty"),

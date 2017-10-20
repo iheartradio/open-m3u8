@@ -1,14 +1,10 @@
 package com.iheartradio.m3u8;
 
+import com.iheartradio.m3u8.data.*;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.iheartradio.m3u8.data.IFrameStreamInfo;
-import com.iheartradio.m3u8.data.MediaData;
-import com.iheartradio.m3u8.data.MediaType;
-import com.iheartradio.m3u8.data.StreamInfo;
-import com.iheartradio.m3u8.data.StreamInfoBuilder;
 
 class MasterPlaylistLineParser implements LineParser {
     private final IExtTagParser mTagParser;
@@ -161,6 +157,20 @@ class MasterPlaylistLineParser implements LineParser {
                         throw ParseException.create(ParseExceptionType.EMPTY_MEDIA_CHARACTERISTICS, getTag(), attribute.toString());
                     } else {
                         builder.withCharacteristics(Arrays.asList(characteristicStrings));
+                    }
+                }
+            });
+
+            HANDLERS.put(Constants.CHANNELS, new AttributeParser<MediaData.Builder>() {
+                @Override
+                public void parse(Attribute attribute, MediaData.Builder builder, ParseState state) throws ParseException {
+                    final String[] channelsStrings = ParseUtil.parseQuotedString(attribute.value, getTag()).split(Constants.LIST_SEPARATOR);
+
+                    if (channelsStrings.length == 0 || channelsStrings[0].isEmpty()) {
+                        throw ParseException.create(ParseExceptionType.EMPTY_MEDIA_CHANNELS, getTag(), attribute.toString());
+                    } else {
+                        final int channelsCount = ParseUtil.parseInt(channelsStrings[0], getTag());
+                        builder.withChannels(channelsCount);
                     }
                 }
             });

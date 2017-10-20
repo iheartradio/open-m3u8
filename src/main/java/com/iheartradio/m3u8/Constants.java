@@ -39,6 +39,7 @@ final class Constants {
     public static  final String FORCED = "FORCED";
     public static  final String IN_STREAM_ID = "INSTREAM-ID";
     public static  final String CHARACTERISTICS = "CHARACTERISTICS";
+    public static  final String CHANNELS = "CHANNELS";
     
     public static final String EXT_X_STREAM_INF_TAG = "EXT-X-STREAM-INF";
     public static final String EXT_X_I_FRAME_STREAM_INF_TAG = "EXT-X-I-FRAME-STREAM-INF";
