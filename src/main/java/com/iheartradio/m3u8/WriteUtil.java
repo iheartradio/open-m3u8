@@ -25,7 +25,7 @@ public class WriteUtil {
         StringBuilder builder = new StringBuilder(hex.size() + prefix.length());
         builder.append(prefix);
         for(Byte b : hex) {
-            builder.append(Integer.toHexString(b));
+            builder.append(String.format("%02x", b));
         }
         return builder.toString();
     }

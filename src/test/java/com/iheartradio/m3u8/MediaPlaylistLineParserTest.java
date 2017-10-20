@@ -46,7 +46,7 @@ public class MediaPlaylistLineParserTest extends LineParserStateTestCase {
         final String line = "#" + tag +
                 ":METHOD=AES-128" +
                 ",URI=\"" + uri + "\"" +
-                ",IV=0x1234abcd5678EF90" +
+                ",IV=0x1234abcd5678EF90aabbccddeeff0011" +
                 ",KEYFORMAT=\"" + format + "\"" +
                 ",KEYFORMATVERSIONS=\"1/2/3\"";
 
@@ -58,8 +58,10 @@ public class MediaPlaylistLineParserTest extends LineParserStateTestCase {
         assertEquals(uri, encryptionData.getUri());
 
         assertEquals(
-                Arrays.asList((byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 10, (byte) 11, (byte) 12, (byte) 13,
-                              (byte) 5, (byte) 6, (byte) 7, (byte) 8, (byte) 14, (byte) 15, (byte) 9, (byte) 0),
+                Arrays.asList((byte) 0x12, (byte) 0x34, (byte) 0xAB, (byte) 0xCD,
+                              (byte) 0x56, (byte) 0x78, (byte) 0xEF, (byte) 0x90,
+                              (byte) 0xAA, (byte) 0xBB, (byte) 0xCC, (byte) 0xDD,
+                              (byte) 0xEE, (byte) 0xFF, (byte) 0x00, (byte) 0x11),
                 encryptionData.getInitializationVector());
 
         assertEquals(format, encryptionData.getKeyFormat());
